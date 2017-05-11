@@ -1,0 +1,96 @@
+#! /bin/bash
+
+vsr_root="${BASH_SOURCE%/*}/../.."
+source "$vsr_root/scripts/prelude"
+
+function print_usage() {
+  errcho "usage: myrsync [--yes] <folder> <dst> <additional rsync opts>"
+  errcho ""
+  errcho "    --yes will answer yes to any confirmation."
+  errcho "    <folder> is relative to $HOME."
+  errcho "    <dst> is the absolute path of the"
+  errcho "          destination"
+  exit 1
+}
+
+if [[ $# -lt 2 ]]; then
+  print_usage
+fi
+
+ansYes=false
+
+src="$1"
+
+if [[ "$src" == "--yes" ]]; then
+  ansYes=true
+  shift
+  src="$1"
+fi
+
+dst="$2"
+
+shift; shift 
+
+RSYNC_OPTS=("-aEh"
+            "--progress"
+            "--preallocate" 
+            "--exclude-from=$vsr_root/config/rsync/folder-backup.exc"
+            "--include-from=$vsr_root/config/rsync/folder-backup.inc"
+            )
+
+# And we can sudo
+sudo -k
+errcho "I need sudo."
+if ! sudo true; then
+  errcho "Sorry, aborting."
+  exit 1
+fi
+
+if [ ! -e "$HOME/$src" ]; then
+  errcho "!! Source does not exist."
+  errcho "   Aborting."
+  exit 1
+fi
+
+if [ ! -e "$dst" ]; then
+  errcho "!! Destination does not exist."
+  errcho "   Aborting."
+  exit 1
+fi
+
+bname=$(basename "$HOME/$src")
+if [ ! -e "$dst/$bname" ]; then
+  errcho "!! the destination $dst/$bname"
+  errcho "   does not exist."
+  errcho "   rsync will create it, no worries."
+  errcho ""
+  if ! $ansYes; then
+    read -p "continue (y/n) ? " ans
+    case $ans in
+        [Nn])
+        exit 1
+        ;;
+    esac
+  fi
+fi
+
+echo "I'm about to mirror:"
+echo "  $HOME/$src"
+echo "into"
+echo "  $dst"
+
+if ! $ansYes; then
+  read -p "continue (Y/n) ? " ans
+else
+  ans="Y"
+fi
+
+case "$ans" in
+  Y) sudo rsync "${RSYNC_OPTS[@]}" "$@" "$HOME/$src" "$dst" ;;
+esac
+
+
+
+
+
+

@@ -1,0 +1,28 @@
+#! /bin/bash
+
+dir="${BASH_SOURCE%/*}"
+source "$dir/../prelude"
+
+file="/dev/stdin"
+
+if [[ $# -eq 1 ]]; then
+  file=$1
+elif [[ $# -gt 1 ]]; then
+  errcho "usage: uncomment <file>"
+  errcho ""
+  errcho "  Removes commented portions and empty lines of <file>."
+  errcho "  <file> defaults to stdin."
+  exit 1
+fi
+
+if [[ ! -e $file ]]; then
+  errcho "File $file does not exist."
+  exit 1
+fi
+
+while read -r line || [ -n "$line" ]; do
+  res="${line%%\#*}"
+  if [[ ! -z "$res" ]]; then
+    echo "$res"
+  fi
+done < "$file"

@@ -1,0 +1,19 @@
+#! /bin/bash
+
+vsr_root="${BASH_SOURCE%/*}"
+
+lib="$vsr_root/scripts"
+while [ $# -gt 0 ]; do
+  aux=$1
+  shift
+  if [[ -d "$lib/$aux" ]]; then
+    lib="$lib/$aux"
+  elif [[ -e "$lib/$aux" ]]; then
+    script="$lib/$aux $@"
+    $script
+    exit $?
+  else
+    echo "Error: '$lib/$aux' is not a valid directory or file."
+    exit 1
+  fi
+done

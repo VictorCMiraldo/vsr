@@ -1,0 +1,26 @@
+#! /bin/bash
+
+function showHelp() {
+  errcho "usage: pkg-is-installed <pkgname>"
+  errcho ""
+  errcho "  pkg-is-installed exits with 0 if <pkgname> is"
+  errcho "  installed in this system. exits with 1 otherwise"
+  errcho ""
+  errcho "example:"
+  errcho ""
+  errcho "  if (pkg-is-installed gimp); then"
+  errcho "    do-stuff-with-gimp"
+  errcho "  fi"
+}
+
+if [[ $# -ne 1 ]]; then
+  showHelp
+  exit 1
+fi
+
+res=$(apt-cache policy "$1" | grep "Installed: " | grep -vc "(none)");
+if [[ $res -eq 1 ]]; then
+  exit 0
+else
+  exit 1
+fi

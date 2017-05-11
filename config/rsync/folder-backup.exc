@@ -1,0 +1,17 @@
+*~
+.csync_journal*
+.owncloud*
+Downloads/
+Dropbox/
+[Cc]ache
+*.o
+*.log
+*.aux
+*.toc
+*.hi
+*.pyc
+*.agdai
+*.blg
+*.idx
+*.ptb
+tmp/

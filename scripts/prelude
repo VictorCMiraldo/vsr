@@ -1,0 +1,17 @@
+#! /bin/bash
+
+function errcho() {
+  (>&2 echo "$@")
+}
+
+function log-if() {
+  if [[ $# -gt 1 ]] && [[ $1 -eq 1 ]]; then
+    shift
+    errcho "$@"
+  fi
+}
+
+if ! type vsr > /dev/null; then
+  errcho "Can't find vsr. Make sure it is on the path."
+  exit 1
+fi

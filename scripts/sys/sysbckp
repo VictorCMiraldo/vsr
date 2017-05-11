@@ -1,0 +1,89 @@
+#! /bin/bash
+
+vsr_root="${BASH_SOURCE%/*}/../.."
+source "$vsr_root/scripts/prelude"
+
+function print_usage() {
+  echo "usage: sysbckp <dst> <additional rsync opts>"
+  echo ""
+  echo "    <dst> is the absolute path of the"
+  echo "          destination"
+  exit 1
+}
+
+if [[ $# -lt 1 ]]; then
+  print_usage
+fi
+
+dst="$1"
+shift
+
+case $dst in
+  -h|--help)
+    print_usage
+  ;;
+esac
+
+echo "  SYSBCKP"
+echo "  ======="
+echo ""
+echo "Starting interactive system backup."
+
+if [ ! -e "$dst" ]; then
+  echo " !! Sorry, $dst does not exist"
+  exit 1
+fi
+
+echo "By default, the following folders will be"
+echo "copied to $dst."
+echo ""
+echo "    ~/bin"
+echo "    ~/config"
+echo "    ~/safe"
+echo "    ~/work"
+echo "    ~/usr/pub"
+echo ""
+read -p "Should I copy ~/usr/data (y/n) ? " ansUsrData
+read -p "Should I run keychain-priv-backup (y/n) ? " ansPriv
+
+CPYDATA=false
+CPYPRIV=false
+
+case $ansUsrData in
+  [Yy])
+    CPYDATA=true
+  ;;
+esac
+
+case $ansPriv in
+  [Yy])
+    CPYPRIV=true
+  ;;
+esac
+
+echo ""
+if $CPYDATA; then echo "I am copying your data."; fi
+if $CPYPRIV; then echo "I am copying your private data."; fi
+
+read -p "Last call... continue (y/n) ? " ans
+case $ans in
+  [Nn])
+    echo "  ok... :/"
+    exit 1
+  ;;
+esac
+
+vsr sys myrsync --yes "$HOME/bin"     "$dst"     --delete "$@"
+vsr sys myrsync --yes "$HOME/config"  "$dst"     --delete "$@"
+vsr sys myrsync --yes "$HOME/work"    "$dst"     --delete "$@"
+vsr sys myrsync --yes "$HOME/usr/pub" "$dst/usr" --delete "$@"
+
+if $CPYPRIV; then
+  vsr sys myrsync --yes "$HOME/usr/keychain" "$dst/usr" --delete "$@"
+  vsr sys myrsync --yes "$HOME/usr/priv"     "$dst/usr" --delete "$@"
+fi
+
+if $CPYDATA; then
+  vsr sys myrsync --yes "$HOME/usr/data"     "$dst/usr" "$@"
+fi
+

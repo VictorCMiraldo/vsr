@@ -1,0 +1,38 @@
+#! /bin/bash
+
+function showUsage() {
+  echo "mass-mv \"pattern-from\" \"pattern-to\""
+  echo ""
+  echo "  Will move every file that matches 'pattern-from'"
+  echo "  in the current directory into 'pattern-to'."
+  echo ""
+  echo "  The string '{}' in 'pattern-to' is used as a placeholder"
+  echo "  for the counter."
+  echo ""
+  echo "Example:"
+  echo "  mass-mv \".*\\.jpg\" \"pics_travel_{}.jpg\""
+  echo ""
+  echo "  DONT FORGET THAT FIRST ARGUMENT IS REGEXP!"
+}
+
+if (( $# != 2 )); then
+  showUsage
+  exit 1
+fi
+
+PATIN="$1"
+PATOUT="$2"
+
+if [[ ! "$PATOUT" =~ .*\{\}.* ]]; then
+  echo "You forgot the counter placeholder!"
+  exit 1
+fi
+
+X=0
+for i in $(ls); do
+  if [[ $i =~ "$PATIN" ]]; then
+    o=${PATOUT/"{}"/`printf "%03d" $X`}
+    X=$((X + 1))
+    mv $i $o
+  fi
+done
