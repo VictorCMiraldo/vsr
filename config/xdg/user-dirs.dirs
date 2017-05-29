@@ -5,6 +5,10 @@
 # homedir-relative path, or XDG_xxx_DIR="/yyy", where /yyy is an
 # absolute path. No other format is supported.
 # 
+#
+# This file should be copied (or linked) to $HOME/.config/user-dirs.dirs
+#
+#
 XDG_DESKTOP_DIR="$HOME/usr/pub/Desktop"
 XDG_DOWNLOAD_DIR="$HOME/tmp"
 XDG_TEMPLATES_DIR="$VSR/config/templates"
