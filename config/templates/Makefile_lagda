@@ -1,0 +1,60 @@
+
+DIRGUARD=@mkdir -p $(@D)
+
+MAIN_NAME=paper
+REFERENCES_NAME=references
+LATEXMKOPTS=-pdf -f
+TEXT_PARTS_SRC_ROOT=text
+TEXT_PARTS_SRC_GENTEX=$(TEXT_PARTS_SRC_ROOT)
+
+MAINTEX=$(TEXT_PARTS_SRC_ROOT)/$(MAIN_NAME).tex
+MAINPDF=./$(MAIN_NAME).pdf
+REFERENCES=text/$(REFERENCES_NAME).bib
+TEXT_PARTS= 
+
+# Location of agda source
+CODE_AGDA_SRC=
+CODE_AGDA_EXCERPTS=excerpts
+CODE_AGDA_STY=./agda.sty
+
+# Agda modules that need output to LaTeX:
+CODE_AGDA_MODULES=
+                  
+
+
+all: $(MAINPDF)
+	
+$(MAINPDF): \
+	$(REFERENCES) $(MAINTEX) \
+	$(TEXT_PARTS:%=$(TEXT_PARTS_SRC_GENTEX)/%.tex) \
+	$(CODE_AGDA_STY) \
+	$(CODE_AGDA_MODULES:%=$(CODE_AGDA_EXCERPTS)/%.tex)
+	latexmk $(LATEXMKOPTS) $(MAINTEX)
+	
+$(TEXT_PARTS_SRC_GENTEX)/%.tex: $(TEXT_PARTS_SRC_GENTEX)/%.lhs
+	lhs2TeX -o $@ $<
+	
+force:
+	$(COMPILER) $(MAINTEX)
+
+$(CODE_AGDA_EXCERPTS)/%.tex: $(CODE_AGDA_SRC)/%.lagda
+	$(DIRGUARD); agda --allow-unsolved-metas \
+		--latex-dir=$(CODE_AGDA_EXCERPTS) --latex $<
+
+clean:
+	rm -f *.log
+	rm -f *.ptb
+	rm -f *.aux
+	rm -f *.toc
+	rm -f *.blg
+	rm -f *.bbl
+	rm -f *.out
+	rm -f *.fdb_latexmk
+	rm -f *.fls
+	
+cleanall: clean nosrctex
+	rm -f paper.pdf
+
+.PHONY: clean all
+
+

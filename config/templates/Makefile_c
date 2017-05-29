@@ -1,0 +1,53 @@
+#	Template Makefile
+
+CC=gcc
+CC_FLAGS=-c -g -Wall -Wextra -Werror
+CC_INCLUDE= `pkg-config --cflags glib-2.0`
+CC_LIBS=
+CC_ALL=$(CC) $(CC_FLAGS) $(CC_INCLUDE) $(CC_LIBS)
+
+LINKER=gcc
+LINKER_FLAGS=
+LINKER_INCLUDE=
+LINKER_LIBS= -lm `pkg-config --libs glib-2.0`
+LINKER_ALL=$(LINKER) $(LINKER_FLAGS) $(LINKER_INCLUDE) $(LINKER_LIBS) 
+
+OBJS= 	
+		
+OUT=
+		
+all: $(OBJS)
+	$(LINKER_ALL) $(OBJS) -o $(OUT)
+	
+../GC/bin/lib/libgc.a:
+	./configure
+	
+memtest: $(OBJS)
+	$(LINKER_ALL) $(OBJS) -o $(OUT)
+	valgrind --leak-check=full --show-reachable=yes --track-origins=yes $(RUN)
+	
+profile: $(OBJS)
+	$(LINKER_ALL) $(OBJS) -o $(OUT)
+	valgrind --tool=callgrind $(RUN)
+	
+package:
+	make clean	## Erases everything not important.
+	cd GC; make clean
+	tar --force-local -czf "$(OUT).tar.gz" *.c *.h *.y *.l Makefile configure *.astcg README
+	
+lexer.c: lexer.l parser.y
+	flex -o lexer.c --header-file="lexer.h" lexer.l
+	
+parser.c: lexer.c parser.y
+	bison --defines="parser.h" --output="parser.c" parser.y
+	
+%.o: %.c %.h
+	$(CC_ALL) $< -o $@
+	
+%.o: %.c
+	$(CC_ALL) $< -o $@
+	
+clean:
+	rm -f $(OBJS)
+	rm -f $(OUT)
+	rm -f callgrind*
