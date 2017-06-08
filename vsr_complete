@@ -1,6 +1,7 @@
 #! /bin/bash
 
-vsr_root="${BASH_SOURCE%/*}"
+#vsr_root="${BASH_SOURCE%/*}"
+vsr_root="$VSR_ROOT"
 
 # Completion function for vsr.
 # Imagine we are typing:

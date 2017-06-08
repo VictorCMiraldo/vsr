@@ -7,3 +7,6 @@ PROMPT_COMMAND='echo -ne "\033]0;"Bash $(whoami)@$(hostname)"\007"'
 
 # Cool weather forecast in the terminal
 alias weather='curl -4 http://wttr.in/Utrecht'
+
+# Enable completion for vsr
+. $VSR_ROOT/vsr_complete

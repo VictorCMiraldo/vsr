@@ -1,6 +1,7 @@
 #! /bin/bash
 
-vsr_root="${BASH_SOURCE%/*}"
+#vsr_root="${BASH_SOURCE%/*}"
+vsr_root="$VSR_ROOT"
 
 lib="$vsr_root/scripts"
 while [ $# -gt 0 ]; do
