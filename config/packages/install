@@ -22,6 +22,9 @@ shellcheck
 octave
 moreutils
 
+## Better than regular mail
+heirloom-mailx
+
 ## Programming
 build-essential
 g++
@@ -50,6 +53,7 @@ tcpreplay
 john
 crunch
 wireshark
+netcat-traditional
 
 ## VPN
 openvpn
