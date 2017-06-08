@@ -11,8 +11,13 @@ export KEYCHAIN_ROOT
 PASSWORD_STORE_DIR="$HOME/usr/keychain/password-store"
 export PASSWORD_STORE_DIR
 
-### Adding out bin to PATH
-PATH="$HOME/bin":"${BASH_SOURCE%/*}/lib":$PATH
+### Our latex library
+LATEXLIB=$HOME/lib/latex
+export LATEXLIB
+
+### Modify our path
+PATH=$HOME/bin:$PATH:$HOME/.cabal/bin:/opt/cabal/1.24/bin
 export PATH
 
-
+### We like vim!
+export EDITOR="vim"
