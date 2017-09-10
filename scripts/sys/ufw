@@ -3,11 +3,6 @@
 vsr_root="${BASH_SOURCE%/*}/../.."
 source "$vsr_root/scripts/prelude"
 
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 1>&2
-   exit 1
-fi
-
 # Lets check whether or not ufw is managing IPV6 too:
 IPV6=$(cat /etc/default/ufw | grep "IPV6=yes" | wc -l)
 if [ "$IPV6" -ne 1 ]; then
@@ -28,12 +23,12 @@ fi
 echo "Configuring UFW..."
 
 # Default policies
-ufw default deny incoming
-ufw default allow outgoing
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
 
 # We're opening up ssh by default and thats it for now!
-ufw allow 22/tcp
+sudo ufw allow 22/tcp
 
-ufw enable
+sudo ufw enable
 
 

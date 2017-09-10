@@ -7,29 +7,26 @@ function print_usage() {
   echo "ufw-killswitch [start|stop]"
 }
 
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 1>&2
-   exit 1
-fi
-
 if [[ $# -ne "1" ]]; then
-  print_usage()
+  print_usage
   exit 1
 else
   opt=$1
   if [[ $opt == "start" ]]; then
-    ufw reset
-    ufw default deny incomming
-    ufw default deny outgoing
-    ufw allow out on tun0 from any to any
-    ufw allow in  on tun0 from any to any
-    ufw enable
+    sudo ufw reset
+    sudo ufw default deny incoming
+    sudo ufw default deny outgoing
+    sudo ufw allow out on tun0 from any to any
+    sudo ufw allow in  on tun0 from any to any
+    sudo ufw enable
+    echo "Killswitch is on"
   elif [[ $opt == "stop" ]]; then
-    ufw reset
+    sudo ufw reset
     vsr sys ufw
+    echo "Killswitch is off"
   else
     echo "Unknown option"
-    print_usage()
+    print_usage
     exit 1
   fi
 fi
