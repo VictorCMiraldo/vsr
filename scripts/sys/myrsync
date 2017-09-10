@@ -33,27 +33,27 @@ shift; shift
 
 RSYNC_OPTS=("-aEh"
             "--progress"
-            "--preallocate" 
+            # "--preallocate" 
             "--exclude-from=$vsr_root/config/rsync/folder-backup.exc"
             "--include-from=$vsr_root/config/rsync/folder-backup.inc"
             )
 
 # And we can sudo
-sudo -k
-errcho "I need sudo."
-if ! sudo true; then
-  errcho "Sorry, aborting."
-  exit 1
-fi
+# sudo -k
+# errcho "I need sudo."
+# if ! sudo true; then
+#   errcho "Sorry, aborting."
+#   exit 1
+# fi
 
 if [ ! -e "$HOME/$src" ]; then
-  errcho "!! Source does not exist."
+  errcho "!! Source ( $src ) does not exist."
   errcho "   Aborting."
   exit 1
 fi
 
 if [ ! -e "$dst" ]; then
-  errcho "!! Destination does not exist."
+  errcho "!! Destination ( $dst ) does not exist."
   errcho "   Aborting."
   exit 1
 fi

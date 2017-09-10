@@ -73,17 +73,17 @@ case $ans in
   ;;
 esac
 
-vsr sys myrsync --yes "$HOME/bin"     "$dst"     --delete "$@"
-vsr sys myrsync --yes "$HOME/config"  "$dst"     --delete "$@"
-vsr sys myrsync --yes "$HOME/work"    "$dst"     --delete "$@"
-vsr sys myrsync --yes "$HOME/usr/pub" "$dst/usr" --delete "$@"
+vsr sys myrsync --yes "bin"     "$dst"     --delete "$@"
+vsr sys myrsync --yes "config"  "$dst"     --delete "$@"
+vsr sys myrsync --yes "work"    "$dst"     --delete "$@"
+vsr sys myrsync --yes "usr/pub" "$dst/usr" --delete "$@"
 
 if $CPYPRIV; then
-  vsr sys myrsync --yes "$HOME/usr/keychain" "$dst/usr" --delete "$@"
-  vsr sys myrsync --yes "$HOME/usr/priv"     "$dst/usr" --delete "$@"
+  vsr sys myrsync --yes "usr/keychain" "$dst/usr" --delete "$@"
+  vsr sys myrsync --yes "usr/priv"     "$dst/usr" --delete "$@"
 fi
 
 if $CPYDATA; then
-  vsr sys myrsync --yes "$HOME/usr/data"     "$dst/usr" "$@"
+  vsr sys myrsync --yes "usr/data"     "$dst/usr" "$@"
 fi
 

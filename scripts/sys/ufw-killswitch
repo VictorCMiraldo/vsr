@@ -1,0 +1,36 @@
+#! /bin/bash
+
+vsr_root="${BASH_SOURCE%/*}/../.."
+source "$vsr_root/scripts/prelude"
+
+function print_usage() {
+  echo "ufw-killswitch [start|stop]"
+}
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
+if [[ $# -ne "1" ]]; then
+  print_usage()
+  exit 1
+else
+  opt=$1
+  if [[ $opt == "start" ]]; then
+    ufw reset
+    ufw default deny incomming
+    ufw default deny outgoing
+    ufw allow out on tun0 from any to any
+    ufw allow in  on tun0 from any to any
+    ufw enable
+  elif [[ $opt == "stop" ]]; then
+    ufw reset
+    vsr sys ufw
+  else
+    echo "Unknown option"
+    print_usage()
+    exit 1
+  fi
+fi
+
