@@ -1,0 +1,67 @@
+#! /bin/bash
+
+function fix-metainfo-leak () {
+  if [[ $# -ne "1" ]]; then
+    echo "Critical; wrong number of args to fix-metainfo-leaf"
+    exit 1
+  fi
+
+  local leaf=$1
+  local relative=${leaf#$PASSWORD_STORE_DIR}
+  relative=${relative#/}
+  local file=$(ls -1 "$leaf")
+  local fname=${file%\.gpg}
+  fname=${fname/%\.gmail/@gmail}
+
+  if [[ ! -e "$leaf/.no-leak" ]]; then
+    echo "Possible metainfo leak: $relative/$file"
+    read -p "Should I: [F/Y]ix, [S]kip forever , (default) skip [n]ow?  " ans
+    case $ans in
+       F|Y)
+         mv "$leaf/$file" "$leaf/password.gpg" && \
+         echo "$fname" | pass insert -e "$relative/username"
+       ;;   
+       S) 
+         touch "$leaf/.no-leak"
+       ;;
+       *) ;;
+     esac
+  fi
+}
+
+function displayUsage() {
+  echo "Fixes username leak in our password-store directiroy"
+  echo ""
+  echo "It is common to create passwords where the filename"
+  echo "is the username for the password, with pass. This is"
+  echo "not ideal as it reveals some information if we put the"
+  echo "password store in the cloud."
+  echo ""
+}
+
+if [ "$#" -gt "0" ]; then 
+  if [ "$1" == "--help" ]; then
+    displayUsage
+    exit 0
+  else
+    echo "Too many arguments;"
+    exit 1
+  fi
+fi
+
+dir=$PASSWORD_STORE_DIR
+echo "We are about to fix your metainfo leaks on: "
+echo "  $dir"
+read -p "Continue? [Y/n] " ans
+
+if [[ ! "$ans" == "Y" ]]; then
+  echo "Aborting"
+  exit 0
+fi
+
+for leaf in $(find "$dir" -type d -links 2); do
+  nfiles=$(ls -1 "$leaf" | wc -l)
+  if [[ "$nfiles" == "1" ]]; then
+    fix-metainfo-leak "$leaf"
+  fi
+done
