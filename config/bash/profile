@@ -16,7 +16,7 @@ LATEXLIB=$HOME/lib/latex
 export LATEXLIB
 
 ### Modify our path
-PATH=$HOME/bin:$PATH:$HOME/.cabal/bin:/opt/cabal/1.24/bin
+PATH=$HOME/bin:$PATH
 export PATH
 
 ### We like vim!
