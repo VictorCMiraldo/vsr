@@ -1,0 +1,83 @@
+#! /bin/bash
+
+# BaseStructure script is the first thing to be executed
+# on a new install.
+#
+# 1. Cleans the default home folder
+# 2. Sets up the new folder structure
+# 3. Sets up the permissions for the new home structure.
+
+# Will start the base structure of my home folder.
+BASE="/home/$(whoami)"
+
+DEFAULTDIRS=(
+  "$BASE/Documents"
+  "$BASE/Downloads"
+  "$BASE/Music"
+  "$BASE/Pictures"
+  "$BASE/Public"
+  "$BASE/Videos"
+  "$BASE/Templates"
+  "$BASE/Desktop"
+)
+
+# Remove unused directory structure.
+# Will keep Templates and Desktop for
+# some compatibility.
+for i in ${DEFAULTDIRS[@]}; do
+  D=${i}
+  if [ -d $D ]; then
+    rmdir $D
+    echo "Removing '$D'"
+  fi
+done
+
+# New directories to be created
+# with their corresponding permissions.
+#
+# Cheat sheet:
+#  0  1  2  3   4  5   6   7  
+#     x  w  xw  r  rx  rw  rwx
+#
+#
+# Use "def" for default permissions
+NEWDIRS=(
+  "$BASE/usr/pub"                     "755"
+  "$BASE/usr/pub/Desktop"             "def"
+  "$BASE/usr/priv"                    "700"
+  "$BASE/usr/data"                    "755"
+  "$BASE/usr/data/Music"              "755"
+  "$BASE/usr/data/Pictures"           "755"
+  "$BASE/usr/data/Videos"             "755"
+  "$BASE/usr/keychain/gnupg"          "700"
+  "$BASE/usr/keychain/password-store" "700"
+  "$BASE/config"                      "755"
+  "$BASE/var/state"                   "555"
+  "$BASE/var/log"                     "700"
+  "$BASE/var"                         "555"
+  "$BASE/lib"                         "755"
+  "$BASE/safe"                        "700"
+  "$BASE/tmp"                         "755"
+  "$BASE/work"                        "700"
+  "$BASE/repos/clones"                "def"
+  "$BASE/repos/mine"                  "def"
+  "$BASE/repos"                       "755"
+  "$BASE/bin"                         "755"
+)
+
+i=0
+while [ $i -lt ${#NEWDIRS[@]} ]; do
+  DIR=${NEWDIRS[$i]}
+  PERM=${NEWDIRS[$i + 1]}
+  i=$(( $i + 2 ))
+  
+  if [ ! -d $DIR ]; then
+    mkdir -p $DIR
+    echo "Creating '$DIR'"
+  fi
+  
+  if [[ "$PERM" -ne "def" ]]; then
+    chmod $PERM $DIR
+    echo "    chmod $PERM"
+  fi
+done
