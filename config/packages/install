@@ -28,10 +28,10 @@ heirloom-mailx
 ## Programming
 build-essential
 g++
-cabal-install-1.24
-ghc-8.0.1
-ghc-8.0.1-prof
-emacs24
+cabal-install
+ghc
+ghc-prof
+emacs
 vim
 
 ## LaTeX (handled by it's own script)
@@ -59,3 +59,20 @@ netcat-traditional
 openvpn
 network-manager-openvpn
 network-manager-openvpn-gnome
+
+## Latex
+texlive
+texlive-base
+texlive-binaries
+texlive-fonts-extra
+texlive-fonts-recommended
+texlive-latex-base
+texlive-latex-extra
+texlive-latex-recommended
+texlive-math-extra
+texlive-pictures
+texlive-science
+latex-beamer
+latex-xcolor
+latexmk
+rubber
