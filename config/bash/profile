@@ -16,7 +16,7 @@ LATEXLIB=$HOME/lib/latex
 export LATEXLIB
 
 ### Modify our path
-PATH=$HOME/bin:$PATH
+PATH=$HOME/.local/bin:$HOME/bin:$PATH
 export PATH
 
 ### We like vim!
