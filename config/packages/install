@@ -41,7 +41,7 @@ pandoc
 
 ## General Purpose
 spotify-client
-owncloud-client
+# owncloud-client
 imagemagick
 
 ## Security

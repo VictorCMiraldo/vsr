@@ -5,13 +5,13 @@ vsr_root="$VSR_ROOT"
 
 lib="$vsr_root/scripts"
 while [ $# -gt 0 ]; do
-  aux=$1
+  aux="$1"
   shift
   if [[ -d "$lib/$aux" ]]; then
     lib="$lib/$aux"
   elif [[ -e "$lib/$aux" ]]; then
-    script="$lib/$aux $@"
-    $script
+    script="$lib/$aux"  
+    $script "$@"
     exit $?
   else
     echo "Error: '$lib/$aux' is not a valid directory or file."
