@@ -22,6 +22,10 @@ shellcheck
 octave
 moreutils
 
+## Syncghronization
+unison
+davfs2
+
 ## Better than regular mail
 heirloom-mailx
 
@@ -73,6 +77,5 @@ texlive-math-extra
 texlive-pictures
 texlive-science
 latex-beamer
-latex-xcolor
 latexmk
 rubber
