@@ -1,0 +1,18 @@
+#! /bin/bash
+
+## TODO: Find a better way to know we are running from the correct place.
+prelude_expected_sha="9d8611e0c2816e975837bbddf0ba4100bb9444b4dc64bd506b5a2d750610e187"
+prelude_sha=$(sha256sum prelude | cut -d' ' -f 1)
+if [[ "$prelude_expected_sha" != "$prelude_sha" ]]; then
+  echo "Something is off!"
+  exit 1
+fi
+  
+## Store the root
+vsr_root=$(pwd)
+
+## Installing is trivial, just add a couple lines to the beginning of
+## our profile skeleton file:
+profile_prefix="#! /bin/bash\nVSR_ROOT=$vsr_root\nexport VSR_ROOT\n"
+echo -e "$profile_prefix" | cat - "$vsr_root/config/bash/profile" > temp \
+  && mv temp "$HOME/.profile" 
