@@ -1,10 +1,10 @@
 #! /bin/bash
 
-vsr_root="${BASH_SOURCE%/*}/../.."
-source "$vsr_root/scripts/prelude"
+vsr_root="${BASH_SOURCE%/*}.."
+source "$vsr_root/prelude"
 
 function print_usage() {
-  echo "ufw-killswitch [start|stop]"
+  echo "sys-ufw-killswitch [start|stop]"
 }
 
 if [[ $# -ne "1" ]]; then
@@ -22,7 +22,7 @@ else
     echo "Killswitch is on"
   elif [[ $opt == "stop" ]]; then
     sudo ufw reset
-    vsr sys ufw
+    vsr-ufw
     echo "Killswitch is off"
   else
     echo "Unknown option"

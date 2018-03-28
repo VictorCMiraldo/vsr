@@ -1,12 +1,12 @@
 #! /bin/bash
 
-vsr_root="${BASH_SOURCE%/*}/../.."
-source "$vsr_root/scripts/prelude"
+vsr_root="${BASH_SOURCE%/*}.."
+source "$vsr_root/prelude"
 
 function showHelp() {
   errcho "usage: pkg-has-candidate [opts] [pkg-name]"
   errcho ""
-  errcho "  pkg-check <pkg> will return true (0) if there is"
+  errcho "  pkg-has-candidate <pkg> will return true (0) if there is"
   errcho "  a candidate version for <pkg> to be installed"
   errcho "  within apt."
   errcho ""
@@ -81,7 +81,7 @@ else
   #
   # The workaround is to echo the result out of the subshell and
   # capture it in a variable.
-  res=$(vsr util uncomment | (flag=0; while read line; do
+  res=$(uncomment | (flag=0; while read line; do
     if checkOne "$line"; then continue; else
       log-if "$verb" "Package $line has no candidate."
       flag=1

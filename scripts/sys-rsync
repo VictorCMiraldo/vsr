@@ -1,10 +1,13 @@
 #! /bin/bash
 
-vsr_root="${BASH_SOURCE%/*}/../.."
-source "$vsr_root/scripts/prelude"
+vsr_root="${BASH_SOURCE%/*}.."
+source "$vsr_root/prelude"
 
 function print_usage() {
-  errcho "usage: myrsync [--yes] <folder> <dst> <additional rsync opts>"
+  errcho "usage: sys-rsync [--yes] <folder> <dst> <additional rsync opts>"
+  errcho ""
+  errcho "    Runs rsync with:"
+  errcho "      -aEh --progress --exclude-from=exc-file --include-from=inc-file"
   errcho ""
   errcho "    --yes will answer yes to any confirmation."
   errcho "    <folder> is relative to $HOME."

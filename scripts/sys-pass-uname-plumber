@@ -1,8 +1,11 @@
 #! /bin/bash
 
+vsr_root="${BASH_SOURCE%/*}.."
+source "$vsr_root/prelude"
+
 function fix-metainfo-leak () {
   if [[ $# -ne "1" ]]; then
-    echo "Critical; wrong number of args to fix-metainfo-leaf"
+    errcho "Critical; wrong number of args to fix-metainfo-leaf"
     exit 1
   fi
 
@@ -30,13 +33,13 @@ function fix-metainfo-leak () {
 }
 
 function displayUsage() {
-  echo "Fixes username leak in our password-store directiroy"
-  echo ""
-  echo "It is common to create passwords where the filename"
-  echo "is the username for the password, with pass. This is"
-  echo "not ideal as it reveals some information if we put the"
-  echo "password store in the cloud."
-  echo ""
+  errcho "Fixes username leak in our password-store directiroy"
+  errcho ""
+  errcho "It is common to create passwords where the filename"
+  errcho "is the username for the password, with pass. This is"
+  errcho "not ideal as it reveals some information if we put the"
+  errcho "password store in the cloud."
+  errcho ""
 }
 
 if [ "$#" -gt "0" ]; then 
@@ -44,7 +47,7 @@ if [ "$#" -gt "0" ]; then
     displayUsage
     exit 0
   else
-    echo "Too many arguments;"
+    errcho "Too many arguments;"
     exit 1
   fi
 fi
@@ -55,7 +58,7 @@ echo "  $dir"
 read -p "Continue? [Y/n] " ans
 
 if [[ ! "$ans" == "Y" ]]; then
-  echo "Aborting"
+  errcho "Aborting"
   exit 0
 fi
 

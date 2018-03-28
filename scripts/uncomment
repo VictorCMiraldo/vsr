@@ -1,7 +1,7 @@
 #! /bin/bash
 
-dir="${BASH_SOURCE%/*}"
-source "$dir/../prelude"
+vsr_root="${BASH_SOURCE%/*}.."
+source "$vsr_root/prelude"
 
 file="/dev/stdin"
 

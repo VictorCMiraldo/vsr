@@ -1,18 +1,21 @@
 #! /bin/bash
 
+vsr_root="${BASH_SOURCE%/*}.."
+source "$vsr_root/prelude"
+
 function showUsage() {
-  echo "mass-mv \"pattern-from\" \"pattern-to\""
-  echo ""
-  echo "  Will move every file that matches 'pattern-from'"
-  echo "  in the current directory into 'pattern-to'."
-  echo ""
-  echo "  The string '{}' in 'pattern-to' is used as a placeholder"
-  echo "  for the counter."
-  echo ""
-  echo "Example:"
-  echo "  mass-mv \".*\\.jpg\" \"pics_travel_{}.jpg\""
-  echo ""
-  echo "  DONT FORGET THAT FIRST ARGUMENT IS REGEXP!"
+  errcho "mass-mv \"pattern-from\" \"pattern-to\""
+  errcho ""
+  errcho "  Will move every file that matches 'pattern-from'"
+  errcho "  in the current directory into 'pattern-to'."
+  errcho ""
+  errcho "  The string '{}' in 'pattern-to' is used as a placeholder"
+  errcho "  for the counter."
+  errcho ""
+  errcho "Example:"
+  errcho "  mass-mv \".*\\.jpg\" \"pics_travel_{}.jpg\""
+  errcho ""
+  errcho "  DONT FORGET THAT FIRST ARGUMENT IS REGEXP!"
 }
 
 if (( $# != 2 )); then
@@ -24,7 +27,7 @@ PATIN="$1"
 PATOUT="$2"
 
 if [[ ! "$PATOUT" =~ .*\{\}.* ]]; then
-  echo "You forgot the counter placeholder!"
+  errcho "You forgot the counter placeholder!"
   exit 1
 fi
 

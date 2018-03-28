@@ -1,5 +1,8 @@
 #! /bin/bash
 
+vsr_root="${BASH_SOURCE%/*}.."
+source "$vsr_root/prelude"
+
 function showHelp() {
   errcho "usage: pkg-is-installed <pkgname>"
   errcho ""

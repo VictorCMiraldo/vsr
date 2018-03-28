@@ -1,10 +1,10 @@
 #! /bin/bash
 
-vsr_root="${BASH_SOURCE%/*}/../.."
-source "$vsr_root/scripts/prelude"
+vsr_root="${BASH_SOURCE%/*}.."
+source "$vsr_root/prelude"
 
 function print_usage() {
-  echo "usage: dav-bckp <dav> <dst>"
+  echo "usage: sys-dav-bckp <dav> <dst>"
   echo ""
   echo "  Runs some rsync through our home and <dav>/<dst>"
   echo ""
@@ -27,9 +27,7 @@ esac
 
 ## Nasty space-in-names problem.
 dav="${1%%/}"
-shift
-dst="$@"
-shift
+dst="$2"
 
 ismounted=$(findmnt -lo target | grep "$dav")
 if [[ -z "$ismounted" ]]; then
@@ -39,5 +37,5 @@ fi
 
 final="$dav/$dst"
 
-vsr sys myrsync --yes "usr/keychain" "$final/usr" --delete
+vsr-rsync --yes "usr/keychain" "$final/usr" --delete
 

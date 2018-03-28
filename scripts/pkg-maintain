@@ -1,7 +1,7 @@
 #! /bin/bash
 
-vsr_root="${BASH_SOURCE%/*}/../.."
-source "$vsr_root/scripts/prelude"
+vsr_root="${BASH_SOURCE%/*}.."
+source "$vsr_root/prelude"
 
 function showHelp() {
   errcho "usage: pkg-maintain [opts]"
@@ -70,8 +70,8 @@ if $update; then
 fi
 
 # Handle uninstalls
-(vsr util uncomment | while read line; do
-  if vsr apt pkg-is-installed "$line"; then
+(uncomment | while read line; do
+  if pkg-is-installed "$line"; then
     if $dryrun; then
       errcho "sudo apt-get -y remove --purge \"$line\""
     else
@@ -87,9 +87,9 @@ if [[ -e ./pkg-maintain-no-candidates ]]; then
 fi
 
 # Handle installs
-(vsr util uncomment | while read line; do
-  if ! vsr apt pkg-is-installed "$line"; then
-    if vsr apt pkg-has-candidate "$line"; then
+(uncomment | while read line; do
+  if ! pkg-is-installed "$line"; then
+    if pkg-has-candidate "$line"; then
       if $dryrun; then
         errcho "sudo apt-get -y install \"$line\""
       else

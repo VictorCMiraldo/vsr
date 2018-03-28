@@ -1,13 +1,13 @@
 #! /bin/bash
 
-vsr_root="${BASH_SOURCE%/*}/../.."
-source "$vsr_root/scripts/prelude"
+vsr_root="${BASH_SOURCE%/*}.."
+source "$vsr_root/prelude"
 
 function print_usage() {
-  echo "usage: sysbckp <dst> <additional rsync opts>"
-  echo ""
-  echo "    <dst> is the absolute path of the"
-  echo "          destination"
+  errcho "usage: vsr-bckp <dst> <additional rsync opts>"
+  errcho ""
+  errcho "    <dst> is the absolute path of the"
+  errcho "          destination"
   exit 1
 }
 
@@ -30,7 +30,7 @@ echo ""
 echo "Starting interactive system backup."
 
 if [ ! -e "$dst" ]; then
-  echo " !! Sorry, $dst does not exist"
+  errcho " !! Sorry, $dst does not exist"
   exit 1
 fi
 
@@ -44,7 +44,7 @@ echo "    ~/work"
 echo "    ~/usr/pub"
 echo ""
 read -p "Should I copy ~/usr/data (y/n) ? " ansUsrData
-read -p "Should I run keychain-priv-backup (y/n) ? " ansPriv
+read -p "Should I copy ~/usr/keychain and ~/usr/priv (y/n) ? " ansPriv
 
 CPYDATA=false
 CPYPRIV=false
@@ -73,17 +73,17 @@ case $ans in
   ;;
 esac
 
-vsr sys myrsync --yes "bin"     "$dst"     --delete "$@"
-vsr sys myrsync --yes "config"  "$dst"     --delete "$@"
-vsr sys myrsync --yes "work"    "$dst"     --delete "$@"
-vsr sys myrsync --yes "usr/pub" "$dst/usr" --delete "$@"
+vsr-rsync --yes "bin"     "$dst"     --delete "$@"
+vsr-rsync --yes "config"  "$dst"     --delete "$@"
+vsr-rsync --yes "work"    "$dst"     --delete "$@"
+vsr-rsync --yes "usr/pub" "$dst/usr" --delete "$@"
 
 if $CPYPRIV; then
-  vsr sys myrsync --yes "usr/keychain" "$dst/usr" --delete "$@"
-  vsr sys myrsync --yes "usr/priv"     "$dst/usr" --delete "$@"
+  vsr-rsync --yes "usr/keychain" "$dst/usr" --delete "$@"
+  vsr-rsync --yes "usr/priv"     "$dst/usr" --delete "$@"
 fi
 
 if $CPYDATA; then
-  vsr sys myrsync --yes "usr/data"     "$dst/usr" "$@"
+  vsr-rsync --yes "usr/data"     "$dst/usr" "$@"
 fi
 

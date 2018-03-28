@@ -1,8 +1,5 @@
 #! /bin/bash
 
-vsr_root="${BASH_SOURCE%/*}/../.."
-source "$vsr_root/scripts/prelude"
-
 # Lets check whether or not ufw is managing IPV6 too:
 IPV6=$(cat /etc/default/ufw | grep "IPV6=yes" | wc -l)
 if [ "$IPV6" -ne 1 ]; then
