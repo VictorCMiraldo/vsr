@@ -1,0 +1,15 @@
+# Synchronize our keychain
+
+path = usr/keychain
+
+nodeletion = /home/victor
+
+# Keep GPG private keys out
+ignore = Name secring.gpg
+ignore = Name private*
+
+# Backs up all gpg files
+backup = Name *.gpg
+
+copyonconflict = true
+include common

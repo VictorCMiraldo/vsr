@@ -1,0 +1,8 @@
+# Sync my blockchain slides
+path = work/PhD/2017-2018/DB/Slides
+
+## Copy everything on conflict
+copyonconflict = true
+
+## Bring in default settings
+include common

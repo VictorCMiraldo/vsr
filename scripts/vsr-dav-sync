@@ -1,0 +1,34 @@
+#! /bin/bash
+
+vsr_root="${BASH_SOURCE%/*}/.."
+source "$vsr_root/prelude"
+
+function print_usage() {
+  errcho "usage: sys-dav-sync [unison profile]"
+  errcho ""
+  errcho "  runs our magic unison, either on all"
+  errcho "  proviles or on a single one"
+  errcho ""
+  exit 1
+}
+
+## The profiles that I like to enforce sync
+allprofs=( "keychain" "dbslides" )
+
+if [[ "$#" -eq "1" ]]; then
+  allprofs=( "$1" )
+elif [[ "$#" -gt "1" ]]; then
+  print_usage
+fi
+
+dav="/media/dav"
+ismounted=$(findmnt -lo target | grep "$dav")
+if [[ -z "$ismounted" ]]; then
+  errcho "Error: $dav is not mounted!"
+  errcho "       Mount it first, then come back."
+  exit 1
+fi
+
+for prof in ${allprofs[*]}; do
+  unison $prof
+done
