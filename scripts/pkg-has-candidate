@@ -28,7 +28,7 @@ function showHelp() {
 function checkOne() {
   if [[ $# -ne 1 ]]; then return 0; fi
   
-  res=$(apt-cache policy "$1" | grep "Candidate:")
+  res=$(apt-cache policy "$1" | grep "Candidate:" | grep -v "none")
   if [[ -z $res ]]; then
     log-if "$verb" "No"
     return 1

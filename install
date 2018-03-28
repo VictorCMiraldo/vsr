@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ## TODO: Find a better way to know we are running from the correct place.
-prelude_expected_sha="9d8611e0c2816e975837bbddf0ba4100bb9444b4dc64bd506b5a2d750610e187"
+prelude_expected_sha="e0eeb7d7ccb8fb3aeed2abbff0847c495aaca82a69750a051cfbcfc557da0034"
 prelude_sha=$(sha256sum prelude | cut -d' ' -f 1)
 if [[ "$prelude_expected_sha" != "$prelude_sha" ]]; then
   echo "Something is off!"

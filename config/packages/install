@@ -44,7 +44,7 @@ lhs2tex
 pandoc
 
 ## General Purpose
-spotify-client
+spotify-client # incompatible with 18.04 so far
 # owncloud-client
 imagemagick
 
@@ -73,7 +73,6 @@ texlive-fonts-recommended
 texlive-latex-base
 texlive-latex-extra
 texlive-latex-recommended
-texlive-math-extra
 texlive-pictures
 texlive-science
 latex-beamer
