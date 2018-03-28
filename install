@@ -15,4 +15,5 @@ vsr_root=$(pwd)
 ## our profile skeleton file:
 profile_prefix="#! /bin/bash\nVSR_ROOT=$vsr_root\nexport VSR_ROOT\n"
 echo -e "$profile_prefix" | cat - "$vsr_root/config/bash/profile" > temp \
-  && mv temp "$HOME/.profile" 
+  && mv temp "$HOME/.profile" \
+  && cp "$vsr_root/config/bash/bashrc_default" "$HOME/.bashrc"

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-vsr_root="${BASH_SOURCE%/*}.."
+vsr_root="${BASH_SOURCE%/*}/.."
 source "$vsr_root/prelude"
 
 function showHelp() {
