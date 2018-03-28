@@ -75,6 +75,7 @@ texlive-latex-extra
 texlive-latex-recommended
 texlive-pictures
 texlive-science
+texlive-xetex
 latex-beamer
 latexmk
 rubber
