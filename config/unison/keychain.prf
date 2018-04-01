@@ -8,8 +8,13 @@ nodeletion = /home/victor
 ignore = Name secring.gpg
 ignore = Name private*
 
+# Ignore ssh private keys
+ignore = Name *rsa*
+ignorenot = Name *.pub
+
 # Backs up all gpg files
 backup = Name *.gpg
+backup = Name id_rsa
 
 copyonconflict = true
 include common
