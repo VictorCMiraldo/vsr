@@ -2,14 +2,17 @@
 #
 # Roots of the synchronization
 root = /home/victor
-root = /media/dav/Userstore/Victor Miraldo/Documents/logos-bckp
+root = ssh://victor@89.40.4.54//home/victor
 
 # If any new preferences are added by Unison (e.g. 'ignore'
 # preferences added via the graphical UI), then store them in the
 # file 'common' rathen than in the top-level preference file
 addprefsto = common
 
-# Names and paths to ignore:
+# Names and paths to ignore
+
+# Projectile file
+ignore = Name .projectile
 
 # Haskell Building Infrastructure
 ignore = Name dist
@@ -25,6 +28,10 @@ ignore = Name *.agdai
 # Backups
 ignore = Name *~
 ignore = Name .*~
+ignore = Name *.old
+
+# Lock files
+ignore = Name #*
 
 # LaTeX stuff
 ignore = Name *.vrb
@@ -36,6 +43,8 @@ ignore = Name *.toc
 ignore = Name *.blg
 ignore = Name *.idx
 ignore = Name *.ptb
+ignore = Name *.snm
+ignore = Name *.out
 
 # OwnCloud reminescents
 ignore = Name .csync_journal*

@@ -1,0 +1,14 @@
+# Sync my work directory
+path = work
+
+## Copy everything on conflict
+copyonconflict = true
+
+## Back some stuff up
+backup = Name *.hs
+backup = Name *.tex
+backup = Name *.pdf
+backup = Name *.agda
+
+## Bring in default settings
+include common
