@@ -22,9 +22,8 @@ shellcheck
 octave
 moreutils
 
-## Syncghronization
+## Synchronization
 unison
-davfs2
 
 ## Better than regular mail
 heirloom-mailx

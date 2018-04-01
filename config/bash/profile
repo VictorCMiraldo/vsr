@@ -33,3 +33,6 @@ export PATH
 
 ### We like vim!
 export EDITOR="vim"
+
+### My VPS IP
+export TIME4VPS="89.40.4.54"
