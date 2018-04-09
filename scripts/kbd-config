@@ -1,5 +1,14 @@
 #! /bin/bash
 
+lock="/tmp/kbd-config-done"
+
+if [[ -e "$lock" ]]; then
+  echo "Keyboard is already modded!"
+  echo ""
+  echo "  if you really want to run again; delete $lock"
+  echo ""
+  exit 1
+fi
 
 # Addapted from xcape manual.
 
@@ -21,3 +30,5 @@ xcape -e "$spare_modifier=Return"
 #### Swapping Alt_L and CapsLock
 # xmodmap -e "remove Lock = Caps_Lock" 
 # xmodmap -e "keycode Caps_Lock = Alt_L" 
+
+date +%d%m-%H%M > "$lock"

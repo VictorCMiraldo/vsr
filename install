@@ -21,7 +21,3 @@ echo -e "$profile_prefix" | cat - "$vsr_root/config/bash/profile" > temp \
 ## Copy our unison profiles
 mkdir -p "$HOME/.unison" \
   && ln -fs $vsr_root/config/unison/* "$HOME/.unison/"
-
-## Copy our davfs2 config
-mkdir -p "$HOME/.davfs2" \
-  && ln -fs $vsr_root/config/davfs2/* "$HOME/.davfs2/"

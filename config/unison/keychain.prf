@@ -5,6 +5,7 @@ path = usr/keychain
 nodeletion = /home/victor
 
 # Keep GPG private keys out
+ignore = Name random_seed
 ignore = Name secring.gpg
 ignore = Name private*
 

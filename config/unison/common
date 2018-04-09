@@ -51,3 +51,4 @@ ignore = Name .csync_journal*
 ignore = Name .owncloud*
 ignore = Name Cache
 ignore = Name cache
+ignore = Name ._sync*
