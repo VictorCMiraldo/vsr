@@ -8,6 +8,7 @@ nodeletion = /home/victor
 ignore = Name random_seed
 ignore = Name secring.gpg
 ignore = Name private*
+ignore = Name *.gpg-agent
 
 # Ignore ssh private keys
 ignore = Name *rsa*
