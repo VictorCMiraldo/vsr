@@ -1,0 +1,41 @@
+#! /bin/bash
+
+vsr_root="${BASH_SOURCE%/*}/.."
+source "$vsr_root/prelude"
+
+function showUsage() {
+  errcho "mass-mv \"pattern-from\" \"pattern-to\""
+  errcho ""
+  errcho "  Will move every file that matches 'pattern-from'"
+  errcho "  in the current directory into 'pattern-to'."
+  errcho ""
+  errcho "  The string '{}' in 'pattern-to' is used as a placeholder"
+  errcho "  for the counter."
+  errcho ""
+  errcho "Example:"
+  errcho "  mass-mv \".*\\.jpg\" \"pics_travel_{}.jpg\""
+  errcho ""
+  errcho "  DONT FORGET THAT FIRST ARGUMENT IS REGEXP!"
+}
+
+if (( $# != 2 )); then
+  showUsage
+  exit 1
+fi
+
+PATIN="$1"
+PATOUT="$2"
+
+if [[ ! "$PATOUT" =~ .*\{\}.* ]]; then
+  errcho "You forgot the counter placeholder!"
+  exit 1
+fi
+
+X=0
+for i in $(ls); do
+  if [[ $i =~ "$PATIN" ]]; then
+    o=${PATOUT/"{}"/`printf "%03d" $X`}
+    X=$((X + 1))
+    mv $i $o
+  fi
+done

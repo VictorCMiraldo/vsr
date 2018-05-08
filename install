@@ -1,0 +1,23 @@
+#! /bin/bash
+
+## TODO: Find a better way to know we are running from the correct place.
+prelude_expected_sha="e0eeb7d7ccb8fb3aeed2abbff0847c495aaca82a69750a051cfbcfc557da0034"
+prelude_sha=$(sha256sum prelude | cut -d' ' -f 1)
+if [[ "$prelude_expected_sha" != "$prelude_sha" ]]; then
+  echo "Something is off!"
+  exit 1
+fi
+  
+## Store the root
+vsr_root=$(pwd)
+
+## Installing is trivial, just add a couple lines to the beginning of
+## our profile skeleton file:
+profile_prefix="#! /bin/bash\nVSR_ROOT=$vsr_root\nexport VSR_ROOT\n"
+echo -e "$profile_prefix" | cat - "$vsr_root/config/bash/profile" > temp \
+  && mv temp "$HOME/.profile" \
+  && ln -fs "$vsr_root/config/bash/bashrc_default" "$HOME/.bashrc"
+
+## Copy our unison profiles
+mkdir -p "$HOME/.unison" \
+  && ln -fs $vsr_root/config/unison/* "$HOME/.unison/"

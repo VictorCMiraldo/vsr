@@ -22,6 +22,9 @@ shellcheck
 octave
 moreutils
 
+## Synchronization
+unison
+
 ## Better than regular mail
 heirloom-mailx
 
@@ -40,8 +43,8 @@ lhs2tex
 pandoc
 
 ## General Purpose
-spotify-client
-owncloud-client
+spotify-client # incompatible with 18.04 so far
+# owncloud-client
 imagemagick
 
 ## Security
@@ -69,10 +72,9 @@ texlive-fonts-recommended
 texlive-latex-base
 texlive-latex-extra
 texlive-latex-recommended
-texlive-math-extra
 texlive-pictures
 texlive-science
+texlive-xetex
 latex-beamer
-latex-xcolor
 latexmk
 rubber

@@ -1,6 +1,8 @@
 *~
 .csync_journal*
 .owncloud*
+.cabal*
+.stack*
 Downloads/
 Dropbox/
 [Cc]ache

@@ -1,0 +1,9 @@
+## My VPS config
+Host vps
+  HostName 89.40.4.54
+  user victor
+  
+Host vps-root
+  HostName 89.40.4.54
+  user root
+  IdentityFile /home/victor/usr/keychain/vps/Time4VPS/root/id_rsa
