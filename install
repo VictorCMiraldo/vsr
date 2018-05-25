@@ -18,6 +18,41 @@ echo -e "$profile_prefix" | cat - "$vsr_root/config/bash/profile" > temp \
   && mv temp "$HOME/.profile" \
   && ln -fs "$vsr_root/config/bash/bashrc_default" "$HOME/.bashrc"
 
-## Copy our unison profiles
+## Link our unison profiles
 mkdir -p "$HOME/.unison" \
   && ln -fs $vsr_root/config/unison/* "$HOME/.unison/"
+
+## Copy SSH config file
+mkdir -p "$HOME/.ssh" \
+  && cp $vsr_root/config/ssh/config "$HOME/.ssh/config"
+
+## Link our user directories
+ln -fs $vsr_root/config/xdg/user-dirs.dirs "$HOME/.config/user-dirs.dirs"
+
+## Setup our base directory structure
+mydirs=("$HOME/usr/pub/Desktop"
+        "$HOME/usr/data/Music"
+        "$HOME/usr/data/Videos"
+        "$HOME/usr/data/Pictures"
+        "$HOME/usr/priv"
+        "$HOME/bin"
+        "$HOME/tmp")
+	
+for d in ${mydirs[*]}; do
+  mkdir -p "$d"
+done
+
+rmdirs=("$HOME/Music"
+        "$HOME/Documents"
+        "$HOME/Downloads"
+        "$HOME/Public"
+        "$HOME/Templates"
+        "$HOME/Pictures"
+        "$HOME/Desktop"
+        "$HOME/Videos")
+
+for d in ${rmdirs[*]}; do
+  if [[ -d "$d" ]]; then
+    rmdir "$d"
+  fi
+done

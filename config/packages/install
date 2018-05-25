@@ -7,6 +7,9 @@ cryptsetup
 zlib1g-dev 
 libncurses5-dev
 software-properties-common
+libx11-dev
+libxinerama-dev
+libxext-dev
 
 ## Binaries
 rsync
@@ -31,9 +34,6 @@ heirloom-mailx
 ## Programming
 build-essential
 g++
-cabal-install
-ghc
-ghc-prof
 emacs
 vim
 
@@ -43,7 +43,7 @@ lhs2tex
 pandoc
 
 ## General Purpose
-spotify-client # incompatible with 18.04 so far
+# spotify-client # incompatible with 18.04 so far
 # owncloud-client
 imagemagick
 

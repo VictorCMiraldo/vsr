@@ -11,7 +11,7 @@
 #
 XDG_DESKTOP_DIR="$HOME/usr/pub/Desktop"
 XDG_DOWNLOAD_DIR="$HOME/tmp"
-XDG_TEMPLATES_DIR="$VSR/config/templates"
+XDG_TEMPLATES_DIR="$VSR_ROOT/config/templates"
 XDG_PUBLICSHARE_DIR="$HOME/usr/pub"
 XDG_DOCUMENTS_DIR="$HOME/usr/priv"
 XDG_MUSIC_DIR="$HOME/usr/data/Music"
