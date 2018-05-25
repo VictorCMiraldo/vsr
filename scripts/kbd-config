@@ -28,7 +28,7 @@ xmodmap -e "keycode 250 = Return"
 xcape -e "$spare_modifier=Return"
 
 #### Assigning Alt_R to Caps_Lock
-xmodmap -e "remove Lock = Caps_Lock" 
-xmodmap -e "keycode 66  = Alt_R" 
+## xmodmap -e "remove Lock = Caps_Lock" 
+## xmodmap -e "keycode 66  = Alt_R" 
 
 date +%d%m-%H%M > "$lock"
