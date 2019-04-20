@@ -1,0 +1,33 @@
+#!/bin/bash
+set -uo pipefail
+
+vsr_root="${BASH_SOURCE%/*}/.."
+source "$vsr_root/prelude"
+
+function showHelp() {
+  errcho "usage: vsr-generate-sys-startup"
+  errcho ""
+  errcho "  Generates an archive with the necessary pieces to"
+  errcho "  1-click install my system config on a newly installed"
+  errcho "  ubuntu distro"
+}
+
+# Installing on a new system:
+#
+# a) Copy keychain and vsr, place them in the
+#    correct places.
+# b) Run $vsr_root/install to set up the system.
+# c) log-off and log-on, so path changes come to place.
+# d) run vsr-pkg-maintain so we have all the basic necessary
+#    packages for the rest.
+
+# First we go and compress the keychain, putting it in our current
+# directory.
+
+mkdir -p $HOME/tmp/sys-bootstrap
+cd $HOME/tmp/sys-bootstrap
+tar -acf keychain.tar.gz $HOME/usr/keychain/
+tar -acf vsr.tar.gz $vsr_root
+
+
+
