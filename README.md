@@ -63,5 +63,8 @@ In the fresh machine now, we do:
 
 ## Xmonad
 
-  Clone 
+  Clone the repo:
 
+  `cd ~ && git clone --recursive git@github.com:VictorCMiraldo/my-xmonad.git .xmonad`
+
+  Run the installation script.
