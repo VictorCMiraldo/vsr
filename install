@@ -26,6 +26,9 @@ mkdir -p "$HOME/.unison" \
 mkdir -p "$HOME/.ssh" \
   && cp $vsr_root/config/ssh/config "$HOME/.ssh/config"
 
+## Link our vimrc config file
+ln -fs $vsr_root/config/vim/vimrc "$HOME/.vimrc"
+
 ## Link our user directories
 ln -fs $vsr_root/config/xdg/user-dirs.dirs "$HOME/.config/user-dirs.dirs"
 

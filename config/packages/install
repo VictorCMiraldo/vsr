@@ -10,6 +10,9 @@ software-properties-common
 libx11-dev
 libxinerama-dev
 libxext-dev
+libxft-dev
+libxrandr-dev
+libxss-dev
 
 ## Binaries
 rsync
@@ -24,6 +27,9 @@ ascii
 shellcheck
 octave
 moreutils
+
+### XMonad deps
+xmobar
 
 ## Synchronization
 unison
