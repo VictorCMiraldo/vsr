@@ -9,3 +9,10 @@ Host vps-root
   Port 4651
   user root
   IdentityFile /home/victor/usr/keychain/vps/Time4VPS/root/id_rsa
+
+Host jizo
+  HostName mafl.me
+  Port 10010
+  user victor
+  IdentityFile /home/victor/usr/keychain/vps/UU-SoftwareTech-jizo/id_rsa
+

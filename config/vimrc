@@ -155,3 +155,21 @@ map Y y$
 " Map <C-L> (redraw screen) to also turn off search highlighting until the
 " next search
 nnoremap <C-L> :nohl<CR><C-L>
+
+"-----------------------------------------------------------
+"" Splitting {{{1
+
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+set splitbelow
+set splitright
+
+"-----------------------------------------------------------
+" Completion {{{1
+"
+
+imap <Tab> <C-P>
+
