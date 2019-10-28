@@ -14,7 +14,6 @@ fi
 # traditional behavior
 xmodmap -e "clear lock"
 xmodmap -e "keycode 66 = Escape Caps_Lock"
-xmodmap -e "add lock = Caps_Lock"
 
 # Addapted from xcape manual.
 
