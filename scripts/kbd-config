@@ -10,6 +10,12 @@ if [[ -e "$lock" ]]; then
   exit 1
 fi
 
+# Make Caps_Lock into Escape; mapping Shift+Caps_Lock to the
+# traditional behavior
+xmodmap -e "clear lock"
+xmodmap -e "keycode 66 = Escape Caps_Lock"
+xmodmap -e "add lock = Caps_Lock"
+
 # Addapted from xcape manual.
 
 # Map an unused modifier's keysym to the return's keycode and make it a
