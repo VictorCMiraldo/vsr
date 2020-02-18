@@ -2,10 +2,25 @@
 
 lock="/tmp/kbd-config-done"
 
-if [[ -e "$lock" ]]; then
+if [[ $# -gt 1 ]]; then
+  echo "Error: too many options"
+fi
+
+notreconf=true
+if [[ $# -eq 1 ]]; then
+  if [[ "$1" == "--reconfig" ]]; then
+    notreconf=false
+  else
+    echo "Wrong optino; only --reconfig is an option"
+    exit 1
+  fi
+fi
+
+if [[ -e "$lock" ]] && $notreconf; then
   echo "Keyboard is already modded!"
   echo ""
   echo "  if you really want to run again; delete $lock"
+  echo "  or run with --reconfig"
   echo ""
   exit 1
 fi

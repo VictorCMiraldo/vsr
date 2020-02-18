@@ -16,3 +16,9 @@ Host jizo
   user victor
   IdentityFile /home/victor/usr/keychain/vps/UU-SoftwareTech-jizo/id_rsa
 
+Host pizero
+  HostName 192.168.2.1
+  user pi
+  IdentityFile /home/victor/usr/keychain/vps/PiZero/id_rsa
+
+
