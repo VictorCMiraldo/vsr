@@ -10,15 +10,26 @@ Host vps-root
   user root
   IdentityFile /home/victor/usr/keychain/vps/Time4VPS/root/id_rsa
 
-Host jizo
-  HostName mafl.me
-  Port 10010
-  user victor
-  IdentityFile /home/victor/usr/keychain/vps/UU-SoftwareTech-jizo/id_rsa
-
 Host pizero
   HostName 192.168.2.1
   user pi
   IdentityFile /home/victor/usr/keychain/vps/PiZero/id_rsa
+
+Host gemini
+  Hostname gemini.science.uu.nl
+  User f133012
+  IdentityFile /home/victor/usr/keychain/vps/UU-SoftwareTech-jizo/id_rsa
+
+# Match Host jizo Exec "not ping -c 1 -W 0.4 jizo.science.uu.nl 2>/dev/null"
+#   ProxyJump gemini
+#   User victor
+#   IdentityFile /home/victor/usr/keychain/vps/UU-SoftwareTech-jizo/id_rsa
+
+Host jizo
+  ProxyJump gemini
+  Hostname jizo.science.uu.nl
+  User victor
+  IdentityFile /home/victor/usr/keychain/vps/UU-SoftwareTech-jizo/id_rsa
+
 
 
