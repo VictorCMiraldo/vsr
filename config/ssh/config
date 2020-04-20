@@ -3,22 +3,22 @@ Host vps
   HostName 89.40.4.54
   Port 4651
   user victor
-  
+
 Host vps-root
   HostName 89.40.4.54
   Port 4651
   user root
-  IdentityFile /home/victor/usr/keychain/vps/Time4VPS/root/id_rsa
+  IdentityFile /home/victor/keychain/vps/Time4VPS/root/id_rsa
 
 Host pizero
   HostName 192.168.2.1
   user pi
-  IdentityFile /home/victor/usr/keychain/vps/PiZero/id_rsa
+  IdentityFile /home/victor/keychain/vps/PiZero/id_rsa
 
 Host gemini
   Hostname gemini.science.uu.nl
   User f133012
-  IdentityFile /home/victor/usr/keychain/vps/UU-SoftwareTech-jizo/id_rsa
+  IdentityFile /home/victor/keychain/vps/UU-SoftwareTech-jizo/id_rsa
 
 # Match Host jizo Exec "not ping -c 1 -W 0.4 jizo.science.uu.nl 2>/dev/null"
 #   ProxyJump gemini
@@ -29,7 +29,7 @@ Host jizo
   ProxyJump gemini
   Hostname jizo.science.uu.nl
   User victor
-  IdentityFile /home/victor/usr/keychain/vps/UU-SoftwareTech-jizo/id_rsa
+  IdentityFile /home/victor/keychain/vps/UU-SoftwareTech-jizo/id_rsa
 
 
 

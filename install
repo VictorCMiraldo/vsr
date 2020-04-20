@@ -7,7 +7,7 @@ if [[ "$prelude_expected_sha" != "$prelude_sha" ]]; then
   echo "Something is off!"
   exit 1
 fi
-  
+
 ## Store the root
 vsr_root=$(pwd)
 
@@ -24,7 +24,7 @@ mkdir -p "$HOME/.unison" \
 
 ## Copy SSH config file
 mkdir -p "$HOME/.ssh" \
-  && cp $vsr_root/config/ssh/config "$HOME/.ssh/config"
+  && ln -fs $vsr_root/config/ssh/config "$HOME/.ssh/config"
 
 ## Link our vimrc config file
 ln -fs $vsr_root/config/vim/vimrc "$HOME/.vimrc"
@@ -32,30 +32,36 @@ ln -fs $vsr_root/config/vim/vimrc "$HOME/.vimrc"
 ## Link our user directories
 ln -fs $vsr_root/config/xdg/user-dirs.dirs "$HOME/.config/user-dirs.dirs"
 
-## Setup our base directory structure
-mydirs=("$HOME/usr/pub/Desktop"
-        "$HOME/usr/data/Music"
-        "$HOME/usr/data/Videos"
-        "$HOME/usr/data/Pictures"
-        "$HOME/usr/priv"
-        "$HOME/bin"
-        "$HOME/tmp")
-	
-for d in ${mydirs[*]}; do
-  mkdir -p "$d"
-done
+## Link our templates
+ln -fs $vsr_root/config/templates "$HOME/.templates"
 
-rmdirs=("$HOME/Music"
-        "$HOME/Documents"
-        "$HOME/Downloads"
-        "$HOME/Public"
-        "$HOME/Templates"
-        "$HOME/Pictures"
-        "$HOME/Desktop"
-        "$HOME/Videos")
+exit 0
 
-for d in ${rmdirs[*]}; do
-  if [[ -d "$d" ]]; then
-    rmdir "$d"
-  fi
-done
+# ## Setup our base directory structure
+# mydirs=("$HOME/tmp/Desktop"
+#         "$HOME/data/Music"
+#         "$HOME/data/Videos"
+#         "$HOME/data/Pictures"
+#         "$HOME/keychain"
+#         "$HOME/repos"
+#         "$HOME/doc"
+#         "$HOME/bin")
+# 
+# for d in ${mydirs[*]}; do
+#   mkdir -p "$d"
+# done
+# 
+# rmdirs=("$HOME/Music"
+#         "$HOME/Documents"
+#         "$HOME/Downloads"
+#         "$HOME/Public"
+#         "$HOME/Templates"
+#         "$HOME/Pictures"
+#         "$HOME/Desktop"
+#         "$HOME/Videos")
+# 
+# for d in ${rmdirs[*]}; do
+#   if [[ -d "$d" ]]; then
+#     rmdir "$d"
+#   fi
+# done

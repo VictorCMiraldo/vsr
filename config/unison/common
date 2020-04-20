@@ -1,5 +1,3 @@
-# This is specific to my DAV setup with Mailbox.org
-#
 # Roots of the synchronization
 root = /home/victor
 root = ssh://victor@89.40.4.54:4651//home/victor

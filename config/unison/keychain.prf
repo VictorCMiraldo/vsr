@@ -1,6 +1,6 @@
 # Synchronize our keychain
 
-path = usr/keychain
+path = keychain
 
 nodeletion = /home/victor
 

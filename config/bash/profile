@@ -16,7 +16,7 @@ if [ -n "$BASH_VERSION" ]; then
 fi
 
 ### GNUPG Home Directory
-GNUPGHOME="$HOME/usr/keychain/gnupg"
+GNUPGHOME="$HOME/keychain/gnupg"
 export GNUPGHOME
 
 ### GNUPG Main Key
@@ -24,7 +24,7 @@ KEYCHAIN_ROOT=CB4A4FBA
 export KEYCHAIN_ROOT
 
 ### Pass Password store dir
-PASSWORD_STORE_DIR="$HOME/usr/keychain/password-store"
+PASSWORD_STORE_DIR="$HOME/keychain/password-store"
 export PASSWORD_STORE_DIR
 
 ### Modify our path

@@ -38,13 +38,10 @@ echo "By default, the following folders will be"
 echo "copied to $dst."
 echo ""
 echo "    ~/bin"
-echo "    ~/config"
-echo "    ~/safe"
-echo "    ~/work"
-echo "    ~/usr/pub"
+echo "    ~/repos"
 echo ""
-read -p "Should I copy ~/usr/data (y/n) ? " ansUsrData
-read -p "Should I copy ~/usr/keychain and ~/usr/priv (y/n) ? " ansPriv
+read -p "Should I copy ~/data (y/n) ? " ansUsrData
+read -p "Should I copy ~/keychain and ~/doc  (y/n) ? " ansPriv
 
 CPYDATA=false
 CPYPRIV=false
@@ -74,16 +71,14 @@ case $ans in
 esac
 
 vsr-rsync --yes "bin"     "$dst"     --delete "$@"
-vsr-rsync --yes "config"  "$dst"     --delete "$@"
-vsr-rsync --yes "work"    "$dst"     --delete "$@"
-vsr-rsync --yes "usr/pub" "$dst/usr" --delete "$@"
+vsr-rsync --yes "repos"   "$dst"     --delete "$@"
 
 if $CPYPRIV; then
-  vsr-rsync --yes "usr/keychain" "$dst/usr" --delete "$@"
-  vsr-rsync --yes "usr/priv"     "$dst/usr" --delete "$@"
+  vsr-rsync --yes "keychain" "$dst" --delete "$@"
+  vsr-rsync --yes "doc"      "$dst" --delete "$@"
 fi
 
 if $CPYDATA; then
-  vsr-rsync --yes "usr/data"     "$dst/usr" "$@"
+  vsr-rsync --yes "data"     "$dst" "$@"
 fi
 

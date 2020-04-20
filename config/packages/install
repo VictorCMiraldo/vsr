@@ -4,7 +4,7 @@ lm-sensors
 cryptsetup
 
 ## Libraries
-zlib1g-dev 
+zlib1g-dev
 libncurses5-dev
 software-properties-common
 libx11-dev
