@@ -1,6 +1,7 @@
 # Synchronize our keychain
 
 path = keychain
+mountpoint = keychain
 
 nodeletion = /home/victor
 

@@ -1,11 +1,11 @@
 ## My VPS config
 Host vps
-  HostName 89.40.4.54
+  HostName 89.40.14.29
   Port 4651
   user victor
 
 Host vps-root
-  HostName 89.40.4.54
+  HostName 89.40.14.29
   Port 4651
   user root
   IdentityFile /home/victor/keychain/vps/Time4VPS/root/id_rsa

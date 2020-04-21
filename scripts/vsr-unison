@@ -12,8 +12,14 @@ function print_usage() {
   exit 1
 }
 
+## First, we open the containers in the
+## remote machine:
+echo "We will connect to the remove host and open our luksContainer"
+echo "You will need sudo ON THE REMOTE SERVER; get your passwords ready! :)"
+ssh -t vps '/home/victor/openContainer.sh'
+
 ## The profiles that I like to enforce sync
-allprofs=( "keychain" "work" )
+allprofs=( "keychain" "doc" )
 
 if [[ "$#" -eq "1" ]]; then
   allprofs=( "$1" )
@@ -24,3 +30,6 @@ fi
 for prof in ${allprofs[*]}; do
   unison $prof
 done
+
+
+ssh -t vps '/home/victor/closeContainer.sh'

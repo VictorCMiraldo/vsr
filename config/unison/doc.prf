@@ -1,5 +1,6 @@
-# Sync my work directory
-path = work
+# Sync my documents directory
+path = doc
+mountpoint = doc
 
 ## Copy everything on conflict
 copyonconflict = true
