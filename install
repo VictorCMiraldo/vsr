@@ -24,6 +24,7 @@ mkdir -p "$HOME/.unison" \
 
 ## Copy SSH config file
 mkdir -p "$HOME/.ssh" \
+  && chmod 700 "$HOME/.ssh" \
   && ln -fs $vsr_root/config/ssh/config "$HOME/.ssh/config"
 
 ## Link our vimrc config file
@@ -34,6 +35,9 @@ ln -fs $vsr_root/config/xdg/user-dirs.dirs "$HOME/.config/user-dirs.dirs"
 
 ## Link our templates
 ln -fs $vsr_root/config/templates "$HOME/.templates"
+
+## Link our vifm config
+ln -fs $vsr_root/config/vifm "$HOME/.vifm"
 
 exit 0
 

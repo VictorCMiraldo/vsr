@@ -26,7 +26,7 @@ function showHelp() {
 
 mkdir -p $HOME/tmp/sys-bootstrap
 cd $HOME/tmp/sys-bootstrap
-tar -acf keychain.tar.gz $HOME/usr/keychain/
+tar -acf keychain.tar.gz $HOME/keychain
 tar -acf vsr.tar.gz $vsr_root
 
 

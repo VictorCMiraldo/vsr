@@ -27,6 +27,7 @@ ascii
 shellcheck
 octave
 moreutils
+vifm
 
 ### XMonad deps
 xmobar
@@ -41,7 +42,7 @@ heirloom-mailx
 build-essential
 g++
 emacs
-vim
+vim-gtk3
 
 ## LaTeX (handled by it's own script)
 ## And cousins
@@ -78,6 +79,7 @@ texlive-fonts-extra
 texlive-fonts-recommended
 texlive-latex-base
 texlive-latex-extra
+texlive-extra-utils
 texlive-latex-recommended
 texlive-pictures
 texlive-science
