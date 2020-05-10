@@ -7,12 +7,6 @@ cryptsetup
 zlib1g-dev
 libncurses5-dev
 software-properties-common
-libx11-dev
-libxinerama-dev
-libxext-dev
-libxft-dev
-libxrandr-dev
-libxss-dev
 
 ## Binaries
 rsync
@@ -31,6 +25,12 @@ vifm
 
 ### XMonad deps
 xmobar
+libx11-dev
+libxinerama-dev
+libxext-dev
+libxft-dev
+libxrandr-dev
+libxss-dev
 
 ## Synchronization
 unison
@@ -43,6 +43,7 @@ build-essential
 g++
 emacs
 vim-gtk3
+haskellstack
 
 ## LaTeX (handled by it's own script)
 ## And cousins
@@ -86,4 +87,3 @@ texlive-science
 texlive-xetex
 latex-beamer
 latexmk
-rubber
