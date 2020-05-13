@@ -39,33 +39,31 @@ ln -fs $vsr_root/config/templates "$HOME/.templates"
 ## Link our vifm config
 ln -fs $vsr_root/config/vifm "$HOME/.vifm"
 
-exit 0
+## Setup our base directory structure
+mydirs=("$HOME/tmp/Desktop"
+        "$HOME/data/Music"
+        "$HOME/data/Videos"
+        "$HOME/data/Pictures"
+        "$HOME/keychain"
+        "$HOME/repos"
+        "$HOME/doc"
+        "$HOME/bin")
+ 
+for d in ${mydirs[*]}; do
+   mkdir -p "$d"
+done
 
-# ## Setup our base directory structure
-# mydirs=("$HOME/tmp/Desktop"
-#         "$HOME/data/Music"
-#         "$HOME/data/Videos"
-#         "$HOME/data/Pictures"
-#         "$HOME/keychain"
-#         "$HOME/repos"
-#         "$HOME/doc"
-#         "$HOME/bin")
-# 
-# for d in ${mydirs[*]}; do
-#   mkdir -p "$d"
-# done
-# 
-# rmdirs=("$HOME/Music"
-#         "$HOME/Documents"
-#         "$HOME/Downloads"
-#         "$HOME/Public"
-#         "$HOME/Templates"
-#         "$HOME/Pictures"
-#         "$HOME/Desktop"
-#         "$HOME/Videos")
-# 
-# for d in ${rmdirs[*]}; do
-#   if [[ -d "$d" ]]; then
-#     rmdir "$d"
-#   fi
-# done
+rmdirs=("$HOME/Music"
+        "$HOME/Documents"
+        "$HOME/Downloads"
+        "$HOME/Public"
+        "$HOME/Templates"
+        "$HOME/Pictures"
+        "$HOME/Desktop"
+        "$HOME/Videos")
+
+for d in ${rmdirs[*]}; do
+  if [[ -d "$d" ]]; then
+    rmdir "$d"
+  fi
+done
