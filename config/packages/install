@@ -12,6 +12,10 @@ software-properties-common
 rsync
 tree
 pass
+pass-extension-otp
+oathtool
+zbar-tools
+mutt
 curl
 meld
 htop
@@ -36,14 +40,14 @@ libxss-dev
 unison
 
 ## Better than regular mail
-heirloom-mailx
+# heirloom-mailx ## No candidate
 
 ## Programming
 build-essential
 g++
 emacs
 vim-gtk3
-haskellstack
+haskell-stack
 
 ## LaTeX (handled by it's own script)
 ## And cousins
@@ -85,5 +89,5 @@ texlive-latex-recommended
 texlive-pictures
 texlive-science
 texlive-xetex
-latex-beamer
+# latex-beamer ## No candidate
 latexmk
