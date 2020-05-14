@@ -1,101 +1,84 @@
-#
-# Starter muttrc file, with just a few suggestions and settings.
-#
-# This file purposely doesn't include hooks, keybinding, macros, colors, etc.
-# Read the manual, explore, and have fun!
-#
+##########
+# BASICS #
+##########
 
-###############
-# Identity
-#
-set realname = "Victor Cacciari Miraldo"
-set from = "v.cacciarimiraldo@gmail.com"
+set mbox_type=maildir
 
-# If you have another address:
-alternates "^v.cacciarimiraldo@uu\.nl$"
+# This puts cursor just above signature in vim... the right place, but not common practice. Use [ to jump to top of message.
+set editor='vim + -c "set textwidth=72" -c "set wrap" -c "set nocp" -c "?^$"'
 
-set reverse_name
+# Split screen to view messages - can be slow with direct imap connection on larger mails
+#set pager_index_lines=20
 
-###############
-# Example: local mailboxes
-#
-# Some people use mbsync or getmail to retrieve their mail locally.
-#
-set folder = ~/data/Mail           # This has the shortcut '+' or '='
-set spoolfile = "+inbox"      # This has the shortcut '!'
-set record = "+sent"
-set trash = "+trash"
-set postponed = "+drafts"
-
-mailboxes ! +personal +work
-
-###############
-# Example: Gmail over IMAP
-#
-set imap_user = "v.cacciarimiraldo@gmail.com"
-set imap_pass = "`pass Personal/Email/gmail/app-passwords/v.cacciarimiraldo`"
-
-set folder = imaps://imap.gmail.com/
-set spoolfile = "+INBOX"
-unset record                # Gmail auto-stores in "+[Gmail].Sent Mail"
-unset trash                 # Unset, deletion will remove labels
-set postponed = "+[Gmail].Drafts"
-
-set mail_check = 60
-
-###############
-# Pager settings
-#
-ignore *
-unignore From Message-ID Date To Cc Bcc Subject
-
-set pager_stop
-unset markers
-
-# Prefer plain text to html.
-# However, for brain dead clients that bundle attachments inside a
-# multipart/alternative, prefer that alternative.
-alternative_order multipart/mixed multipart/related text/plain
-
-# Consult mime.types for determining types of these attachments
-mime_lookup application/octet-stream
-
-# This requires a ~/.mailcap entry with the copiousoutput flag, such as:
-# text/html; lynx -dump -width ${COLUMNS:-80} %s; nametemplate=%s.html; copiousoutput
+set sort='reverse-threads'
+set sort_aux='last-date-received'
 auto_view text/html
+# This line gets rid of iso 8859 issues with attachments
+set rfc2047_parameters
 
-###############
-# Index settings
-#
-set quit = ask-yes
-set sort = threads
-set sort_aux = reverse-date
+set sidebar_width=30
+set sidebar_visible=yes
 
+bind index '[' sidebar-prev
+bind index ']' sidebar-next
+bind index '#' sidebar-open
+bind pager '[' sidebar-prev
+bind pager ']' sidebar-next
+bind pager '#' sidebar-open
+
+# Remap bounce-message function to “B” and toggle sb with b
+bind index B bounce-message
+macro index b '<enter-command>toggle sidebar_visible<enter><refresh>'
+macro pager b '<enter-command>toggle sidebar_visible<enter><redraw-screen>'
+
+# See all mail headers in editor, cache headers and bodies
+set edit_headers=yes
+# Caches header info
 # Remember to `mkdir -p ~/.mutt/hcache` first:
 set header_cache= "~/.mutt/hcache"
+# set message_cachedir = "/home/username/.mutt/cache/bodies"
 
-###############
-# Message composition settings
-#
-set edit_headers
-set editor = "vim"
+# Prettify
+color hdrdefault white black  # headers white on black
+color header brightgreen black ^From:  # sender's name in green
+color quoted cyan black  # quoted text in blue
+color signature red black   # signature in red
 
-set mime_type_query_command = "xdg-mime query filetype"
+# Don't wait for sendmail to finish (this runs sendmail in the background)
+#set sendmail_wait=-1
 
-# msmtp is a solid SMTP client.
-# mutt also has built-in SMTP, or you can use an MTA like exim4 or postfix.
-# set sendmail = "/usr/bin/msmtp"
+# A macro to store attachments in specific folder
+macro attach , "<save-entry><bol>/home/victor/tmp<eol>" "Save to downloads folder"
 
-# lbdb is a versatile contact query tool.
-# Invoke via ctrl-t in an address prompt
-set query_command = "/usr/bin/lbdbq"
+#Alias file for addresses
+# set alias_file="/home/username/.mutt/.muttalias"
+# source /home/username/.mutt/.muttalias
 
-###############
-# GnuPG
-#
-# unset crypt_use_gpgme
-# source /usr/local/share/doc/mutt/samples/gpg.rc
-# set pgp_default_key = "0x1234567890ABCDEF"
-# set crypt_opportunistic_encrypt
-# set postpone_encrypt
+#Use abook in addition to aliases - opting to not use it for now, as no autocomplete or BCC autofill
+# Adding with shift-a was tempremental too
+#set query_command= "abook --mutt-query '%s'"
+#macro index,pager A "<pipe-message>abook --add-email-quiet<return>" "Add the sender address to abook"
+
+source mailboxes.muttrc
+
+source ~/.mutt/themes/dracula.muttrc
+
+###########################
+#                CONNECTION
+###########################
+
+
+set imap_check_subscribed
+set imap_keepalive = 300
+
+# Security
+set ssl_force_tls = yes
+set ssl_starttls = yes
+set ssl_use_sslv3 = no
+set ssl_use_tlsv1 = no
+set ssl_use_tlsv1_1 = no
+set ssl_use_tlsv1_2 = yes
+set ssl_verify_dates = yes
+set ssl_verify_host = yes
+
 

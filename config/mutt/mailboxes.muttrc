@@ -1,0 +1,17 @@
+# Here is where we configure all our mailboxes
+
+# This was way too difficult; lets never mess this up!
+# https://bbs.archlinux.org/viewtopic.php?id=240384
+# https://wiki.archlinux.org/index.php/Mutt#Multiple_accounts
+
+source "~/.mutt/accounts/victor.cacciari.gmail"
+folder-hook $folder 'source ~/.mutt/accounts/victor.cacciari.gmail'
+
+## DEFAULT ACCOUNT
+source "~/.mutt/accounts/v.cacciarimiraldo.gmail"
+folder-hook $folder 'source ~/.mutt/accounts/v.cacciarimiraldo.gmail'
+
+# Switch accounts with F keys
+macro index <f2> '<sync-mailbox><refresh><enter-command>source ~/.mutt/accounts/v.cacciarimiraldo.gmail<enter><change-folder>!<enter>'
+macro index <f3> '<sync-mailbox><refresh><enter-command>source ~/.mutt/accounts/victor.cacciari.gmail<enter><change-folder>!<enter>'
+
