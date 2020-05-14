@@ -12,6 +12,6 @@ set smtp_pass = "`pass Personal/Email/gmail/app-passwords/victor.cacciari`"
 set folder    = "imaps://victor.cacciari@imap.gmail.com/"
 set spoolfile = "+INBOX"
 
-set status_format="victor.cacciari--%r--  %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:%o?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?B? Back:%B?%?l? %l?]---(%s/%S)-%>-(%P)---”
+set status_format="victor.cacciari--%r--  %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:%o?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?B? Back:%B?%?l? %l?]---(%s/%S)-%>-(%P)---"
 
 account-hook "imaps://victor.cacciari@imap.gmail.com/" "set imap_user=victor.cacciari@gmail.com"

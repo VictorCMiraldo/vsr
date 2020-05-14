@@ -1,84 +1,11 @@
-##########
-# BASICS #
-##########
-
-set mbox_type=maildir
-
-# This puts cursor just above signature in vim... the right place, but not common practice. Use [ to jump to top of message.
-set editor='vim + -c "set textwidth=72" -c "set wrap" -c "set nocp" -c "?^$"'
-
-# Split screen to view messages - can be slow with direct imap connection on larger mails
-#set pager_index_lines=20
-
-set sort='reverse-threads'
-set sort_aux='last-date-received'
-auto_view text/html
-# This line gets rid of iso 8859 issues with attachments
-set rfc2047_parameters
-
-set sidebar_width=30
-set sidebar_visible=yes
-
-bind index '[' sidebar-prev
-bind index ']' sidebar-next
-bind index '#' sidebar-open
-bind pager '[' sidebar-prev
-bind pager ']' sidebar-next
-bind pager '#' sidebar-open
-
-# Remap bounce-message function to “B” and toggle sb with b
-bind index B bounce-message
-macro index b '<enter-command>toggle sidebar_visible<enter><refresh>'
-macro pager b '<enter-command>toggle sidebar_visible<enter><redraw-screen>'
-
-# See all mail headers in editor, cache headers and bodies
-set edit_headers=yes
-# Caches header info
-# Remember to `mkdir -p ~/.mutt/hcache` first:
-set header_cache= "~/.mutt/hcache"
-# set message_cachedir = "/home/username/.mutt/cache/bodies"
-
-# Prettify
-color hdrdefault white black  # headers white on black
-color header brightgreen black ^From:  # sender's name in green
-color quoted cyan black  # quoted text in blue
-color signature red black   # signature in red
-
-# Don't wait for sendmail to finish (this runs sendmail in the background)
-#set sendmail_wait=-1
-
-# A macro to store attachments in specific folder
-macro attach , "<save-entry><bol>/home/victor/tmp<eol>" "Save to downloads folder"
-
-#Alias file for addresses
-# set alias_file="/home/username/.mutt/.muttalias"
-# source /home/username/.mutt/.muttalias
-
-#Use abook in addition to aliases - opting to not use it for now, as no autocomplete or BCC autofill
-# Adding with shift-a was tempremental too
-#set query_command= "abook --mutt-query '%s'"
-#macro index,pager A "<pipe-message>abook --add-email-quiet<return>" "Add the sender address to abook"
-
-source mailboxes.muttrc
-
+source ~/.mutt/base.muttrc
+source ~/.mutt/binds.muttrc
+source ~/.mutt/accounts.muttrc
 source ~/.mutt/themes/dracula.muttrc
 
-###########################
-#                CONNECTION
-###########################
-
-
-set imap_check_subscribed
-set imap_keepalive = 300
-
-# Security
-set ssl_force_tls = yes
-set ssl_starttls = yes
-set ssl_use_sslv3 = no
-set ssl_use_tlsv1 = no
-set ssl_use_tlsv1_1 = no
-set ssl_use_tlsv1_2 = yes
-set ssl_verify_dates = yes
-set ssl_verify_host = yes
-
+# mailing lists
+lists agda
+lists types-announce
+lists ghc-devs
+lists uuing
 
