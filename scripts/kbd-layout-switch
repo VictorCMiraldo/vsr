@@ -1,0 +1,12 @@
+#! /bin/bash
+
+out=$(setxkbmap -query | grep variant)
+if [[ $? -eq 1 ]]; then
+  setxkbmap -layout us -variant intl
+else
+  setxkbmap -layout us
+fi
+
+kbd-config --reconfig
+
+exit 0

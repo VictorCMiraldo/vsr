@@ -56,6 +56,10 @@ xmodmap -e "add Control = $spare_modifier"
 # use).
 xmodmap -e "keycode 250 = Return"
 
+# Are we already running xcape? if so; kill it!
+curr_xcape=$(pgrep xcape)
+[[ -n "$curr_xcape" ]] && kill $curr_xcape
+
 # Finally use xcape to cause the enter to generate an enter when tapped.
 xcape -e "$spare_modifier=Return"
 
