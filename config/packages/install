@@ -15,7 +15,7 @@ pass
 pass-extension-otp
 oathtool
 zbar-tools
-mutt
+neomutt
 curl
 meld
 htop
