@@ -39,7 +39,7 @@ echo "You will need sudo ON THE REMOTE SERVER; get your passwords ready! :)"
 ssh -t vps '/home/victor/openContainer.sh'
 
 ## The profiles that I like to enforce sync
-allprofs=( "keychain" "doc" )
+allprofs=( "keychain" ) # Let's not sync up documents, actually.
 
 if [[ "$#" -eq "1" ]]; then
   allprofs=( "$1" )
