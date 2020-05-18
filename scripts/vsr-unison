@@ -1,5 +1,25 @@
 #! /bin/bash
 
+# So... unison is VERY picky with its versions. Not only all replicas
+# must have the same version of unison, the binaries themselves must
+# have been compiled with the same version of the OCaml compiler. 
+# This is nuts and horrible!
+#
+# The best solution seems to be the one outline in: 
+#   https://askubuntu.com/questions/1234767/can-i-install-unison-for-ubuntu-18-04-lts-on-ubuntu-20-04-lts
+# Which is: purge current instalation everywhere, remove
+# the .unison/{ar,fp}* cache files, donwload the Debian version
+# on all replicas:
+#
+#  $ wget http://ftp.fr.debian.org/debian/pool/main/u/unison/unison_2.48.4-1+b1_amd64.deb
+#  $ sudo dpkg -i unison_2.48.4-1+b1_amd64.deb
+#
+# finally, install aptitude and put unison on hold to defer upgrading the
+# binary automagically
+#
+#  $ sudo aptitude hold unison
+#
+
 vsr_root="${BASH_SOURCE%/*}/.."
 source "$vsr_root/prelude"
 
