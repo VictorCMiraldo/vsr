@@ -16,6 +16,7 @@ pass-extension-otp
 oathtool
 zbar-tools
 neomutt
+irssi
 curl
 meld
 htop
