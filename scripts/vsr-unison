@@ -14,11 +14,11 @@
 #  $ wget http://ftp.fr.debian.org/debian/pool/main/u/unison/unison_2.48.4-1+b1_amd64.deb
 #  $ sudo dpkg -i unison_2.48.4-1+b1_amd64.deb
 #
-# finally, install aptitude and put unison on hold to defer upgrading the
-# binary automagically
+# finally, put unison on hold to defer upgrading the binary automagically
 #
-#  $ sudo aptitude hold unison
+#  $ sudo apt-mark hold unison
 #
+# Yet, all the machines I'd like to sync are now running 20.04! Yay, no need for these dirty hacks!
 
 vsr_root="${BASH_SOURCE%/*}/.."
 source "$vsr_root/prelude"
@@ -32,14 +32,8 @@ function print_usage() {
   exit 1
 }
 
-## First, we open the containers in the
-## remote machine:
-echo "We will connect to the remove host and open our luksContainer"
-echo "You will need sudo ON THE REMOTE SERVER; get your passwords ready! :)"
-ssh -t vps '/home/victor/openContainer.sh'
-
 ## The profiles that I like to enforce sync
-allprofs=( "keychain" ) # Let's not sync up documents, actually.
+allprofs=( "keychain" "doc" )
 
 if [[ "$#" -eq "1" ]]; then
   allprofs=( "$1" )
@@ -52,4 +46,3 @@ for prof in ${allprofs[*]}; do
 done
 
 
-ssh -t vps '/home/victor/closeContainer.sh'

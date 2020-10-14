@@ -1,6 +1,6 @@
 # Roots of the synchronization
 root = /home/victor
-root = ssh://victor@89.40.14.29:4651//home/victor/backup
+root = ssh://victor@spinach.lan//home/victor
 
 # If any new preferences are added by Unison (e.g. 'ignore'
 # preferences added via the graphical UI), then store them in the
