@@ -23,8 +23,8 @@ echo "Configuring UFW..."
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 
-# We're opening up ssh by default and thats it for now!
-sudo ufw allow 22/tcp
+# Allow my personal machine to ssh into here when on my local network.
+sudo ufw allow from 192.168.2.206 to any port 22
 
 sudo ufw enable
 

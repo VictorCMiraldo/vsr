@@ -3,3 +3,8 @@ set viewcolumns=*{name}..,16{mtime},7{}.
 filextype *.pdf 
         \ {Open with atril}
         \ atril %f &,
+        
+filextype *.jpg
+        \ {Open with Eye of Mate}
+        \ eom %f &,
+
