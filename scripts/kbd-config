@@ -32,15 +32,17 @@ xmodmap -e "keycode 66 = Escape Caps_Lock"
 
 # Swap Left Alt and Left Control
 xmodmap -e "clear mod1"
-xmodmap -e "clear mod4"
 xmodmap -e "clear control"
 xmodmap -e "keycode 64  = Control_L"
 xmodmap -e "keycode 37  = Alt_L Meta_L"
 xmodmap -e "add control = Control_L Control_R"
 xmodmap -e "add mod1    = Alt_L Meta_L"
 
+# TMP: We're switching back to mod1!
+xmodmap -e "add mod1    = Alt_R"
 # Add Alt_R to mod4 group so xmonad intercepts it nicely
-xmodmap -e "add mod4    = Alt_R Super_L Super_R"
+# xmodmap -e "clear mod4"
+# xmodmap -e "add mod4    = Alt_R Super_L Super_R"
 
 # Addapted from xcape manual.
 
