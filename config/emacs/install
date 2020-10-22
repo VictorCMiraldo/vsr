@@ -1,0 +1,6 @@
+#! /bin/bash
+
+mkdir -p ~/.emacs.d
+ln -s $(pwd)/init.el ~/.emacs.d/
+ln -s $(pwd)/custom.el ~/.emacs.d/
+ln -s $(pwd)/themes ~/.emacs.d/
