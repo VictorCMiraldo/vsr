@@ -135,7 +135,7 @@
 
   ;; Use C-/ to manually start company mode at point. C-/ is used by undo-tree.
   ;; Override all minor modes that use C-/; bind-key* is discussed below.
-  (bind-key* "<tab>" #'company-manual-begin)
+  (bind-key* "C-/" #'company-manual-begin)
 
   ;; Bindings when the company list is active.
   :bind (:map company-active-map
@@ -472,7 +472,7 @@
 (setq standard-indent 2)
 
 ;; Lets tab complete
-(setq tab-always-indent 'complete)
+(setq tab-always-indent t)
 
 ;; Does not allow indent to ever insert tabs
 (setq indent-tabs-mode nil)
