@@ -16,7 +16,7 @@
 
 ;; Actually get "package" to work.
 (package-initialize)
-(package-refresh-contents) ;; I actually don't want to refresh contents on every init
+;; (package-refresh-contents) ;; I actually don't want to refresh contents on every init
 
 ;; Set up "use-package" to be installed at startup if its not yet installed
 ;; and tell it to always install packages we require.
@@ -135,7 +135,7 @@
 
   ;; Use C-/ to manually start company mode at point. C-/ is used by undo-tree.
   ;; Override all minor modes that use C-/; bind-key* is discussed below.
-  (bind-key* "<tab>" #'company-manual-begin)
+  (bind-key* "C-/" #'company-manual-begin)
 
   ;; Bindings when the company list is active.
   :bind (:map company-active-map
@@ -266,9 +266,6 @@
 
 (use-package linum-relative
   :custom
-  ;; line numbers everywhere
-  (global-linum-mode t)
-
   ;; use relative numbers everywhere
   (linum-relative-global-mode t)
 
@@ -324,7 +321,13 @@
   (define-key lsp-ui-mode-map [remap xref-find-definitions]
     #'lsp-ui-peek-find-definitions)
   (define-key lsp-ui-mode-map [remap xref-find-references]
-    #'lsp-ui-peek-find-references))
+    #'lsp-ui-peek-find-references)
+  :custom
+  ;; I want lsp-ui to be the least intrusive possible, thanks!
+  (lsp-ui-doc-enable nil)
+  (lsp-ui-imenu-enable nil)
+  (lsp-ui-peek-enable nil)
+  (lsp-ui-sideline-enable nil))
 
 ;; The default Cargo Run window is read only, that's bad since I can't send
 ;; any input.
@@ -358,9 +361,10 @@
             #'(lambda ()
                 (bind-key "C-c h"      #'lsp-ui-doc-glance rust-mode-map)
                 (bind-key "M-<right>"  #'lsp-ui-peek-find-definitions rust-mode-map)
-                (bind-key "M-<left>"   #'lsp-ui-peek-find-references rust-mode-map))))
-                ;; (bind-key "M-<down>"   #'flycheck-next-error rust-mode-map)
-                ;; (bind-key "M-<up>"     #'flycheck-previous-error rust-mode-map))))
+                ;; TODO: define "M-<left>" to be a "go-back" like action
+                (bind-key "C-c r"      #'lsp-ui-peek-find-references rust-mode-map)
+                (bind-key "M-<down>"   #'flymake-goto-next-error rust-mode-map)
+                (bind-key "M-<up>"     #'flymake-goto-prev-error rust-mode-map))))
 
 
 ;;;;;;;;;;;
@@ -468,7 +472,7 @@
 (setq standard-indent 2)
 
 ;; Lets tab complete
-(setq tab-always-indent 'complete)
+(setq tab-always-indent t)
 
 ;; Does not allow indent to ever insert tabs
 (setq indent-tabs-mode nil)
@@ -478,6 +482,10 @@
 
 ;; No toolbar, please
 (tool-bar-mode -1)
+
+;; line numbers everywhere
+(global-linum-mode t)
+(linum-relative-toggle)
 
 ;; Show the column number on my powerline
 (column-number-mode 1)
