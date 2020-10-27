@@ -52,6 +52,7 @@
                    evil-normal-state-map
                    evil-emacs-state-map))
       (define-key (eval map) (kbd "C-.") nil))) 
+  (global-set-key (kbd "<backtab>") #'evil-shift-left-line)
   :bind (:map evil-motion-state-map 
           ("[" . evil-backward-paragraph)
           ("]" . evil-forward-paragraph))
@@ -97,7 +98,7 @@
 (use-package company
   :diminish
   :config
-  (global-company-mode 1)
+  (global-company-mode)
   (setq ;; Only 2 letters required for completion to activate.
    company-minimum-prefix-length 2
 
@@ -131,15 +132,14 @@
    company-dabbrev-ignore-case nil
 
    ;; Immediately activate completion.
-   company-idle-delay 0)
+   company-idle-delay 4)
 
-  ;; Use C-/ to manually start company mode at point. C-/ is used by undo-tree.
-  ;; Override all minor modes that use C-/; bind-key* is discussed below.
-  (bind-key* "C-/" #'company-manual-begin)
+  ;; Use C-<tab> to manually start company mode at point. 
+  (bind-key* "C-<tab>" #'company-manual-begin)
 
   ;; Bindings when the company list is active.
   :bind (:map company-active-map
-              ("C-d" . company-show-doc-buffer) ;; In new temp buffer
+              ("C-d"   . company-show-doc-buffer) ;; In new temp buffer
               ("<tab>" . company-complete-common-or-cycle)))
 
 ;; Projectile
@@ -210,6 +210,11 @@
 ;;;;;;;;;;;;;
 ;; Haskell ;;
 ;;;;;;;;;;;;;
+
+(setq loc-stack-list '())
+(defun loc-stack-push ()
+  (interactive)
+  (setq loc-stack-list ((buffer-name) . (mark)) . loc-stack-list))
 
 ;; TODO: Use lsp-mode too?
 (use-package haskell-mode
@@ -436,6 +441,35 @@
     ("tex" "sty" "cls" "ltx" "texi" "txi" "texinfo" "dtx" "lhs")))
   (TeX-one-master "\\.\\(texi?\\|dtx\\|lhs\\)$"))
 
+;;;;;;;;;;;;;;;;;
+;; Indentation ;;
+;;;;;;;;;;;;;;;;;
+
+;; Inhibit electric indent unless we say otherwise.
+(setq-default electric-indent-inhibit t)
+;; No electric indent anywhere (indents on pressing enter)
+(when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
+
+;; Make backspace properly erase as many spaces as a tab
+(setq backward-delete-char-untabify-method 'hungry)
+
+;; standard indent is two spaces for me
+(setq standard-indent 2)
+
+;; Lets tab complete
+(setq tab-always-indent t)
+
+;; Does not allow indent to ever insert tabs
+(setq indent-tabs-mode nil)
+
+;; Visualize tabs as "|" and show trailing whitespaces.
+(setq whitespace-style '(face tabs tab-mark trailing))
+(custom-set-faces
+ '(whitespace-tab ((t (:foreground "#636363")))))
+(setq whitespace-display-mappings
+  '((tab-mark 9 [124 9] [92 9]))) ; 124 is the ascii ID for '\|'
+(global-whitespace-mode)
+
 
 ;;;;;;;;;;;;;;;;;;;
 ;; Global Config ;;
@@ -456,9 +490,13 @@
 
 ;; * Some of my handy keys
 (bind-key* "C-a" #'align-regexp)
+(bind-key* "C-M-j" #'fill-paragraph)
+
 (bind-key* "C-." #'other-window)
 (bind-key* "C-," #'prev-window)
-(bind-key* "C-M-j" #'fill-paragraph)
+
+(bind-key* "C-<left>" #'prev-buffer)
+(bind-key* "C-<right>" #'next-buffer)
 
 ;; New location for backups.
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
@@ -478,17 +516,8 @@
 ;; Make it very easy to see the line with the cursor.
 (global-hl-line-mode t)
 
-;; standard indent is two spaces for me
-(setq standard-indent 2)
-
-;; Lets tab complete
-(setq tab-always-indent t)
-
-;; Does not allow indent to ever insert tabs
-(setq indent-tabs-mode nil)
-
-;; No electric indent anywhere (indents on pressing enter)
-(when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
+;; Delete trailing whitespaces on saving
+(add-hook 'write-file-hooks 'delete-trailing-whitespace)
 
 ;; No toolbar, please
 (tool-bar-mode -1)
@@ -511,7 +540,6 @@
 
 ;; Enable meacs to read more bytes from processes
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
-
 
 ;; Some ispell configuration
 ;;
