@@ -11,6 +11,9 @@ addversionno = true
 
 # Names and paths to ignore
 
+# It's superfluous to backup git directory
+ignore = Name .git
+
 # Projectile file
 ignore = Name .projectile
 
