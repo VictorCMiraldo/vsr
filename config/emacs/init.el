@@ -313,7 +313,10 @@
   :commands lsp
   :custom
   ;; don't render documentation on a window, please.
-  (lsp-signature-render-documentation nil))
+  (lsp-signature-render-documentation nil)
+
+  ;; take 3 seconds to start updating itself.
+  (lsp-idle-delay 3))
 
 (use-package lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
@@ -364,7 +367,14 @@
                 ;; TODO: define "M-<left>" to be a "go-back" like action
                 (bind-key "C-c r"      #'lsp-ui-peek-find-references rust-mode-map)
                 (bind-key "M-<down>"   #'flymake-goto-next-error rust-mode-map)
-                (bind-key "M-<up>"     #'flymake-goto-prev-error rust-mode-map))))
+                (bind-key "M-<up>"     #'flymake-goto-prev-error rust-mode-map))
+
+                ;; The lsp-mode and rust make emacs start crawling; I'm removing some features
+                ;; and starting some others with delay. In this case, delay the display of the
+                ;; completion popup by a second.
+                (setq company-idle-delay 1))
+  :custom
+  (rust-format-on-save t))
 
 
 ;;;;;;;;;;;
@@ -492,6 +502,16 @@
 
 ;; Don't show startup screen
 (setq inhibit-startup-screen t)
+
+;; Tunning lsp-mode according to
+;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+
+;; Don't run GC all the time by enabling emacs to use ~100mb if memory
+(setq gc-cons-threshold 100000000) 
+
+;; Enable meacs to read more bytes from processes
+(setq read-process-output-max (* 1024 1024)) ;; 1mb
+
 
 ;; Some ispell configuration
 ;;
