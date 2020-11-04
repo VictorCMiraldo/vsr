@@ -3,6 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(cargo-process--command-clippy "clippy")
  '(package-selected-packages (quote (use-package)))
  '(unicode-fonts-block-font-mapping
    (quote
@@ -189,5 +190,5 @@
  '(powerline-active3 ((t (:inherit mode-line :background "gray40" :foreground "white"))))
  '(powerline-evil-normal-face ((t (:inherit powerline-evil-base-face :background "red"))))
  '(powerline-evil-operator-face ((t (:inherit powerline-evil-operator-face :background "midnight blue"))))
- '(powerline-evil-replace-face ((t (:inherit powerline-evil-base-face :background "black")))))
-
+ '(powerline-evil-replace-face ((t (:inherit powerline-evil-base-face :background "black"))))
+ '(whitespace-tab ((t (:foreground "#636363")))))

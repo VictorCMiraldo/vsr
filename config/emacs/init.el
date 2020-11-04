@@ -32,7 +32,7 @@
   :diminish
   :config (which-key-mode)
           (which-key-setup-side-window-bottom)
-          (setq which-key-idle-delay 0.05))
+          (setq which-key-idle-delay 0.7))
 
 ;; Can't survive without magit or timemachine
 (use-package git-timemachine 
@@ -40,6 +40,9 @@
 (use-package magit
   :commands magit
   :config (global-set-key (kbd "C-x g") 'magit-status))
+
+(use-package undo-tree
+  :config (global-undo-tree-mode))
 
 ;; Set up evil mode
 (use-package evil
@@ -57,6 +60,9 @@
           ("[" . evil-backward-paragraph)
           ("]" . evil-forward-paragraph))
   :custom
+  ;; Undo with undo-tree
+  (evil-undo-system 'undo-tree)
+
   ;; I don't want autoindentation when opening lines with o or O
   (evil-auto-indent nil)
 
@@ -70,7 +76,6 @@
 (use-package powerline)
 (use-package powerline-evil
   :config (powerline-evil-center-color-theme))
-(use-package undo-tree)
 
 ;; Set-up helm
 (use-package helm
@@ -288,6 +293,14 @@
 
 ;; first declare where it is, then, if it exists loads everything.
 ;; TODO: Ask John how to do this with use-package
+;;
+;; (use-package agda-mode
+;;    :no-require
+;;    :init (load-file ...)
+;;    :load-path agda-mode-path)
+;; 
+;; macro-step --> place cursos on '(' M-x macro exp
+;;
 (setq agda-mode-path
   (let ((coding-system-for-read 'utf-8))
         (shell-command-to-string "agda-mode locate")))
@@ -365,6 +378,11 @@
   :mode "\\.rs\\'"
   :hook (rust-mode . lsp)
   :config
+  ;; Disable flymake's intrusive settings
+  (setq flymake-no-changes-timeout 'nil)
+  (setq flymake-start-check-on-newline 'nil)
+
+  ;; Set up some hotkeys
   (add-hook 'rust-mode-hook
             #'(lambda ()
                 (bind-key "C-c h"      #'lsp-ui-doc-glance rust-mode-map)
@@ -372,12 +390,7 @@
                 ;; TODO: define "M-<left>" to be a "go-back" like action
                 (bind-key "C-c r"      #'lsp-ui-peek-find-references rust-mode-map)
                 (bind-key "M-<down>"   #'flymake-goto-next-error rust-mode-map)
-                (bind-key "M-<up>"     #'flymake-goto-prev-error rust-mode-map))
-
-                ;; The lsp-mode and rust make emacs start crawling; I'm removing some features
-                ;; and starting some others with delay. In this case, delay the display of the
-                ;; completion popup by a second.
-                (setq company-idle-delay 1))
+                (bind-key "M-<up>"     #'flymake-goto-prev-error rust-mode-map)))
   :custom
   (rust-format-on-save t))
 
