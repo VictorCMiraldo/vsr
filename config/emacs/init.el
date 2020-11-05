@@ -356,8 +356,23 @@
         (inhibit-read-only t))
     (process-send-string proc (concat input "\n"))))
 
+;; Origami plays well with evil mode. In fact, evil
+;; already has predefined commands:
+;;  za - toggle fold
+;;  zc - close
+;;  zm - close all
+;;  zr - open all
+;;  zo - open
+;;
 (use-package origami
-  :hook (rust-mode . origami-mode))
+  :hook (rust-mode . origami-mode)
+  :init
+  ;; We need to tell origami how to work under rust mode
+  (with-eval-after-load "origami"
+    (add-to-list 'origami-parser-alist '(rust-mode . origami-c-style-parser)))
+  :custom
+  ;; Highlights the line the fold starts on
+  (origami-show-fold-header t))
 
 (use-package cargo
   :hook (rust-mode . cargo-minor-mode)
