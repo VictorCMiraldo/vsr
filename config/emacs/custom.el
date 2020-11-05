@@ -4,10 +4,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(cargo-process--command-clippy "clippy")
- '(package-selected-packages (quote (use-package)))
+ '(eldoc-echo-area-prefer-doc-buffer nil)
+ '(eldoc-echo-area-use-multiline-p nil)
+ '(package-selected-packages '(eglot use-package))
  '(unicode-fonts-block-font-mapping
-   (quote
-    (("Aegean Numbers"
+   '(("Aegean Numbers"
       ("Noto Sans Symbols" "Aegean" "Symbola" "Quivira" "Code2001" "Everson Mono:weight=bold" "ALPHABETUM Unicode"))
      ("Ahom"
       ("AhomUnicode"))
@@ -170,7 +171,7 @@
      ("Vedic Extensions"
       ("Siddhanta"))
      ("Vertical Forms"
-      ("Microsoft YaHei" "Microsoft YaHei UI" "Symbola"))))))
+      ("Microsoft YaHei" "Microsoft YaHei UI" "Symbola")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

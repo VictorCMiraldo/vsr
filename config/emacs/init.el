@@ -149,10 +149,11 @@
 
 ;; Projectile
 (use-package projectile
+  :commands projectile-project-root
   :bind-keymap
   ("C-c p" . projectile-command-map)
   :config
-  (projectile-mode)
+  (projectile-mode t)
   (helm-projectile-on) ;; enable helm-projectile
   (defun string-empty-p (str) (string= "" str)))
 
@@ -327,28 +328,20 @@
 ;; Rust ;;
 ;;;;;;;;;;
 
-(use-package lsp-mode
-  :commands lsp
-  :custom
-  ;; don't render documentation on a window, please.
-  (lsp-signature-render-documentation nil)
+(defun my-rust-project-find-function (dir)
+  (let ((root (locate-dominating-file dir "Cargo.toml")))
+        (and root (cons 'transient root))))
 
-  ;; take 3 seconds to start updating itself.
-  (lsp-idle-delay 3))
-
-(use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
+(use-package eglot
   :config
-  (define-key lsp-ui-mode-map [remap xref-find-definitions]
-    #'lsp-ui-peek-find-definitions)
-  (define-key lsp-ui-mode-map [remap xref-find-references]
-    #'lsp-ui-peek-find-references)
+  (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))
   :custom
-  ;; I want lsp-ui to be the least intrusive possible, thanks!
-  (lsp-ui-doc-enable nil)
-  (lsp-ui-imenu-enable nil)
-  (lsp-ui-peek-enable nil)
-  (lsp-ui-sideline-enable nil))
+  ;; don't ask for closing the server connection,
+  (eglot-autoshutdown t)
+
+  ;; wait 1s before sending changes. I often find the default of 0.5s to quick
+  ;; and makes my emacs a bit slower.
+  (eglot-send-changes-idle-time 1))
 
 ;; The default Cargo Run window is read only, that's bad since I can't send
 ;; any input.
@@ -363,11 +356,17 @@
         (inhibit-read-only t))
     (process-send-string proc (concat input "\n"))))
 
+(use-package origami
+  :hook (rust-mode . origami-mode))
+
 (use-package cargo
   :hook (rust-mode . cargo-minor-mode)
   :bind (:map cargo-minor-mode-map ("C-c C-c C-y" . cargo-process-clippy))
   :bind (:map cargo-minor-mode-map ("C-c i"       . rust-compile-send-input))
   :config
+  ;; Cargo mode sets "C-c C-c C-l" to cargo-process-clean. Its way to close to
+  ;; C-C C-C C-k's process-check for my taste. I can do a clean on the terminal when needed.
+  (global-unset-key (kbd "C-c C-c C-l"))
   (defadvice cargo-process-clippy
       (around my-cargo-process-clippy activate)
     (let ((cargo-process--command-flags (concat cargo-process--command-flags
@@ -376,7 +375,7 @@
 
 (use-package rust-mode
   :mode "\\.rs\\'"
-  :hook (rust-mode . lsp)
+  :hook (rust-mode . eglot-ensure)
   :config
   ;; Disable flymake's intrusive settings
   (setq flymake-no-changes-timeout 'nil)
@@ -385,12 +384,19 @@
   ;; Set up some hotkeys
   (add-hook 'rust-mode-hook
             #'(lambda ()
-                (bind-key "C-c h"      #'lsp-ui-doc-glance rust-mode-map)
-                (bind-key "M-<right>"  #'lsp-ui-peek-find-definitions rust-mode-map)
-                ;; TODO: define "M-<left>" to be a "go-back" like action
-                (bind-key "C-c r"      #'lsp-ui-peek-find-references rust-mode-map)
                 (bind-key "M-<down>"   #'flymake-goto-next-error rust-mode-map)
-                (bind-key "M-<up>"     #'flymake-goto-prev-error rust-mode-map)))
+                (bind-key "M-<up>"     #'flymake-goto-prev-error rust-mode-map)
+                (bind-key "M-<right>"  #'xref-find-definitions rust-mode-map)
+                (bind-key "C-c r"      #'xref-find-references rust-mode-map)
+                (bind-key "C-c h"      #'eglot-help-at-point rust-mode-map)
+                (bind-key "C-c C-c v" #'(lambda () (interactive) (shell-command "rustdocs std")) rust-mode-map)))
+
+
+  ;; eglot uses project.el, and requires some special configuration to find
+  ;; the root of the current project. Not ideal, but gets the job done.
+  (with-eval-after-load 'project
+    (add-to-list 'project-find-functions 'my-rust-project-find-function))
+
   :custom
   (rust-format-on-save t))
 
@@ -508,8 +514,11 @@
 (bind-key* "C-." #'other-window)
 (bind-key* "C-," #'prev-window)
 
-(bind-key* "C-<left>" #'prev-buffer)
+(bind-key* "C-<left>" #'previous-buffer)
 (bind-key* "C-<right>" #'next-buffer)
+
+;; Sometimes C-x 1 is too long. :)
+(bind-key* "<f4>" #'delete-other-windows)
 
 ;; New location for backups.
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
