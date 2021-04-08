@@ -31,5 +31,8 @@ Host jizo
   User victor
   IdentityFile /home/victor/keychain/vps/UU-SoftwareTech-jizo/id_rsa
 
-
+Host github.com-personal
+  HostName github.com
+  User git
+  IdentityFile /home/victor/.ssh/id_rsa-personal
 

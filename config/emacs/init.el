@@ -25,6 +25,10 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+;; Provides a nice centered text for writing
+(use-package olivetti
+  :hook (markdown . olivetti-mode))
+
 ;; Making it easier to discover Emacs key presses.
 ;; This is actually pretty cool.
 (use-package which-key
@@ -35,7 +39,7 @@
           (setq which-key-idle-delay 0.7))
 
 ;; Can't survive without magit or timemachine
-(use-package git-timemachine 
+(use-package git-timemachine
   :defer 5)
 (use-package magit
   :commands magit
@@ -46,7 +50,7 @@
 
 ;; Set up evil mode
 (use-package evil
-  :config 
+  :config
   (evil-mode 1)
   ;; evil-mode binds C-. I want it for changing buffers
   (eval-after-load "evil-maps"
@@ -54,9 +58,9 @@
                    evil-insert-state-map
                    evil-normal-state-map
                    evil-emacs-state-map))
-      (define-key (eval map) (kbd "C-.") nil))) 
+      (define-key (eval map) (kbd "C-.") nil)))
   (global-set-key (kbd "<backtab>") #'evil-shift-left-line)
-  :bind (:map evil-motion-state-map 
+  :bind (:map evil-motion-state-map
           ("[" . evil-backward-paragraph)
           ("]" . evil-forward-paragraph))
   :custom
@@ -139,7 +143,7 @@
    ;; Immediately activate completion.
    company-idle-delay 4)
 
-  ;; Use C-<tab> to manually start company mode at point. 
+  ;; Use C-<tab> to manually start company mode at point.
   (bind-key* "C-<tab>" #'company-manual-begin)
 
   ;; Bindings when the company list is active.
@@ -183,7 +187,7 @@
   (yas-global-mode 1))
 
 ;; direnv is nice to have. I came across needing it a DFINITY
-;; and might just bring it into my personal machine. 
+;; and might just bring it into my personal machine.
 ;; Thanks John W. for the many snippets! :)
 (use-package direnv
   :init
@@ -245,7 +249,7 @@
   (haskell-indent-offset 2)
 
   ;; set the relevant options to pass around to cabal repl, ghci and stacj.
-  (haskell-process-args-cabal-repl (quote ("--ghc-option='-ferror-spans +RTS -M12G -RTS'")))
+  ;; (haskell-process-args-cabal-repl (quote ("--ghc-option='-ferror-spans +RTS -M12G -RTS'")))
   (haskell-process-args-ghci (quote ("+RTS -M12G -RTS" "-fshow-loaded-modules")))
   (haskell-process-args-stack-ghci
    (quote
@@ -272,7 +276,7 @@
   ;; default literate haskell style
   (haskell-literate-default 'tex))
 
-(use-package company-ghci) 
+(use-package company-ghci)
 (push 'company-ghci company-backends)
 
 (use-package linum-relative
@@ -299,7 +303,7 @@
 ;;    :no-require
 ;;    :init (load-file ...)
 ;;    :load-path agda-mode-path)
-;; 
+;;
 ;; macro-step --> place cursos on '(' M-x macro exp
 ;;
 (setq agda-mode-path
@@ -381,7 +385,11 @@
   :config
   ;; Cargo mode sets "C-c C-c C-l" to cargo-process-clean. Its way to close to
   ;; C-C C-C C-k's process-check for my taste. I can do a clean on the terminal when needed.
-  (global-unset-key (kbd "C-c C-c C-l"))
+  ;; (global-unset-key (kbd "C-c C-c C-l")) apparently, this global unsert key didn't work... let me try redefining the function entirely! :)
+  (defun cargo-process-clean ()
+    (interactive)
+    (cargo-process--start "Check" cargo-process--command-check))
+
   (defadvice cargo-process-clippy
       (around my-cargo-process-clippy activate)
     (let ((cargo-process--command-flags (concat cargo-process--command-flags
@@ -437,11 +445,11 @@
   (reftex-toc-max-level 3)
 
   ;; follow include, input and lhsinclude commands. I often use lhsinclude
-  ;; as a nifty hack: 
+  ;; as a nifty hack:
   ;; > \newcommand{\lhsinclude}[1]{}
-  ;; > 
+  ;; >
   ;; > ...
-  ;; > 
+  ;; >
   ;; > \chapter{Some Chapter}
   ;; > \label{chap:some-chapter}
   ;; > \lhsinclude{SomeChap.lhs} % lets reftex find references in src/SomeChap.lhs
@@ -453,8 +461,8 @@
   (reftex-try-all-extensions t))
 
 (use-package auctex
-  :mode "\\.tex\\'"
-  :mode "\\.lhs\\'"
+  :mode (("\\.lhs\\'" . LaTeX-mode)
+         ("\\.tex\\'" . LaTeX-mode))
   :config
   ;; I want to turn off spell-checking inside math
   ;; and code enviroments. Good documentation for this
@@ -512,6 +520,7 @@
 ;; Load my modified zenburn version
 (setq custom-safe-themes '("4528fb576178303ee89888e8126449341d463001cb38abe0015541eb798d8a23" "7a4efa993973000e5872099a3c24c310b8bb2568b70f3b9d53675e6edf1f3ce4" default))
 (setq custom-theme-directory "~/.emacs.d/themes/")
+
 (load-theme 'zenburn t)
 
 ;; * Emacs Parens
@@ -573,7 +582,7 @@
 ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
 
 ;; Don't run GC all the time by enabling emacs to use ~100mb if memory
-(setq gc-cons-threshold 100000000) 
+(setq gc-cons-threshold 100000000)
 
 ;; Enable meacs to read more bytes from processes
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
