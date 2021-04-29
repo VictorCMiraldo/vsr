@@ -1,4 +1,6 @@
-This files are copied to $HOME/.unison on installation.
+This files are linked to $HOME/.unison on installation.
+
+# Sync'ing to an encrypted volume:
 
 In the remote host; we should create a luks encrypted container
 to be used as follows:
@@ -32,7 +34,7 @@ And we are good to go.
 
 ## Opening and Closing the Container
 
-Ass two scripts like following:
+Add two scripts like following:
 
 ```
 #! /bin/bash

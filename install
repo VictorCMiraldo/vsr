@@ -18,14 +18,20 @@ echo -e "$profile_prefix" | cat - "$vsr_root/config/bash/profile" > temp \
   && mv temp "$HOME/.profile" \
   && ln -fs "$vsr_root/config/bash/bashrc_default" "$HOME/.bashrc"
 
-## Link our unison profiles
+## Link our unison profiles; we create a dedicated directory because unison loves
+## to keep some of its own local control files in there, so better not pollute
+## vsr with it.
 mkdir -p "$HOME/.unison" \
   && ln -fs $vsr_root/config/unison/* "$HOME/.unison/"
 
-## Copy SSH config file
+## Link SSH config file
 mkdir -p "$HOME/.ssh" \
   && chmod 700 "$HOME/.ssh" \
   && ln -fs $vsr_root/config/ssh/config "$HOME/.ssh/config"
+
+## Link our XMonad directory but does not install it just yet; that
+## installation should be done manually after the system is up and running
+ln -fs $vsr_root/config/xmonad "$HOME/.xmonad"
 
 ## Link our vimrc config file
 ln -fs $vsr_root/config/vim/vimrc "$HOME/.vimrc"
@@ -50,7 +56,9 @@ mydirs=("$HOME/tmp/Desktop"
         "$HOME/bin")
  
 for d in ${mydirs[*]}; do
-   mkdir -p "$d"
+   if [[ ! -d "$d" ]]; then
+       mkdir -p "$d"
+   fi
 done
 
 rmdirs=("$HOME/Music"
