@@ -8,7 +8,7 @@
  '(eldoc-echo-area-use-multiline-p nil)
  '(indent-tabs-mode nil)
  '(olivetti-body-width 80)
- '(package-selected-packages '(nord-theme eglot use-package))
+ '(package-selected-packages '(eglot use-package))
  '(tab-width 2)
  '(unicode-fonts-block-font-mapping
    '(("Aegean Numbers"

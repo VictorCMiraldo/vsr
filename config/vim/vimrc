@@ -142,11 +142,6 @@ set expandtab
 "set shiftwidth=4
 "set tabstop=4
  
-call plug#begin('~/.vim/plugged')
-Plug 'rust-lang/rust.vim'
-Plug 'racer-rust/vim-racer'
-call plug#end()
- 
 "------------------------------------------------------------
 " Mappings {{{1
 "
