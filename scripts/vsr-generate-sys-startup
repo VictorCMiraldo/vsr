@@ -24,12 +24,6 @@ function showHelp() {
 # First we go and compress the keychain, putting it in our current
 # directory.
 
-if [[ -d "$HOME/tmp/sys-bootstrap" ]]; then
-  echo "!! You already have a ~/tmp/sys-bootstrap directory"
-  echo "!! I'll erase the contents and populate with fresh data."
-  rm $HOME/tmp/sys-bootstrap/*
-fi
-
 mkdir -p $HOME/tmp/sys-bootstrap
 cd $HOME/tmp/sys-bootstrap
 tar -acf keychain.tar.gz $HOME/keychain
