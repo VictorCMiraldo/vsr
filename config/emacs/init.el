@@ -50,6 +50,8 @@
 
 ;; Set up evil mode
 (use-package evil
+  :init
+  (setq evil-want-keybinding nil)
   :config
   (evil-mode 1)
   ;; evil-mode binds C-. I want it for changing buffers
@@ -72,9 +74,11 @@
 
   ;; And I want > and < to shift lines one column at a time
   (evil-shift-width 1))
-(use-package evil-space
-  :config (evil-space-mode))
-(use-package evil-magit)
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config
+  (evil-collection-init))
 (use-package evil-surround
   :config (global-evil-surround-mode 1))
 (use-package powerline)
@@ -482,6 +486,13 @@
    (quote
     ("tex" "sty" "cls" "ltx" "texi" "txi" "texinfo" "dtx" "lhs")))
   (TeX-one-master "\\.\\(texi?\\|dtx\\|lhs\\)$"))
+
+;;;;;;;;;;
+;; Ligo ;;
+;;;;;;;;;;
+
+(use-package ligo-mode
+  :mode ("\\.mligo\\'" . ligo-caml-mode))
 
 ;;;;;;;;;;;;;;;;;
 ;; Indentation ;;

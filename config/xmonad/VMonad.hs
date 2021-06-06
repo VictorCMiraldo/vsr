@@ -18,10 +18,12 @@ import System.IO
 -- * Eye Candy * --
 -------------------
 
-myFocusedColor   = "#E9B96E"
-myUnfocusedColor = "#768CA6" 
-myBgColor        = "#2F343F"
-myTextColor      = "#D3DAE3"
+myFocusedColor   = "#6CA84D" -- "#E9B96E"
+myUnfocusedColor = "#96A589" -- "#768CA6" 
+myBgColor        = "#2C2C2C" -- "#2F343F"
+myTextColor      = "#DAE3D3" -- "#D3DAE3"
+
+
 
 -------------------------
 -- * Custom Commands * --
@@ -32,7 +34,7 @@ myRofiCmd = unwords [ "rofi"
           , "-show"     , "run" 
           , "-lines"    , "7" 
           , "-matching" , "fuzzy"
-          , "-theme"    , "Arc-Dark"
+          , "-theme"    , "sidebar"
           ]
 
 

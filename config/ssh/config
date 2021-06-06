@@ -36,3 +36,8 @@ Host github.com-personal
   User git
   IdentityFile /home/victor/.ssh/id_rsa-personal
 
+Host remarkable
+  HostName reMarkable
+  User root
+  IdentityFile /home/victor/.ssh/id_rsa_remarkable
+

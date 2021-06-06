@@ -2,8 +2,8 @@ Config {
 
    -- appearance
      font =         "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
-   , bgColor =      "#2F343F"
-   , fgColor =      "#D3DAE3"
+   , bgColor =      "#292929"
+   , fgColor =      "#DAE3D3"
    , position =     Bottom -- W L 75
    , border =       BottomB
    , borderColor =  "#646464"

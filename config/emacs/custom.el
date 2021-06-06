@@ -6,9 +6,10 @@
  '(cargo-process--command-clippy "clippy")
  '(eldoc-echo-area-prefer-doc-buffer nil)
  '(eldoc-echo-area-use-multiline-p nil)
+ '(helm-minibuffer-history-key "M-p")
  '(indent-tabs-mode nil)
  '(olivetti-body-width 80)
- '(package-selected-packages '(eglot use-package))
+ '(package-selected-packages '(evil-magit eglot use-package))
  '(tab-width 2)
  '(unicode-fonts-block-font-mapping
    '(("Aegean Numbers"
@@ -174,7 +175,8 @@
      ("Vedic Extensions"
       ("Siddhanta"))
      ("Vertical Forms"
-      ("Microsoft YaHei" "Microsoft YaHei UI" "Symbola")))))
+      ("Microsoft YaHei" "Microsoft YaHei UI" "Symbola"))))
+ '(vc-follow-symlinks t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
