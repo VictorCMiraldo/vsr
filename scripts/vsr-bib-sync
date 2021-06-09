@@ -1,0 +1,70 @@
+#! /bin/bash
+set -euo pipefail
+
+function ensure_dir_exists() {
+  if [[ ! -d "$1" ]]; then
+    echo "Dir '$d' doesnt exist"
+    exit 1
+  fi
+}
+
+src="$HOME/doc/Bib"
+ensure_dir_exists "$src"
+
+dest="/run/user/1000/gvfs/mtp:host=SAMSUNG_SAMSUNG_Android_R52R30PHATN/Tablet/Documents"
+ensure_dir_exists "$dest"
+
+# First we bring in changes from the tablet, without deleting anything
+# in the root. This works fine,
+rsync \
+  --verbose \
+  --progress \
+  --update \
+  --omit-dir-times \
+  --no-perms \
+  --recursive \
+  --inplace \
+  --size-only \
+  "$dest/" "$src/"
+
+# The problem is that now, I want to find the papers that I added/deleted
+# in the root and I want to perform those operations on the tablet.
+# Seems easy, but MTP seems to have stopped supporting a lot of it.
+#
+# In fact, newer android versions don't allow direct access, so we
+# have to "gio copy" our papers into it.
+
+# Lo and Behold: Manual Rsync:
+
+# Then, we'll get a summary of the files in the tablet and in the host
+dest_summary=$(mktemp /tmp/dst-files.XXXX)
+find "$dest/" -type f | sed "s!$dest/!!" | sort > $dest_summary
+
+src_summary=$(mktemp /tmp/src-files.XXXX)
+find "$src/" -type f | sed "s!$src/!!" | sort > $src_summary
+
+while read line; do 
+  mod=${line:0:1}
+  full_path=${line:1}
+  path=$(dirname "$full_path")
+  file=$(basename "$full_path")
+
+  case $mod in 
+    # A - indicates move from src to dest
+    -) if [[ ! -d "$dest/$path" ]]; then
+         echo "Creating $path on tablet"
+         gio mkdir -p "$dest/$path"
+       fi
+       echo "Copying $full_path to tablet"
+       gio copy "$src/$full_path" "$dest/$full_path"
+    ;;
+
+    # A + indicates remove from dest
+    +) echo "Removing $full_path from tablet"
+       gio remove "$dest/$full_path"
+    ;;
+
+    *) echo "impossible"
+    ;;
+  esac
+done < <(diff -U 0 $src_summary $dest_summary | tail -n +3 | grep -v @)
