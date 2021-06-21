@@ -1,7 +1,10 @@
 ;; So I just learned about use-package, then I learned
 ;; about https://github.com/alhassy/emacs.d; this really meant
 ;; I had to revamp my configuration. :)
-;;
+
+;; Yes, I know cl is deprecated, but I'm not even using it explicitely...
+(setq byte-compile-warnings '(cl-functions))
+
 ;; Set support for a custom.el file.
 (setq custom-file "~/.emacs.d/custom.el")
 (ignore-errors (load custom-file))
@@ -198,6 +201,7 @@
   (defconst emacs-binary-path (directory-file-name
                                (file-name-directory
                                 (executable-find "emacsclient"))))
+  :hook (before-hack-local-variables . #'direnv-update-environment)
   :config
   (add-hook 'rust-mode-hook
             (lambda ()
@@ -253,7 +257,6 @@
   (haskell-indent-offset 2)
 
   ;; set the relevant options to pass around to cabal repl, ghci and stacj.
-  ;; (haskell-process-args-cabal-repl (quote ("--ghc-option='-ferror-spans +RTS -M12G -RTS'")))
   (haskell-process-args-ghci (quote ("+RTS -M12G -RTS" "-fshow-loaded-modules")))
   (haskell-process-args-stack-ghci
    (quote
