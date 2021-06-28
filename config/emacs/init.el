@@ -236,12 +236,10 @@
 
 ;; TODO: Use lsp-mode too?
 (use-package haskell-mode
+  :hook (haskell-mode . eglot-ensure)
   :bind (:map haskell-mode-map
     ("<f8>"        . haskell-navigate-imports)
     ("C-c M-e"     . haskell-goto-first-error)
-    ("M-<down>"    . haskell-goto-next-error)
-    ("M-<up>"      . haskell-goto-prev-error)
-    ("M-<right>"   . haskell-mode-jump-to-def-or-tag)
     ("C-c C-l"     . haskell-process-load-file)
     ("C-c C-k"     . haskell-process-kill)
     ("C-c C-z"     . haskell-interactive-switch)
@@ -249,6 +247,11 @@
     ("C-c C-i"     . haskell-process-do-info)
     ("C-c C-n C-c" . haskell-process-cabal-build)
     ("C-c C-n c"   . haskell-process-cabal))
+    ("M-<down>"    . #'flymake-goto-next-error)
+    ("M-<up>"      . #'flymake-goto-prev-error)
+    ("M-<right>"   . #'xref-find-definitions)
+    ("C-c r"       . #'xref-find-references)
+    ("C-h ."       . #'eglot-help-at-point)
   :custom
   ;; I don't want errors in a separate buffer
   (haskell-interactive-popup-errors nil)

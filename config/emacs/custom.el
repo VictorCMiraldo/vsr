@@ -4,6 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(cargo-process--command-clippy "clippy")
+ '(eglot-send-changes-idle-time 5)
  '(eldoc-echo-area-prefer-doc-buffer nil)
  '(eldoc-echo-area-use-multiline-p nil)
  '(helm-minibuffer-history-key "M-p")
