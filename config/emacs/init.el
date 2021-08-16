@@ -234,7 +234,6 @@
   (interactive)
   (setq loc-stack-list ((buffer-name) . (mark)) . loc-stack-list))
 
-;; TODO: Use lsp-mode too?
 (use-package haskell-mode
   :hook (haskell-mode . eglot-ensure)
   :bind (:map haskell-mode-map
@@ -247,8 +246,8 @@
     ("C-c C-i"     . haskell-process-do-info)
     ("C-c C-n C-c" . haskell-process-cabal-build)
     ("C-c C-n c"   . haskell-process-cabal))
-    ("M-<down>"    . #'flymake-goto-next-error)
-    ("M-<up>"      . #'flymake-goto-prev-error)
+    ("C-e"         . next-error)
+    ("C-E"         . previous-error)
     ("M-<right>"   . #'xref-find-definitions)
     ("C-c r"       . #'xref-find-references)
     ("C-h ."       . #'eglot-help-at-point)
