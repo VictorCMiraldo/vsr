@@ -19,6 +19,7 @@ set nocompatible
 " contents. Use this to allow intelligent auto-indenting for each filetype,
 " and for plugins that are filetype specific.
 filetype indent plugin on
+au BufRead,BufNewFile *.tla set filetype=tlaplus
  
 " Enable syntax highlighting
 syntax on

@@ -33,8 +33,8 @@ mkdir -p "$HOME/.ssh" \
 ## installation should be done manually after the system is up and running
 ln -fs $vsr_root/config/xmonad "$HOME/.xmonad"
 
-## Link our vimrc config file
-ln -fs $vsr_root/config/vim/vimrc "$HOME/.vimrc"
+## Link our vim directory file
+ln -fs $vsr_root/config/vim "$HOME/.vim"
 
 ## Link our user directories
 ln -fs $vsr_root/config/xdg/user-dirs.dirs "$HOME/.config/user-dirs.dirs"
