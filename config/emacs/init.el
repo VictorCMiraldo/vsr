@@ -269,51 +269,49 @@
     ("C-c C-n C-c" . haskell-process-cabal-build)
     ("C-c C-n c"   . haskell-process-cabal))
   :custom
-    (evil-leader/set-key
-        ;; 'c' code
-        "c l" 'haskell-process-load-file
-        "c r" 'haskell-process-reload
-        "c K" 'haskell-process-kill)
-
     ;; I don't want errors in a separate buffer
     (haskell-interactive-popup-errors nil)
 
-  ;; Keep my code indented with 2 spaces
-  (haskell-indent-offset 2)
+    ;; sets up ormolu as our reformatter
+    (haskell-mode-stylish-haskell-path "ormolu")
 
-  ;; set the relevant options to pass around to cabal repl, ghci and stacj.
-  (haskell-process-args-ghci (quote ("+RTS -M12G -RTS" "-fshow-loaded-modules")))
-  (haskell-process-args-stack-ghci
-   (quote
-    ("--ghci-options=-fshow-loaded-modules -ferror-spans +RTS -M12G -RTS" "--allow-different-user")))
+    ;; Keep my code indented with 2 spaces
+    (haskell-indent-offset 2)
 
-  ;; Load imported modules into the interactive session
-  (haskell-process-auto-import-loaded-modules t)
+    ;; set the relevant options to pass around to cabal repl, ghci and stacj.
+    (haskell-process-args-ghci (quote ("+RTS -M12G -RTS" "-fshow-loaded-modules")))
+    (haskell-process-args-stack-ghci
+     (quote
+      ("--ghci-options=-fshow-loaded-modules -ferror-spans +RTS -M12G -RTS" "--allow-different-user")))
 
-  ;; keep a log of the underlying haskell-process
-  (haskell-process-log t)
+    ;; Load imported modules into the interactive session
+    (haskell-process-auto-import-loaded-modules t)
 
-  ;; where to find cabal
-  (haskell-process-path-cabal "cabal")
+    ;; keep a log of the underlying haskell-process
+    (haskell-process-log t)
 
-  ;; don't tell me to remove unused imports
-  (haskell-process-suggest-remove-import-lines nil)
+    ;; where to find cabal
+    (haskell-process-path-cabal "cabal")
 
-  ;; automatically decide whether to use cabal or stack depending on the project directory
-  (haskell-process-type (quote auto))
+    ;; don't tell me to remove unused imports
+    (haskell-process-suggest-remove-import-lines nil)
 
-  ;; don't process tags on save
-  (haskell-tags-on-save nil)
+    ;; automatically decide whether to use cabal or stack depending on the project directory
+    (haskell-process-type (quote auto))
 
-  ;; default literate haskell style
-  (haskell-literate-default 'tex))
+    ;; don't process tags on save
+    (haskell-tags-on-save nil)
 
-(use-package reformatter)
-(use-package ormolu
- :hook (haskell-mode . ormolu-format-on-save-mode)
- :bind
- (:map haskell-mode-map
-   ("C-c r" . ormolu-format-buffer)))
+    ;; default literate haskell style
+    (haskell-literate-default 'tex)
+  :config
+    (evil-leader/set-key
+      ;; 'c' code
+      "c l" 'haskell-process-load-file
+      "c f" 'haskell-mode-stylish-buffer
+      "c r" 'haskell-process-reload
+      "c K" 'haskell-process-kill)
+)
 
 (use-package company-ghci)
 (push 'company-ghci company-backends)
