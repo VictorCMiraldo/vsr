@@ -81,21 +81,40 @@
   (evil-leader/set-leader "<SPC>")
   (evil-leader/set-key
     ;; ']' next
-    "] e"    'next-error
+      "] e"    'next-error
+      "] b"    'next-buffer
+      "] w"    'other-window
+
     ;; '[' pref
-    "[ e"    'previous-error
+      "[ e"    'previous-error
+      "[ b"    'previous-buffer
+      "[ w"    'previouw-window
+
+    ;; 'w' window
+      "w [" 'previous-window
+      "w ]" 'other-window
+      "w f" 'delete-other-windows
+      "w k" 'delete-window
+      "w h" 'split-window-vertically
+      "w v" 'split-window-horizontally
+
     ;; 'b' buffer
-    "b B" 'switch-to-buffer
-    "b [" 'previous-buffer
-    "b ]" 'next-buffer
-    "b k" 'kill-buffer
+      "b b" 'switch-to-buffer
+      "b [" 'previous-buffer
+      "b ]" 'next-buffer
+      "b k" 'kill-buffer
+
     ;; 'c' code
-    "c d" #'xref-find-definitions
-    "c D" #'xref-find-references
+      "c d" 'xref-find-definitions
+      "c D" 'xref-find-references
+      "c a" 'align-regexp
+      "c j" 'fill-paragraph
+
     ;; 'p' project
-    "p f" 'projectile-find-file
-    "p /" 'projectile-grep
-    "p p" 'projectile-switch-project)
+      "p f" 'projectile-find-file
+      "p /" 'projectile-grep
+      "p p" 'projectile-switch-project)
+
   ;; Enable evil-leader everywhere
   (global-evil-leader-mode))
 (use-package evil-collection
@@ -574,19 +593,6 @@
 (defun prev-window ()
   (interactive)
   (other-window -1))
-
-;; * Some of my handy keys
-(bind-key* "C-a" #'align-regexp)
-(bind-key* "C-M-j" #'fill-paragraph)
-
-(bind-key* "C-." #'other-window)
-(bind-key* "C-," #'prev-window)
-
-(bind-key* "C-<left>" #'previous-buffer)
-(bind-key* "C-<right>" #'next-buffer)
-
-;; Sometimes C-x 1 is too long. :)
-(bind-key* "<f4>" #'delete-other-windows)
 
 ;; New location for backups.
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
