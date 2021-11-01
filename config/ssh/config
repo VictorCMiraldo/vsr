@@ -1,43 +1,18 @@
 ## My VPS config
-Host vps
-  HostName 89.40.14.29
-  Port 4651
+Host pirouette-ec2
+  HostName 18.188.156.180
+  Port 5916
   user victor
 
-Host vps-root
-  HostName 89.40.14.29
-  Port 4651
-  user root
-  IdentityFile /home/victor/keychain/vps/Time4VPS/root/id_rsa
+Host pirouette-ec2-root
+  HostName 18.188.156.180
+  Port 5916
+  user ubuntu
+  IdentityFile /home/victor/.ssh/pirouette-ec2-root.pem
 
 Host pizero
   HostName 192.168.2.1
   user pi
   IdentityFile /home/victor/keychain/vps/PiZero/id_rsa
 
-Host gemini
-  Hostname gemini.science.uu.nl
-  User f133012
-  IdentityFile /home/victor/keychain/vps/UU-SoftwareTech-jizo/id_rsa
-
-# Match Host jizo Exec "not ping -c 1 -W 0.4 jizo.science.uu.nl 2>/dev/null"
-#   ProxyJump gemini
-#   User victor
-#   IdentityFile /home/victor/usr/keychain/vps/UU-SoftwareTech-jizo/id_rsa
-
-Host jizo
-  ProxyJump gemini
-  Hostname jizo.science.uu.nl
-  User victor
-  IdentityFile /home/victor/keychain/vps/UU-SoftwareTech-jizo/id_rsa
-
-Host github.com-personal
-  HostName github.com
-  User git
-  IdentityFile /home/victor/.ssh/id_rsa-personal
-
-Host remarkable
-  HostName reMarkable
-  User root
-  IdentityFile /home/victor/.ssh/id_rsa_remarkable
 

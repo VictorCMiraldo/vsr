@@ -30,6 +30,10 @@ fi
 xmodmap -e "clear lock"
 xmodmap -e "keycode 66 = Escape Caps_Lock"
 
+# Make Num_Lock into Escape; mapping Shift+Num_Lock to the traditional behavior
+xmodmap -e "clear mod2"
+xmodmap -e "keycode 77 = Escape Num_Lock"
+
 # Swap Left Alt and Left Control
 xmodmap -e "clear mod1"
 xmodmap -e "clear control"

@@ -65,9 +65,6 @@
                    evil-emacs-state-map))
       (define-key (eval map) (kbd "C-.") nil)))
   (global-set-key (kbd "<backtab>") #'evil-shift-left-line)
-  :bind (:map evil-motion-state-map
-          ("[" . evil-backward-paragraph)
-          ("]" . evil-forward-paragraph))
   :custom
   ;; Undo with undo-tree
   (evil-undo-system 'undo-tree)
@@ -77,10 +74,35 @@
 
   ;; And I want > and < to shift lines one column at a time
   (evil-shift-width 1))
+(use-package evil-leader
+  :after evil
+  :ensure t
+  :config
+  (evil-leader/set-leader "<SPC>")
+  (evil-leader/set-key
+    ;; ']' next
+    "] e"    'next-error
+    ;; '[' pref
+    "[ e"    'previous-error
+    ;; 'b' buffer
+    "b B" 'switch-to-buffer
+    "b [" 'previous-buffer
+    "b ]" 'next-buffer
+    "b k" 'kill-buffer
+    ;; 'c' code
+    "c d" #'xref-find-definitions
+    "c D" #'xref-find-references
+    ;; 'p' project
+    "p f" 'projectile-find-file
+    "p /" 'projectile-grep
+    "p p" 'projectile-switch-project)
+  ;; Enable evil-leader everywhere
+  (global-evil-leader-mode))
 (use-package evil-collection
   :after evil
   :ensure t
   :config
+  (setq evil-collection-want-unimpaired-p nil)
   (evil-collection-init))
 (use-package evil-surround
   :config (global-evil-surround-mode 1))
@@ -246,14 +268,15 @@
     ("C-c C-i"     . haskell-process-do-info)
     ("C-c C-n C-c" . haskell-process-cabal-build)
     ("C-c C-n c"   . haskell-process-cabal))
-    ("C-e"         . next-error)
-    ("C-E"         . previous-error)
-    ("M-<right>"   . #'xref-find-definitions)
-    ("C-c r"       . #'xref-find-references)
-    ("C-h ."       . #'eglot-help-at-point)
   :custom
-  ;; I don't want errors in a separate buffer
-  (haskell-interactive-popup-errors nil)
+    (evil-leader/set-key
+        ;; 'c' code
+        "c l" 'haskell-process-load-file
+        "c r" 'haskell-process-reload
+        "c K" 'haskell-process-kill)
+
+    ;; I don't want errors in a separate buffer
+    (haskell-interactive-popup-errors nil)
 
   ;; Keep my code indented with 2 spaces
   (haskell-indent-offset 2)
@@ -284,6 +307,13 @@
 
   ;; default literate haskell style
   (haskell-literate-default 'tex))
+
+(use-package reformatter)
+(use-package ormolu
+ :hook (haskell-mode . ormolu-format-on-save-mode)
+ :bind
+ (:map haskell-mode-map
+   ("C-c r" . ormolu-format-buffer)))
 
 (use-package company-ghci)
 (push 'company-ghci company-backends)

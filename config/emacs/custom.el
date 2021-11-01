@@ -4,9 +4,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(cargo-process--command-clippy "clippy")
- '(eglot-send-changes-idle-time 5)
+ '(eglot-send-changes-idle-time 5 nil nil "Customized with use-package eglot")
  '(eldoc-echo-area-prefer-doc-buffer nil)
  '(eldoc-echo-area-use-multiline-p nil)
+ '(haskell-process-args-ghci '("+RTS -M12G -RTS" "-fshow-loaded-modules" "-itest") nil nil "Customized with use-package haskell-mode")
  '(helm-minibuffer-history-key "M-p")
  '(indent-tabs-mode nil)
  '(olivetti-body-width 80)
