@@ -88,10 +88,10 @@
     ;; '[' pref
       "[ e"    'previous-error
       "[ b"    'previous-buffer
-      "[ w"    'previouw-window
+      "[ w"    'prev-window
 
     ;; 'w' window
-      "w [" 'previous-window
+      "w [" 'prev-window
       "w ]" 'other-window
       "w f" 'delete-other-windows
       "w k" 'delete-window
@@ -266,6 +266,12 @@
   (add-hook 'git-commit-mode-hook #'patch-direnv-environment)
   (add-hook 'magit-status-mode-hook #'patch-direnv-environment))
 
+;;;;;;;;;;;;
+;; Racket ;;
+;;;;;;;;;;;;
+
+;; (use-package racket-mode)
+
 ;;;;;;;;;;;;;
 ;; Haskell ;;
 ;;;;;;;;;;;;;
@@ -346,6 +352,7 @@
 ;; Setting up unicode-fonts
 (use-package persistent-soft)
 (use-package unicode-fonts
+  :demand
   :config (unicode-fonts-setup))
 
 ;;;;;;;;;;
@@ -380,7 +387,7 @@
     (define-key evil-normal-state-map [mouse-2]
       'agda2-goto-definition-mouse)))
 
- (setq agda2-fontset-name "DejaVu Sans Mono 13")
+ ;; (setq agda2-fontset-name "DejaVu Sans Mono")
  (setq agda2-program-args nil)
  (setq agda2-program-name "agda"))
 
@@ -586,8 +593,22 @@
 
 (load-theme 'zenburn t)
 
-;; * Emacs Parens
-(show-paren-mode 1)
+;; (use-package bespoke-themes
+;;   :straight (:host github :repo "mclear-tools/bespoke-themes" :branch "main")
+;;   :config
+;;   ;; Set evil cursor colors
+;;   (setq bespoke-set-evil-cursors t)
+;;   ;; Set use of italics
+;;   (setq bespoke-set-italic-comments t
+;;         bespoke-set-italic-keywords t)
+;;   ;; Set variable pitch
+;;   (setq bespoke-set-variable-pitch t)
+;;   ;; Set initial theme variant
+;;   (setq bespoke-set-theme 'dark)
+;;   ;; Load theme
+;;   (load-theme 'bespoke t)) 
+;; ;; * Emacs Parens
+;; (show-paren-mode 1)
 
 ;; Easy to move around windows
 (defun prev-window ()

@@ -11,7 +11,7 @@
  '(helm-minibuffer-history-key "M-p")
  '(indent-tabs-mode nil)
  '(olivetti-body-width 80)
- '(package-selected-packages '(evil-magit eglot use-package))
+ '(package-selected-packages '(racket-mode evil-magit eglot use-package))
  '(tab-width 2)
  '(unicode-fonts-block-font-mapping
    '(("Aegean Numbers"
