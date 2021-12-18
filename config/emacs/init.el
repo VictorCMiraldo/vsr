@@ -1,40 +1,42 @@
-;; So I just learned about use-package, then I learned
-;; about https://github.com/alhassy/emacs.d; this really meant
-;; I had to revamp my configuration. :)
+;; Bootstraps straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-;; Yes, I know cl is deprecated, but I'm not even using it explicitely...
-(setq byte-compile-warnings '(cl-functions))
+;; Emacs 28.1 provides this as standard, I'm still running 27.1, so I need to define it.
+;; (string-replace FROMSTRING TOSTRING INSTRING)
+(defun string-replace (old new s)
+  (replace-regexp-in-string (regexp-quote old) new s t t))
 
-;; Set support for a custom.el file.
-(setq custom-file "~/.emacs.d/custom.el")
-(ignore-errors (load custom-file))
+;; Bring in use-package through straight, so we can preserve most of the config
+(straight-use-package 'use-package)
 
-;; Make all commands of the "package" module present.
-(require 'package)
-
-;; Internet repositories for new packages.
-(setq package-archives '(("org"       . "http://orgmode.org/elpa/")
-                         ("gnu"       . "http://elpa.gnu.org/packages/")
-                         ("melpa"     . "http://melpa.org/packages/")))
-
-;; Actually get "package" to work.
-(package-initialize)
-;; (package-refresh-contents) ;; I actually don't want to refresh contents on every init
-
-;; Set up "use-package" to be installed at startup if its not yet installed
-;; and tell it to always install packages we require.
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-(require 'use-package)
-(setq use-package-always-ensure t)
+;; We don't want a poluted mode line
+(use-package diminish :straight t)
 
 ;; Provides a nice centered text for writing
 (use-package olivetti
-  :hook (markdown . olivetti-mode))
+  :straight t
+  :hook (markdown . olivetti-mode)
+  :custom
+    (olivetti-body-width 110))
+
+(use-package markdown-mode
+  :straight t)
 
 ;; Making it easier to discover Emacs key presses.
 ;; This is actually pretty cool.
 (use-package which-key
+  :straight t
   :defer 5
   :diminish
   :config (which-key-mode)
@@ -43,19 +45,24 @@
 
 ;; Can't survive without magit or timemachine
 (use-package git-timemachine
+  :straight t
   :defer 5)
 (use-package magit
+  :straight t
   :commands magit
   :config (global-set-key (kbd "C-x g") 'magit-status))
 
 (use-package undo-tree
+  :straight t
   :config (global-undo-tree-mode))
 
 ;; Set up evil mode
 (use-package evil
+  :straight t
   :init
   (setq evil-want-keybinding nil)
   :config
+  (diminish 'undo-tree-mode)
   (evil-mode 1)
   ;; evil-mode binds C-. I want it for changing buffers
   (eval-after-load "evil-maps"
@@ -75,8 +82,8 @@
   ;; And I want > and < to shift lines one column at a time
   (evil-shift-width 1))
 (use-package evil-leader
+  :straight t
   :after evil
-  :ensure t
   :config
   (evil-leader/set-leader "<SPC>")
   (evil-leader/set-key
@@ -118,22 +125,21 @@
   ;; Enable evil-leader everywhere
   (global-evil-leader-mode))
 (use-package evil-collection
+  :straight t
   :after evil
-  :ensure t
   :config
   (setq evil-collection-want-unimpaired-p nil)
   (evil-collection-init))
 (use-package evil-surround
+  :straight t
   :config (global-evil-surround-mode 1))
-(use-package powerline)
-(use-package powerline-evil
-  :config (powerline-evil-center-color-theme))
 
 ;; Set-up helm
 (use-package helm
- :diminish
- :init (helm-mode t)
- :bind (("M-x"     . helm-M-x)
+  :straight t
+  :diminish
+  :init (helm-mode t)
+  :bind (("M-x"     . helm-M-x)
         ("C-x C-f" . helm-find-files)
         ("C-x b"   . helm-mini)     ;; See buffers & recent files; more useful.
         ("C-x r b" . helm-filtered-bookmarks)
@@ -147,12 +153,13 @@
         ;; Let's keep tab-completetion anyhow.
         ("TAB"   . helm-execute-persistent-action)
         ("<tab>" . helm-execute-persistent-action))
- :custom
- ;; I don't want helm involved with code completion
- (helm-mode-handle-completion-in-region nil))
+  :custom
+  ;; I don't want helm involved with code completion
+  (helm-mode-handle-completion-in-region nil))
 
 ;; Enable fancy autocomplete from company
 (use-package company
+  :straight t
   :diminish
   :config
   (global-company-mode)
@@ -201,76 +208,60 @@
 
 ;; Projectile
 (use-package projectile
+  :diminish
+  :straight t
   :commands projectile-project-root
   :bind-keymap
-  ("C-c p" . projectile-command-map)
+    ("C-c p" . projectile-command-map)
   :config
-  (projectile-mode t)
-  (helm-projectile-on) ;; enable helm-projectile
-  (defun string-empty-p (str) (string= "" str)))
+      (projectile-mode t)
+      (helm-projectile-on) ;; enable helm-projectile
+      (defun string-empty-p (str) (string= "" str)))
 
 ;; Helm-projectile is great for opening files quickly,
 ;; tell it to be loaded whenever helm-projectile-on is called.
 (use-package helm-projectile
+  :straight t
   :commands helm-projectile-on)
 
+(use-package linum-relative
+  :diminish
+  :straight t
+  :custom
+  ;; use relative numbers everywhere
+  (linum-relative-global-mode t)
+  ;; Make linum show the actual line on the current line
+  (linum-relative-current-symbol ""))
 
-;; Fancy snippets and very good company support.
-(use-package yasnippet
-  :diminish yas-minor-mode
-  :bind (("C-c y d" . yas-load-directory)
-         ("C-c y i" . yas-insert-snippet)
-         ("C-c y f" . yas-visit-snippet-file)
-         ("C-c y n" . yas-new-snippet)
-         ("C-c y t" . yas-tryout-snippet)
-         ("C-c y l" . yas-describe-tables)
-         ("C-c y g" . yas/global-mode)
-         ("C-c y m" . yas/minor-mode)
-         ("C-c y r" . yas-reload-all)
-         ("C-c y x" . yas-expand))
-  :bind (:map yas-keymap
-              ("C-i" . yas-next-field-or-maybe-expand))
-  :mode ("/\\.emacs\\.d/snippets/" . snippet-mode)
+;;;;;;;;;;;;;;;;;;;;;;;;
+;; Direnv Integration ;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package envrc
+  :diminish
+  :straight t
+  :demand
   :config
-  (yas-global-mode 1))
+  (envrc-global-mode))
 
-;; direnv is nice to have. I came across needing it a DFINITY
-;; and might just bring it into my personal machine.
-;; Thanks John W. for the many snippets! :)
-(use-package direnv
-  :init
-  (defconst emacs-binary-path (directory-file-name
-                               (file-name-directory
-                                (executable-find "emacsclient"))))
-  :hook (before-hack-local-variables . #'direnv-update-environment)
+;;;;;;;;;;;;;;;;;;;;;
+;; Language Server ;;
+;;;;;;;;;;;;;;;;;;;;;
+
+(use-package eglot
+  :straight t
   :config
-  (add-hook 'rust-mode-hook
-            (lambda ()
-              (add-hook 'post-command-hook #'direnv--maybe-update-environment)
-              (direnv-update-environment default-directory)))
+  (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))
+  (diminish 'eldoc-mode)
+  :custom
+  ;; don't ask for closing the server connection,
+  (eglot-autoshutdown t)
 
-  (add-hook 'haskell-mode-hook
-            (lambda ()
-              (add-hook 'post-command-hook #'direnv--maybe-update-environment)
-              (direnv-update-environment default-directory)))
-
-
-  (defun patch-direnv-environment (&rest _args)
-    (setenv "PATH" (concat emacs-binary-path ":" (getenv "PATH")))
-    (setq exec-path (cons (file-name-as-directory emacs-binary-path)
-                          exec-path)))
-
-  (advice-add 'direnv-update-directory-environment
-              :after #'patch-direnv-environment)
-
-  (add-hook 'git-commit-mode-hook #'patch-direnv-environment)
-  (add-hook 'magit-status-mode-hook #'patch-direnv-environment))
-
-;;;;;;;;;;;;
-;; Racket ;;
-;;;;;;;;;;;;
-
-;; (use-package racket-mode)
+  ;; wait 5s before sending changes. I often find the default of 0.5s to quick
+  ;; and makes my emacs a bit slower.
+  (eglot-send-changes-idle-time 5)
+  (eldoc-echo-area-prefer-doc-buffer t)
+  (eldoc-echo-area-use-multiline-p 1))
 
 ;;;;;;;;;;;;;
 ;; Haskell ;;
@@ -282,6 +273,7 @@
   (setq loc-stack-list ((buffer-name) . (mark)) . loc-stack-list))
 
 (use-package haskell-mode
+  :straight t
   :hook (haskell-mode . eglot-ensure)
   :bind (:map haskell-mode-map
     ("<f8>"        . haskell-navigate-imports)
@@ -293,6 +285,9 @@
     ("C-c C-i"     . haskell-process-do-info)
     ("C-c C-n C-c" . haskell-process-cabal-build)
     ("C-c C-n c"   . haskell-process-cabal))
+  :custom-face
+    (haskell-keyword-face ((t (:inherit font-lock-keyword-face :weight semi-bold))))
+    (haskell-operator-face ((t (:inherit font-lock-keyword-face))))
   :custom
     ;; I don't want errors in a separate buffer
     (haskell-interactive-popup-errors nil)
@@ -329,6 +324,28 @@
 
     ;; default literate haskell style
     (haskell-literate-default 'tex)
+
+    ;; use some unicode symbols for us
+    (haskell-font-lock-symbols t)
+    (haskell-font-lock-symbols-alist
+     '(("\\" . "λ")
+       ("->" . "→")
+       ("<-" . "←")
+       ("=>" . "⇒")
+       ("==" . "≡")
+       ("/=" . "≢")
+       (">=" . "≥")
+       ("<=" . "≤")
+       ("!!" . "‼")
+       ("&&" . "∧")
+       ("||" . "∨")
+       ("~>" . "⇝")
+       ("<~" . "⇜")
+       ("><" . "⋈")
+       ("-<" . "↢")
+       ("::" . "∷")
+       ("." "∘" haskell-font-lock-dot-is-not-composition)
+       ("forall" . "∀")))
   :config
     (evil-leader/set-key
       ;; 'c' code
@@ -338,153 +355,40 @@
       "c K" 'haskell-process-kill)
 )
 
-(use-package company-ghci)
-(push 'company-ghci company-backends)
-
-(use-package linum-relative
-  :custom
-  ;; use relative numbers everywhere
-  (linum-relative-global-mode t)
-
-  ;; Make linum show the actual line on the current line
-  (linum-relative-current-symbol ""))
-
-;; Setting up unicode-fonts
-(use-package persistent-soft)
-(use-package unicode-fonts
-  :demand
-  :config (unicode-fonts-setup))
-
 ;;;;;;;;;;
 ;; Agda ;;
 ;;;;;;;;;;
 
-;; first declare where it is, then, if it exists loads everything.
-;; TODO: Ask John how to do this with use-package
-;;
-;; (use-package agda-mode
-;;    :no-require
-;;    :init (load-file ...)
-;;    :load-path agda-mode-path)
-;;
-;; macro-step --> place cursos on '(' M-x macro exp
-;;
 (setq agda-mode-path
   (let ((coding-system-for-read 'utf-8))
         (shell-command-to-string "agda-mode locate")))
 
 (when (file-exists-p agda-mode-path)
-  (load-file agda-mode-path)
-  (eval-after-load 'agda2-mode '(progn
-    (define-key agda2-mode-map (kbd "M-<right>")
-      'agda2-goto-definition-keyboard)
-    (define-key agda2-mode-map (kbd "M-<left>")
-      'agda2-go-back)
-    (define-key agda2-mode-map (kbd "M-<up>")
-      'agda2-previous-goal)
-    (define-key agda2-mode-map (kbd "M-<down>")
-      'agda2-next-goal)
-    (define-key evil-normal-state-map [mouse-2]
-      'agda2-goto-definition-mouse)))
-
- ;; (setq agda2-fontset-name "DejaVu Sans Mono")
- (setq agda2-program-args nil)
- (setq agda2-program-name "agda"))
-
-;;;;;;;;;;
-;; Rust ;;
-;;;;;;;;;;
-
-(defun my-rust-project-find-function (dir)
-  (let ((root (locate-dominating-file dir "Cargo.toml")))
-        (and root (cons 'transient root))))
-
-(use-package eglot
-  :config
-  (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))
-  :custom
-  ;; don't ask for closing the server connection,
-  (eglot-autoshutdown t)
-
-  ;; wait 1s before sending changes. I often find the default of 0.5s to quick
-  ;; and makes my emacs a bit slower.
-  (eglot-send-changes-idle-time 1))
-
-;; The default Cargo Run window is read only, that's bad since I can't send
-;; any input.
-;;
-;; https://emacs.stackexchange.com/questions/51156/cargo-process-does-not-accept-user-input
-;;
-(defun rust-compile-send-input ()
-  "Read string from minibuffer and send it to the rust process of the current buffer."
-  (interactive)
-  (let ((input (read-from-minibuffer "Send input to rust process: "))
-        (proc (get-buffer-process "*Cargo Run*"))
-        (inhibit-read-only t))
-    (process-send-string proc (concat input "\n"))))
-
-;; Origami plays well with evil mode. In fact, evil
-;; already has predefined commands:
-;;  za - toggle fold
-;;  zc - close
-;;  zm - close all
-;;  zr - open all
-;;  zo - open
-;;
-(use-package origami
-  :hook (rust-mode . origami-mode)
-  :init
-  ;; We need to tell origami how to work under rust mode
-  (with-eval-after-load "origami"
-    (add-to-list 'origami-parser-alist '(rust-mode . origami-c-style-parser)))
-  :custom
-  ;; Highlights the line the fold starts on
-  (origami-show-fold-header t))
-
-(use-package cargo
-  :hook (rust-mode . cargo-minor-mode)
-  :bind (:map cargo-minor-mode-map ("C-c C-c C-y" . cargo-process-clippy))
-  :bind (:map cargo-minor-mode-map ("C-c i"       . rust-compile-send-input))
-  :config
-  ;; Cargo mode sets "C-c C-c C-l" to cargo-process-clean. Its way to close to
-  ;; C-C C-C C-k's process-check for my taste. I can do a clean on the terminal when needed.
-  ;; (global-unset-key (kbd "C-c C-c C-l")) apparently, this global unsert key didn't work... let me try redefining the function entirely! :)
-  (defun cargo-process-clean ()
-    (interactive)
-    (cargo-process--start "Check" cargo-process--command-check))
-
-  (defadvice cargo-process-clippy
-      (around my-cargo-process-clippy activate)
-    (let ((cargo-process--command-flags (concat cargo-process--command-flags
-                                                " --tests -- -D clippy::all")))
-      ad-do-it)))
-
-(use-package rust-mode
-  :mode "\\.rs\\'"
-  :hook (rust-mode . eglot-ensure)
-  :config
-  ;; Disable flymake's intrusive settings
-  (setq flymake-no-changes-timeout 'nil)
-  (setq flymake-start-check-on-newline 'nil)
-
-  ;; Set up some hotkeys
-  (add-hook 'rust-mode-hook
-            #'(lambda ()
-                (bind-key "M-<down>"   #'flymake-goto-next-error rust-mode-map)
-                (bind-key "M-<up>"     #'flymake-goto-prev-error rust-mode-map)
-                (bind-key "M-<right>"  #'xref-find-definitions rust-mode-map)
-                (bind-key "C-c r"      #'xref-find-references rust-mode-map)
-                (bind-key "C-c h"      #'eglot-help-at-point rust-mode-map)
-                (bind-key "C-c C-c v" #'(lambda () (interactive) (shell-command "rustdocs std")) rust-mode-map)))
-
-
-  ;; eglot uses project.el, and requires some special configuration to find
-  ;; the root of the current project. Not ideal, but gets the job done.
-  (with-eval-after-load 'project
-    (add-to-list 'project-find-functions 'my-rust-project-find-function))
-
-  :custom
-  (rust-format-on-save t))
+  (use-package agda-mode
+    :no-require
+    :init (load-file agda-mode-path)
+    :bind 
+      (:map agda2-mode-map
+        ("M-<right>"   . agda2-goto-definition)
+        ("M-<left>"    . agda2-go-back)
+        ("M-<up>"      . agda2-previous-goal)
+        ("M-<down>"    . agda2-next-goal)
+       :map evil-normal-state-map
+        ([mouse-2]     . agda2-goto-definition-mouse))
+    :custom
+       ;; use font-lock for agda2; maybe one day we sit and carefully customize things.
+       (agda2-highlight-face-groups 'default-faces)
+       (agda2-program-args nil)
+       (agda2-program-name "agda")
+    :config
+      (evil-leader/set-key
+        ;; 'c' code
+        "c l" 'agda2-load
+        "c d" 'agda2-goto-definition
+        "c b" 'agda2-go-back
+        "c g" 'agda2-next-goal)
+       ;; (setq agda2-fontset-name "DejaVu Sans Mono")
+))
 
 
 ;;;;;;;;;;;
@@ -492,6 +396,7 @@
 ;;;;;;;;;;;
 
 (use-package reftex
+  :straight t
   :hook (LaTeX-mode . turn-on-reftex)
   :custom
   ;; uses reftex to supply arguments to \ref, \cite, etc...
@@ -524,6 +429,7 @@
   (reftex-try-all-extensions t))
 
 (use-package auctex
+  :straight t
   :mode (("\\.lhs\\'" . LaTeX-mode)
          ("\\.tex\\'" . LaTeX-mode))
   :config
@@ -546,13 +452,6 @@
     ("tex" "sty" "cls" "ltx" "texi" "txi" "texinfo" "dtx" "lhs")))
   (TeX-one-master "\\.\\(texi?\\|dtx\\|lhs\\)$"))
 
-;;;;;;;;;;
-;; Ligo ;;
-;;;;;;;;;;
-
-(use-package ligo-mode
-  :mode ("\\.mligo\\'" . ligo-caml-mode))
-
 ;;;;;;;;;;;;;;;;;
 ;; Indentation ;;
 ;;;;;;;;;;;;;;;;;
@@ -564,6 +463,9 @@
 
 ;; Make backspace properly erase as many spaces as a tab
 (setq backward-delete-char-untabify-method 'hungry)
+
+;; A tab is two spaces
+(setq tab-width 2)
 
 ;; standard indent is two spaces for me
 (setq standard-indent 2)
@@ -582,81 +484,51 @@
   '((tab-mark 9 [124 9] [92 9]))) ; 124 is the ascii ID for '\|'
 (global-whitespace-mode)
 
+;;;;;;;;;;;;
+;; Ricing ;;
+;;;;;;;;;;;;
+
+;; Dim inactive windows
+(use-package dimmer
+  :diminish
+  :straight (:host github :repo "gonewest818/dimmer.el")
+  :hook (after-init . dimmer-mode)
+  :custom
+    (dimmer-fraction 0.5)
+    (dimmer-adjustment-mode :foreground)
+    (dimmer-use-colorspace :rgb)
+    (dimmer-watch-frame-focus-events nil)
+    (dimmer-buffer-exclusion-regexps
+       '("^ \\*transient\\*$" "^ \\*which-key\\*$" "^ \\*Minibuf-[0-9]+\\*$" "^ \\*Echo.*\\*$" ".*\\*eldoc\\*.*"))
+  :config
+    (dimmer-configure-which-key)
+    (dimmer-configure-magit)
+    (dimmer-configure-helm)
+    (dimmer-configure-posframe))
+
+(use-package doom-themes
+  :straight t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-nord t)
+
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config))
+
+(use-package powerline
+  :straight t
+)
+
+(use-package airline-themes
+  :straight t
+  :config
+  (load-theme 'airline-base16_nord t))
 
 ;;;;;;;;;;;;;;;;;;;
-;; Global Config ;;
+;; Final Details ;;
 ;;;;;;;;;;;;;;;;;;;
-
-;; Load my modified zenburn version
-(setq custom-safe-themes '("4528fb576178303ee89888e8126449341d463001cb38abe0015541eb798d8a23" "7a4efa993973000e5872099a3c24c310b8bb2568b70f3b9d53675e6edf1f3ce4" default))
-(setq custom-theme-directory "~/.emacs.d/themes/")
-
-(load-theme 'zenburn t)
-
-;; (use-package bespoke-themes
-;;   :straight (:host github :repo "mclear-tools/bespoke-themes" :branch "main")
-;;   :config
-;;   ;; Set evil cursor colors
-;;   (setq bespoke-set-evil-cursors t)
-;;   ;; Set use of italics
-;;   (setq bespoke-set-italic-comments t
-;;         bespoke-set-italic-keywords t)
-;;   ;; Set variable pitch
-;;   (setq bespoke-set-variable-pitch t)
-;;   ;; Set initial theme variant
-;;   (setq bespoke-set-theme 'dark)
-;;   ;; Load theme
-;;   (load-theme 'bespoke t)) 
-;; ;; * Emacs Parens
-;; (show-paren-mode 1)
-
-;; Easy to move around windows
-(defun prev-window ()
-  (interactive)
-  (other-window -1))
-
-;; New location for backups.
-(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-
-;; Silently delete execess backup versions
-(setq delete-old-versions t)
-
-;; Only keep the last 1000 backups of a file.
-(setq kept-old-versions 10)
-
-;; Even version controlled files get to be backed up.
-(setq vc-make-backup-files t)
-
-;; Use version numbers for backup files.
-(setq version-control t)
-
-;; Make it very easy to see the line with the cursor.
-(global-hl-line-mode t)
-
-;; Delete trailing whitespaces on saving
-(add-hook 'write-file-hooks 'delete-trailing-whitespace)
-
-;; No toolbar, please
-(tool-bar-mode -1)
-
-;; line numbers everywhere
-(global-linum-mode t)
-(linum-relative-toggle)
-
-;; Show the column number on my powerline
-(column-number-mode 1)
-
-;; Don't show startup screen
-(setq inhibit-startup-screen t)
-
-;; Tunning lsp-mode according to
-;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-
-;; Don't run GC all the time by enabling emacs to use ~100mb if memory
-(setq gc-cons-threshold 100000000)
-
-;; Enable meacs to read more bytes from processes
-(setq read-process-output-max (* 1024 1024)) ;; 1mb
 
 ;; Some ispell configuration
 ;;
@@ -680,13 +552,41 @@
 (setq uniquify-separator "/"               ;; The separator in buffer names.
       uniquify-buffer-name-style 'forward) ;; names/in/this/style
 
-;; Set up a larger font at my personal machine
-(defun my-inc-fontsize ()
-  (set-face-attribute 'default nil
-                      :height
-                      (+ (face-attribute 'default :height)
-                         30)))
+;; Set support for a custom.el file.
+(setq custom-file "~/.emacs.d/custom.el")
+(ignore-errors (load custom-file))
 
-(when (string= system-name "Garlic")
-  (progn (message "%s" "Setting larger font for Garlic")
-         (my-inc-fontsize)))
+;; Easy to move around windows
+(defun prev-window ()
+  (interactive)
+  (other-window -1))
+
+;; New location for backups.
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+
+;; Silently delete execess backup versions
+(setq delete-old-versions t)
+
+;; Only keep the last 1000 backups of a file.
+(setq kept-old-versions 10)
+
+;; Even version controlled files get to be backed up.
+(setq vc-make-backup-files t)
+
+;; Follow symlinks
+(setq vc-follow-symlinks t)
+
+;; Use version numbers for backup files.
+(setq version-control t)
+
+;; Make it very easy to see the line with the cursor.
+(global-hl-line-mode t)
+
+;; Delete trailing whitespaces on saving
+(add-hook 'write-file-hooks 'delete-trailing-whitespace)
+
+;; line numbers everywhere
+(global-linum-mode t)
+(linum-relative-toggle)
+
+
