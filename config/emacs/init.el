@@ -251,17 +251,24 @@
 (use-package eglot
   :straight t
   :config
-  (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))
-  (diminish 'eldoc-mode)
+    (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))
+    (diminish 'eldoc-mode)
   :custom
-  ;; don't ask for closing the server connection,
-  (eglot-autoshutdown t)
+    ;; don't ask for closing the server connection,
+    (eglot-autoshutdown t)
 
-  ;; wait 5s before sending changes. I often find the default of 0.5s to quick
-  ;; and makes my emacs a bit slower.
-  (eglot-send-changes-idle-time 5)
-  (eldoc-echo-area-prefer-doc-buffer t)
-  (eldoc-echo-area-use-multiline-p 1))
+    ;; wait 5s before sending changes. I often find the default of 0.5s to quick
+    ;; and makes my emacs a bit slower.
+    (eglot-send-changes-idle-time 5)
+    (eldoc-echo-area-prefer-doc-buffer t)
+    (eldoc-echo-area-use-multiline-p 1)
+  :config
+    (evil-leader/set-key
+      ;; Redefine next-error to use flymake's
+      "] e" 'flymake-goto-next-error
+      "e ]" 'flymake-goto-next-error
+      "e [" 'flymake-goto-prev-error
+      "[ e" 'flymake-goto-prev-error))
 
 ;;;;;;;;;;;;;
 ;; Haskell ;;
@@ -286,7 +293,7 @@
     ("C-c C-n C-c" . haskell-process-cabal-build)
     ("C-c C-n c"   . haskell-process-cabal))
   :custom-face
-    (haskell-keyword-face ((t (:inherit font-lock-keyword-face :weight semi-bold))))
+    (haskell-keyword-face ((t (:inherit font-lock-keyword-face))))
     (haskell-operator-face ((t (:inherit font-lock-keyword-face))))
   :custom
     ;; I don't want errors in a separate buffer
@@ -494,7 +501,7 @@
   :straight (:host github :repo "gonewest818/dimmer.el")
   :hook (after-init . dimmer-mode)
   :custom
-    (dimmer-fraction 0.5)
+    (dimmer-fraction 0.2)
     (dimmer-adjustment-mode :foreground)
     (dimmer-use-colorspace :rgb)
     (dimmer-watch-frame-focus-events nil)
