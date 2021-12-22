@@ -530,6 +530,8 @@
 
 (use-package airline-themes
   :straight t
+  :custom
+  (airline-helm-colors t)
   :config
   (load-theme 'airline-base16_nord t))
 
@@ -595,5 +597,4 @@
 ;; line numbers everywhere
 (global-linum-mode t)
 (linum-relative-toggle)
-
 
