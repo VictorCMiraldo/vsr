@@ -111,6 +111,9 @@
       "b ]" 'next-buffer
       "b k" 'kill-buffer
 
+    ;; 'x' execute
+      "x d" 'dired
+
     ;; 'c' code
       "c d" 'xref-find-definitions
       "c D" 'xref-find-references
@@ -156,6 +159,7 @@
   :custom
   ;; I don't want helm involved with code completion
   (helm-mode-handle-completion-in-region nil))
+
 
 ;; Enable fancy autocomplete from company
 (use-package company
@@ -281,7 +285,7 @@
 
 (use-package haskell-mode
   :straight t
-  :hook (haskell-mode . eglot-ensure)
+  ;; :hook (haskell-mode . eglot-ensure)
   :bind (:map haskell-mode-map
     ("<f8>"        . haskell-navigate-imports)
     ("C-c M-e"     . haskell-goto-first-error)
@@ -359,7 +363,8 @@
       "c l" 'haskell-process-load-file
       "c f" 'haskell-mode-stylish-buffer
       "c r" 'haskell-process-reload
-      "c K" 'haskell-process-kill)
+      "c K" 'haskell-process-kill
+      "c s" 'eglot)
 )
 
 ;;;;;;;;;;
@@ -373,7 +378,14 @@
 (when (file-exists-p agda-mode-path)
   (use-package agda-mode
     :no-require
-    :init (load-file agda-mode-path)
+    :init 
+      (load-file agda-mode-path)
+      (evil-leader/set-key
+        ;; 'c' code
+        "c l" 'agda2-load
+        "c d" 'agda2-goto-definition
+        "c b" 'agda2-go-back
+        "c g" 'agda2-next-goal)
     :bind 
       (:map agda2-mode-map
         ("M-<right>"   . agda2-goto-definition)
@@ -387,14 +399,6 @@
        (agda2-highlight-face-groups 'default-faces)
        (agda2-program-args nil)
        (agda2-program-name "agda")
-    :config
-      (evil-leader/set-key
-        ;; 'c' code
-        "c l" 'agda2-load
-        "c d" 'agda2-goto-definition
-        "c b" 'agda2-go-back
-        "c g" 'agda2-next-goal)
-       ;; (setq agda2-fontset-name "DejaVu Sans Mono")
 ))
 
 
@@ -490,6 +494,41 @@
 (setq whitespace-display-mappings
   '((tab-mark 9 [124 9] [92 9]))) ; 124 is the ascii ID for '\|'
 (global-whitespace-mode)
+
+;;;;;;;;;;;
+;; Dired ;;
+;;;;;;;;;;;
+
+(use-package dired-x
+  :straight (:type built-in)
+  :init
+    (add-hook 'dired-mode-hook (lambda () (dired-omit-mode 1)))
+  :custom
+    (dired-omit-files "^\\...+$"))
+
+(use-package dired-sidebar
+  :straight t
+  :commands (dired-sidebar-toggle-sidebar)
+  :init
+    (evil-leader/set-key "d" 'dired-sidebar-toggle-sidebar)
+    (add-hook 'dired-sidebar-mode-hook
+              (lambda ()
+                (unless (file-remote-p default-directory)
+                  (auto-revert-mode))))
+  :custom
+    (dired-sidebar-subtree-line-prefix "__")
+  :config
+   (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+   (push 'rotate-windows dired-sidebar-toggle-hidden-commands))
+
+(use-package all-the-icons-dired
+  :straight (:host github :repo "jtbm37/all-the-icons-dired"))
+
+(use-package all-the-icons
+  :straight t
+  :if (display-graphic-p)
+  :hook (dired-mode . all-the-icons-dired-mode))
+
 
 ;;;;;;;;;;;;
 ;; Ricing ;;
