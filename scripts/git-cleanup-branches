@@ -1,0 +1,42 @@
+#! /bin/bash
+set -euo pipefail
+
+pre="pre.branches" # $(mktemp)
+post="post.branches" # $(mktemp)
+
+echo "# Delete lines of branches containing branches that you would" > $post
+echo "# like deleted, then save and quit." >> $post
+echo "# You cannot delete the current branch, marked with an *" >> $post
+echo "# There will be an extra interactive confirmation step." >> $post
+
+git branch -a --no-color > $pre
+cat $pre >> $post
+vim $post
+
+# We can't delete the current branch, since its diff would contain '*',
+# which we deliberately filter out.
+for b in $(diff $pre $post | grep "^<   " | sed 's/^<   //'); do
+  undecided=true
+  cancelled=false
+  while $undecided; do
+    echo "Deleting: $b"
+    read -p "To delete, press Enter; or (c)ancel or (a)bort:" ans
+    case $ans in
+      "") undecided=false;;
+      c|C) undecided=false; cancelled=true;;
+      a|A) echo "Aborting operation"; exit 1;;
+      *) echo "Unknown option, try again";;
+    esac
+  done
+
+  if $cancelled; then
+    echo "Won't delete $b"
+  else
+    if [[ "$b" =~ remotes* ]]; then
+      git branch -Dr ${b##remotes/}
+    else
+      git branch -D $b
+    fi
+  fi
+done
+
