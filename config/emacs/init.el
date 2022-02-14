@@ -49,8 +49,12 @@
   :defer 5)
 (use-package magit
   :straight t
-  :commands magit
-  :config (global-set-key (kbd "C-x g") 'magit-status))
+  :commands 
+    magit
+  :custom
+    (setq magit-diff-refine-hunk 'all)
+  :config 
+    (global-set-key (kbd "C-x g") 'magit-status))
 
 (use-package undo-tree
   :straight t
@@ -64,13 +68,6 @@
   :config
   (diminish 'undo-tree-mode)
   (evil-mode 1)
-  ;; evil-mode binds C-. I want it for changing buffers
-  (eval-after-load "evil-maps"
-    (dolist (map '(evil-motion-state-map
-                   evil-insert-state-map
-                   evil-normal-state-map
-                   evil-emacs-state-map))
-      (define-key (eval map) (kbd "C-.") nil)))
   (global-set-key (kbd "<backtab>") #'evil-shift-left-line)
   :custom
   ;; Undo with undo-tree
@@ -113,6 +110,7 @@
 
     ;; 'x' execute
       "x d" 'dired
+      "x g" 'magit-status
 
     ;; 'c' code
       "c d" 'xref-find-definitions
@@ -165,50 +163,51 @@
 (use-package company
   :straight t
   :diminish
-  :config
-  (global-company-mode)
-  (setq ;; Only 2 letters required for completion to activate.
-   company-minimum-prefix-length 2
-
-   ;; Search other buffers for compleition candidates
-   company-dabbrev-other-buffers t
-   company-dabbrev-code-other-buffers t
-
-   ;; Show candidates according to importance, then case, then in-buffer frequency
-   company-transformers '(company-sort-by-backend-importance
-                          company-sort-prefer-same-case-prefix
-                          company-sort-by-occurrence)
-
-   ;; Flushright any annotations for a compleition;
-   ;; e.g., the description of what a snippet template word expands into.
-   company-tooltip-align-annotations t
-
-   ;; Allow (lengthy) numbers to be eligible for completion.
-   company-complete-number t
-
-   ;; Show 10 items in a tooltip; scrollbar otherwise or C-s ^_^
-   company-tooltip-limit 10
-
-   ;; Edge of the completion list cycles around.
-   company-selection-wrap-around t
-
-   ;; Do not downcase completions by default.
-   company-dabbrev-downcase nil
-
-   ;; Even if I write something with the ‘wrong’ case,
-   ;; provide the ‘correct’ casing.
-   company-dabbrev-ignore-case nil
-
-   ;; Immediately activate completion.
-   company-idle-delay 4)
-
-  ;; Use C-<tab> to manually start company mode at point.
-  (bind-key* "C-<tab>" #'company-manual-begin)
-
+  :commands
+    company-manual-begin
+  :init
+    ;; Use C-<tab> to manually start company mode at point.
+    (bind-key* "C-<tab>" #'company-manual-begin)
   ;; Bindings when the company list is active.
   :bind (:map company-active-map
               ("C-d"   . company-show-doc-buffer) ;; In new temp buffer
-              ("<tab>" . company-complete-common-or-cycle)))
+              ("<tab>" . company-complete-common-or-cycle))
+  :custom
+    ;; Only 2 letters required for completion to activate.
+    (company-minimum-prefix-length 2)
+
+    ;; Search other buffers for completion candidates
+    (company-dabbrev-other-buffers t)
+    (company-dabbrev-code-other-buffers t)
+
+    ;; Show candidates according to importance, then case, then in-buffer frequency
+    (company-transformers '(company-sort-by-backend-importance
+                            company-sort-prefer-same-case-prefix
+                            company-sort-by-occurrence))
+ 
+    ;; Flushright any annotations for a compleition;
+    ;; e.g., the description of what a snippet template word expands into.
+    (company-tooltip-align-annotations t)
+
+    ;; Allow (lengthy) numbers to be eligible for completion.
+    (company-complete-number t)
+
+    ;; Show 10 items in a tooltip; scrollbar otherwise or C-s ^_^
+    (company-tooltip-limit 10)
+
+    ;; Edge of the completion list cycles around.
+    (company-selection-wrap-around t)
+
+    ;; Do not downcase completions by default.
+    (company-dabbrev-downcase nil)
+
+    ;; Even if I write something with the ‘wrong’ case, provide the ‘correct’ casing.
+    (company-dabbrev-ignore-case nil)
+
+    ;; Immediately activate completion.
+    (company-idle-delay 4)
+  :config
+    (global-company-mode))
 
 ;; Projectile
 (use-package projectile
@@ -398,8 +397,29 @@
        ;; use font-lock for agda2; maybe one day we sit and carefully customize things.
        (agda2-highlight-face-groups 'default-faces)
        (agda2-program-args nil)
-       (agda2-program-name "agda")
-))
+       (agda2-program-name "agda"))
+
+  ;; Font hack adapted from: https://stackoverflow.com/questions/33074370/how-can-i-use-a-different-ttf-fonts-for-certain-utf-8-characters-in-emacs
+  ;; Add some specific font points that need to be displayed with
+  ;; another font; and which font to use for them. Ranges and single points
+  ;; are supported:
+  ;;
+  ;; (#x12345 . "ReplacementFont")
+  ;; ((#x12300 . #x12333) "ReplacementFont")
+  ;;
+  (setq vcm/lacking-font-points '( 
+    ((#x1d552 . #x1d56b) . "DejaVu Sans") ;; lowecase bb: 𝕥, 𝕗, ...
+  ))
+  
+  (when (fboundp 'set-fontset-font)
+    (defun vcm/fix-unicode (&optional frame)
+      (mapcar 
+        '(lambda (s) (set-fontset-font "fontset-default" (car s) (cdr s) frame)) 
+        vcm/lacking-font-points)
+    )
+    (vcm/fix-unicode)
+    (add-hook 'after-make-frame-functions 'vcm/fix-unicode))
+)
 
 
 ;;;;;;;;;;;
@@ -554,10 +574,10 @@
 
 (use-package doom-themes
   :straight t
+  :custom
+    (doom-themes-enable-bold t)   ; if nil, bold is universally disabled
+    (doom-themes-enable-italic t) ; if nil, italics is universally disabled
   :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
   (load-theme 'doom-nord t)
 
   ;; Enable flashing mode-line on errors
