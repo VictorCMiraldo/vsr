@@ -1,0 +1,4 @@
+#! /bin/bash
+set -eu
+git reset $(git commit-tree HEAD^{tree} -m "init")
+

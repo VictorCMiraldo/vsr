@@ -3,7 +3,7 @@ set -euo pipefail
 
 function ensure_dir_exists() {
   if [[ ! -d "$1" ]]; then
-    echo "Dir '$d' doesnt exist"
+    echo "Dir '$1' doesnt exist"
     exit 1
   fi
 }
@@ -11,7 +11,7 @@ function ensure_dir_exists() {
 src="$HOME/doc/Bib"
 ensure_dir_exists "$src"
 
-dest="/run/user/1000/gvfs/mtp:host=SAMSUNG_SAMSUNG_Android_R52R30PHATN/Tablet/Documents"
+dest="/run/user/1000/gvfs/mtp:host=SAMSUNG_SAMSUNG_Android_R52R30PHATN/Internal storage/Documents"
 ensure_dir_exists "$dest"
 
 # First we bring in changes from the tablet, without deleting anything
