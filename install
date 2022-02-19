@@ -45,6 +45,10 @@ ln -fs $vsr_root/config/templates "$HOME/.templates"
 ## Link our vifm config
 ln -fs $vsr_root/config/vifm "$HOME/.vifm"
 
+## Link our papis config
+mkdir -p "$HOME/.config"
+ln -fs $vsr_root/config/papis "$HOME/.config/papis"
+
 ## Setup our base directory structure
 mydirs=("$HOME/tmp/Desktop"
         "$HOME/data/Music"

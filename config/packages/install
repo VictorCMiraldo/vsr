@@ -37,11 +37,8 @@ libxft-dev
 libxrandr-dev
 libxss-dev
 
-## Synchronization
-unison
-
-## Better than regular mail
-# heirloom-mailx ## No candidate
+## Synchronization (make sure we rely on the deb in the repo to ensure the same version)
+## unison
 
 ## Programming
 build-essential
@@ -49,15 +46,10 @@ g++
 emacs
 vim-gtk3
 haskell-stack
-
-## LaTeX (handled by it's own script)
-## And cousins
 lhs2tex
 pandoc
 
 ## General Purpose
-# spotify-client # incompatible with 18.04 so far
-# owncloud-client
 imagemagick
 
 ## Security
@@ -90,5 +82,4 @@ texlive-latex-recommended
 texlive-pictures
 texlive-science
 texlive-xetex
-# latex-beamer ## No candidate
 latexmk
