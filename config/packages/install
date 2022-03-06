@@ -15,7 +15,6 @@ pass
 pass-extension-otp
 oathtool
 zbar-tools
-neomutt
 irssi
 curl
 meld
@@ -23,7 +22,6 @@ htop
 xdotool
 xcape
 ascii
-shellcheck
 octave
 moreutils
 vifm
@@ -36,12 +34,14 @@ libxext-dev
 libxft-dev
 libxrandr-dev
 libxss-dev
+rofi
 
 ## Synchronization (make sure we rely on the deb in the repo to ensure the same version)
-## unison
+unison
 
 ## Programming
 build-essential
+direnv
 g++
 emacs
 vim-gtk3
@@ -64,22 +64,6 @@ wireshark
 netcat-traditional
 seahorse
 
-## VPN
-openvpn
-network-manager-openvpn
-network-manager-openvpn-gnome
-
-## Latex
-texlive
-texlive-base
-texlive-binaries
-texlive-fonts-extra
-texlive-fonts-recommended
-texlive-latex-base
-texlive-latex-extra
-texlive-extra-utils
-texlive-latex-recommended
-texlive-pictures
-texlive-science
-texlive-xetex
-latexmk
+# Ricing
+arc-theme
+papirus-icon-theme

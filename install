@@ -11,12 +11,9 @@ fi
 ## Store the root
 vsr_root=$(pwd)
 
-## Installing is trivial, just add a couple lines to the beginning of
-## our profile skeleton file:
-profile_prefix="#! /bin/bash\nVSR_ROOT=$vsr_root\nexport VSR_ROOT\n"
-echo -e "$profile_prefix" | cat - "$vsr_root/config/bash/profile" > temp \
-  && mv temp "$HOME/.profile" \
-  && ln -fs "$vsr_root/config/bash/bashrc_default" "$HOME/.bashrc"
+## link our bashrc; this will only really work if this repo is always 
+## under the same path: /home/victor/repos/vsr
+ln -fs "$vsr_root/config/bash/bashrc_default" "$HOME/.bashrc"
 
 ## Link our unison profiles; we create a dedicated directory because unison loves
 ## to keep some of its own local control files in there, so better not pollute

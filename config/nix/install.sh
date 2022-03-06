@@ -12,19 +12,13 @@ if ! sudo true; then
   exit 1
 fi
 
-# Download and install nix in multi-user mode:
-sh <(curl -L https://nixos.org/nix/install) --daemon
+# Download and install nix in single-user mode; multi user is giving me way too much trouble.
+sh <(curl -L https://nixos.org/nix/install) --no-daemon
 
 # Link our nix.conf file and change its settings accordingly
+sudo mkdir -p /etc/nix
 sudo ln -fs "$(pwd)/nix.conf" /etc/nix/nix.conf
 sudo chmod 644 /etc/nix/nix.conf
-
-# Finally, we must restart the nix-daemon for changes to take effect.
-sudo systemctl restart nix-daemon
-
-# Add a nixpkgs channel
-echo "https://github.com/NixOS/nixpkgs/archive/refs/tags/21.11.tar.gz nixpkgs" > ~/.nix-channels
-nix-channel --update
 
 # Now we install nix-direnv and configure it.
 # https://github.com/nix-community/nix-direnv#with-nix-env

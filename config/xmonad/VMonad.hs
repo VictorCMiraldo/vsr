@@ -18,23 +18,21 @@ import System.IO
 -- * Eye Candy * --
 -------------------
 
-myFocusedColor   = "#6CA84D" -- "#E9B96E"
-myUnfocusedColor = "#96A589" -- "#768CA6" 
-myBgColor        = "#2C2C2C" -- "#2F343F"
-myTextColor      = "#DAE3D3" -- "#D3DAE3"
-
-
+myFocusedColor   = "#A3BE8C"
+myUnfocusedColor = "#A9B89E"
+myBgColor        = "#2E3440"
+myTextColor      = "#D3DAE3"
 
 -------------------------
 -- * Custom Commands * --
 -------------------------
 
 myRofiCmd :: String
-myRofiCmd = unwords [ "rofi" 
-          , "-show"     , "run" 
-          , "-lines"    , "7" 
+myRofiCmd = unwords [ "rofi"
+          , "-show"     , "run"
+          , "-lines"    , "7"
           , "-matching" , "fuzzy"
-          , "-theme"    , "sidebar"
+          , "-theme"    , "Arc-Dark"
           ]
 
 
@@ -53,14 +51,14 @@ myCycleScreen act = do
  where
    screenId :: SS.Screen i l a sid sd -> i
    screenId = SS.tag . SS.workspace
-            
+
 
 ------------------------
 -- * My Keybindings * --
 ------------------------
 
-myKeys :: [((KeyMask, KeySym), X ())] 
-myKeys = [ 
+myKeys :: [((KeyMask, KeySym), X ())]
+myKeys = [
   -- It is VERY important to override the restart command.
     ((myMod , xK_q), spawn "cd /home/victor/.xmonad && stack install && stack exec xmonad-x86_64-linux -- --restart && date > ~/xmonad-restart" )
   -- Launch rofi
@@ -140,10 +138,10 @@ myManageHook = composeAll
       [ className =? c --> doShift wsMedia
       | c <- ["vlc"]] ++
       [ title =? "Spotify" --> doShift wsMedia ]
-   
+
     -- Shifting emacs and terminals automatically is more confusing
     -- than it is helpful; nevermind.
-    -- 
+    --
     -- manageEmacs :: ManageHook
     -- manageEmacs = className =? "Emacs"
     --           --> (ask >>= doF . flip copyWindow wsEmacs)
@@ -151,7 +149,7 @@ myManageHook = composeAll
     -- manageTerms :: ManageHook
     -- manageTerms = composeAll
     --   [ className =? c --> (ask >>= doF . flip copyWindow wsTerm)
-    --   | c <- ["Mate-terminal" , "URxvt"] 
+    --   | c <- ["Mate-terminal" , "URxvt"]
     --   ]
 
 ----------------------------
@@ -163,14 +161,14 @@ myManageHook = composeAll
 --
 -- My ThinkPad came with ISO_Level3_Shift (aka AltGR) in the
 -- mod5 group;
--- Seems like this was a problem with the layout. 
+-- Seems like this was a problem with the layout.
 -- (English US with euro on 5) has altgr mapped to ISO_Level3_Shift
 -- (English US) has altgr maped to Alt_R
 --
 --
 -- Nevertheless, I'll be whitching to alt since I can't get mouse actions
 -- to woek with mod4Mask; I'll deal with emacs-specific stuff within emacs if it turns out to
--- be too nasty. 
+-- be too nasty.
 myMod = mod1Mask
 
 --------------------
@@ -179,14 +177,14 @@ myMod = mod1Mask
 
 myLayouts = smartBorders . avoidStruts
           $ tiled ||| Mirror tiled ||| threecol ||| Full
-  where 
+  where
     nmaster = 1     -- default number of windows on master pane
     delta   = 3/100 -- percentage to increment when resizing panes
     ratio   = 1/2   -- proportion of screen ocupied by master
 
     tiled    = Tall nmaster delta ratio
-    threecol = ThreeColMid nmaster delta ratio 
-    
+    threecol = ThreeColMid nmaster delta ratio
+
 
 -------------------
 -- * My Config * --
@@ -195,7 +193,7 @@ myLayouts = smartBorders . avoidStruts
 -- We receive a handle as parameter since on the main
 -- function we spawn the xmobar process and need
 -- to do some wiring here.
-myConfig xmproc = (mateConfig 
+myConfig xmproc = (mateConfig
     { modMask            = myMod
     , terminal           = "mate-terminal"
     , focusedBorderColor = myFocusedColor
