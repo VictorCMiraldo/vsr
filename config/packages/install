@@ -25,6 +25,7 @@ ascii
 octave
 moreutils
 vifm
+ufw
 
 ### XMonad deps
 xmobar

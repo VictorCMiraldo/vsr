@@ -117,4 +117,10 @@ export VSR_ROOT
 PATH=$VSR_ROOT/scripts:$HOME/.local/bin:$HOME/bin:/usr/local/bin:/usr/bin:/bin
 export PATH
 
+## Run SSHD on 2142
+export VSR_SSH_PORT=2142
+
+## Configure nix
+source $HOME/.nix-profile/etc/profile.d/nix.sh
+
 eval "$(direnv hook bash)"

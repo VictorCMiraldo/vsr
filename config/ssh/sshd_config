@@ -14,7 +14,7 @@ Include /etc/ssh/sshd_config.d/*.conf
 
 Protocol 2
 
-#Port 22
+Port 2142
 #AddressFamily any
 #ListenAddress 0.0.0.0
 #ListenAddress ::
