@@ -359,9 +359,7 @@
   :config
     (evil-leader/set-key
       ;; 'c' code
-      "c l" 'haskell-process-load-file
       "c f" 'haskell-mode-stylish-buffer
-      "c r" 'haskell-process-reload
       "c K" 'haskell-process-kill
       "c s" 'eglot)
 )

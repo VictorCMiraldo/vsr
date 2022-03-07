@@ -26,6 +26,9 @@ octave
 moreutils
 vifm
 ufw
+blueman
+vlc
+python3-pip
 
 ### XMonad deps
 xmobar
