@@ -15,7 +15,6 @@ pass
 pass-extension-otp
 oathtool
 zbar-tools
-neomutt
 irssi
 curl
 meld
@@ -23,10 +22,13 @@ htop
 xdotool
 xcape
 ascii
-shellcheck
 octave
 moreutils
 vifm
+ufw
+blueman
+vlc
+python3-pip
 
 ### XMonad deps
 xmobar
@@ -36,28 +38,22 @@ libxext-dev
 libxft-dev
 libxrandr-dev
 libxss-dev
+rofi
 
-## Synchronization
+## Synchronization (make sure we rely on the deb in the repo to ensure the same version)
 unison
-
-## Better than regular mail
-# heirloom-mailx ## No candidate
 
 ## Programming
 build-essential
+direnv
 g++
 emacs
 vim-gtk3
 haskell-stack
-
-## LaTeX (handled by it's own script)
-## And cousins
 lhs2tex
 pandoc
 
 ## General Purpose
-# spotify-client # incompatible with 18.04 so far
-# owncloud-client
 imagemagick
 
 ## Security
@@ -72,23 +68,6 @@ wireshark
 netcat-traditional
 seahorse
 
-## VPN
-openvpn
-network-manager-openvpn
-network-manager-openvpn-gnome
-
-## Latex
-texlive
-texlive-base
-texlive-binaries
-texlive-fonts-extra
-texlive-fonts-recommended
-texlive-latex-base
-texlive-latex-extra
-texlive-extra-utils
-texlive-latex-recommended
-texlive-pictures
-texlive-science
-texlive-xetex
-# latex-beamer ## No candidate
-latexmk
+# Ricing
+arc-theme
+papirus-icon-theme

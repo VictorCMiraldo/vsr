@@ -86,10 +86,41 @@ if ! shopt -oq posix; then
   fi
 fi
 
+## My Config
+
 # Adding some colors to our prompt
 PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 # And fixing up my hostname at the window title
 PROMPT_COMMAND='echo -ne "\033]0;"Bash $(whoami)@$(hostname)"\007"'
+
+### GNUPG Home Directory
+GNUPGHOME="$HOME/keychain/gnupg"
+export GNUPGHOME
+
+### GNUPG Main Key
+KEYCHAIN_ROOT=CB4A4FBA
+export KEYCHAIN_ROOT
+
+### Pass Password store dir
+PASSWORD_STORE_DIR="$HOME/keychain/password-store"
+export PASSWORD_STORE_DIR
+
+### We like vim!
+export EDITOR="vim"
+
+## VSR root
+VSR_ROOT=/home/victor/repos/vsr
+export VSR_ROOT
+
+### Modify our path
+PATH=$VSR_ROOT/scripts:$HOME/.local/bin:$HOME/bin:/usr/local/bin:/usr/bin:/bin
+export PATH
+
+## Run SSHD on 2142
+export VSR_SSH_PORT=2142
+
+## Configure nix
+source $HOME/.nix-profile/etc/profile.d/nix.sh
 
 eval "$(direnv hook bash)"

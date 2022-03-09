@@ -43,28 +43,5 @@ In the fresh machine now, we do:
   8) Run `vsr-unison`
   9) The system should be mainly set-up, now we need
      some additional software.
-
-## Emacs
-
-  Run
-
-  `cd ~ && git clone --recursive git@github.com:VictorCMiraldo/victor-emacs-config.git .emacs.d`
-
-  Start emacs and let it do its magic. It will probably complain about not finding `agda-mode`, we'll fix that soon.
-
-## Agda
-
-  Install `haskell-stack`, then run `stack install cabal-install`, finally,
-  we do the cabal dance:
-
-  ```cabal install hsc2hs alex happy Agda```
-
-  Now, grab a coffee...
-
-## Xmonad
-
-  Clone the repo:
-
-  `cd ~ && git clone --recursive git@github.com:VictorCMiraldo/my-xmonad.git .xmonad`
-
-  Run the installation script.
+      - *emacs*: run `cd $VSR_ROOT/config/emacs && ./install`
+      - *xmonad*: install manually from `$VSR_ROOT/config/xmonad`
