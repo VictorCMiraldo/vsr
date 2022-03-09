@@ -38,7 +38,6 @@ echo "By default, the following folders will be"
 echo "copied to $dst."
 echo ""
 echo "    ~/bin"
-echo "    ~/repos"
 echo ""
 read -p "Should I copy ~/data (y/n) ? " ansUsrData
 read -p "Should I copy ~/keychain and ~/doc  (y/n) ? " ansPriv
@@ -71,7 +70,6 @@ case $ans in
 esac
 
 vsr-rsync --yes "bin"     "$dst"     --delete "$@"
-vsr-rsync --yes "repos"   "$dst"     --delete "$@"
 
 if $CPYPRIV; then
   vsr-rsync --yes "keychain" "$dst" --delete "$@"
