@@ -1,6 +1,4 @@
 # Roots of the synchronization
-root = /home/victor
-root = ssh://victor@blackbean.local//home/victor
 
 # If any new preferences are added by Unison (e.g. 'ignore'
 # preferences added via the graphical UI), then store them in the
