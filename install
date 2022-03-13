@@ -25,6 +25,7 @@ mkdir -p "$HOME/.unison" \
 mkdir -p "$HOME/.ssh" \
   && chmod 700 "$HOME/.ssh" \
   && ln -fs $vsr_root/config/ssh/config "$HOME/.ssh/config"
+  && ln -fs $vsr_root/config/ssh/authorized_keys "$HOME/.ssh/authorized_keys"
 
 ## Link our XMonad directory but does not install it just yet; that
 ## installation should be done manually after the system is up and running

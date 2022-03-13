@@ -35,6 +35,7 @@ Paper/excerpts
 dist
 .cabal-sandbox
 cabal.sandbox.config
+.stack-work
 
 # Backup files #
 ################

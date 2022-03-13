@@ -8,7 +8,7 @@ Host pirouette-ec2-root
   HostName 18.188.156.180
   Port 5916
   user ubuntu
-  IdentityFile /home/victor/.ssh/pirouette-ec2-root.pem
+  IdentityFile /home/victor/keychain/Pirouette-ec2/pirouette-ec2-root.pem
 
 Host pizero
   HostName 192.168.2.1
