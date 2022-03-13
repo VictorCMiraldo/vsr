@@ -41,7 +41,7 @@ elif [[ "$#" -gt "1" ]]; then
   print_usage
 fi
 
-if [[ "$(uname -n)" -eq "blackbean" ]]; then
+if [[ "$(uname -n)" == "blackbean" ]]; then
   remote_hostname="beetroot"
 else
   remote_hostname="blackbean"
