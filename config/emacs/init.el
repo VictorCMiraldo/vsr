@@ -112,6 +112,11 @@
       "x d" 'dired
       "x g" 'magit-status
 
+    ;; 'm' merge
+      "m u" 'smerge-keep-upper
+      "m l" 'smerge-keep-lower
+      "m n" 'smerge-next
+
     ;; 'c' code
       "c d" 'xref-find-definitions
       "c D" 'xref-find-references

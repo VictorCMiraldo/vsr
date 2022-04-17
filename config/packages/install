@@ -29,6 +29,7 @@ ufw
 blueman
 vlc
 python3-pip
+parallel
 
 ### XMonad deps
 xmobar
