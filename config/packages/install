@@ -31,6 +31,9 @@ vlc
 python3-pip
 parallel
 
+## Android-debug-bridge: needed for vsr-bib-sync
+adb
+
 ### XMonad deps
 xmobar
 libx11-dev
