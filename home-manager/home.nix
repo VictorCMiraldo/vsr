@@ -3,8 +3,8 @@
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
-  home.username = "v";
-  home.homeDirectory = "/home/v";
+  home.username = "victor";
+  home.homeDirectory = "/home/victor";
 
   # My environment variables
   home.sessionVariables = {

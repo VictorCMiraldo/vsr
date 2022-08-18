@@ -34,7 +34,9 @@ in {
     # Start the nm-applet by itself; curiously, using its home-manager counterpart
     # does not load properly.
     initExtra = ''
-      ~/.screenlayout/default.sh
+      if [ -f "~/.screenlayout/default.sh" ]; then
+        ~/.screenlayout/default.sh
+      fi
       feh --bg-scale ~/.wallpaper.jpg &
       nm-applet &
       pasystray &
