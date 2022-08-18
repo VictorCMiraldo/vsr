@@ -9,6 +9,8 @@
   # My environment variables
   home.sessionVariables = {
     EDITOR = "vim";
+    GNUPGHOME = "$HOME/keychain/gnupg";
+    KEYCHAIN_ROOT = "CB4A4FBA";
   };
 
   # This value determines the Home Manager release that your
