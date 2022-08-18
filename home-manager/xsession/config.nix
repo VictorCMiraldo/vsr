@@ -41,6 +41,9 @@ in {
       nm-applet &
       pasystray &
       mate-screensaver &
+
+      # Start the gpg-agent
+      gpg-agent --daemon &
       '';
     windowManager.xmonad = {
       enable = true;
