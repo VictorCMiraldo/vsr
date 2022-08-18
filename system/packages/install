@@ -1,0 +1,19 @@
+## Kernel Modules
+lm-sensors
+cryptsetup
+
+## Libraries
+software-properties-common
+
+## Binaries
+curl
+ufw
+blueman
+vlc
+pavucontrol
+pasystray
+
+# Ricing
+lxappearance
+arc-theme
+papirus-icon-theme

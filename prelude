@@ -1,5 +1,7 @@
 #! /bin/bash
 
+if [[ -z "${VSR_PRELUDE_LOADED}" ]]; then
+
 function errcho() {
   (>&2 echo "$@")
 }
@@ -11,7 +13,15 @@ function log-if() {
   fi
 }
 
+# Change our path temporarily
+PATH="${BASH_SOURCE%/*}/scripts/:$PATH"
+
+# Record that we have loaded this prelude already
+VSR_PRELUDE_LOADED=1
+
 if ! type vsr-rsync > /dev/null; then
   errcho "Can't find vsr directory. Make sure it is on the path."
   exit 1
+fi
+
 fi

@@ -1,0 +1,12 @@
+[settings]
+header-format = <lightgreen>{doc.html_escape[title]}</lightgreen>
+ <ansigray>{doc.html_escape[author]}</ansigray>
+  <green>({doc.html_escape[year]})</green> [<teal>{doc.html_escape[tags]}</teal>]
+default-library=papers
+
+[books]
+dir = ~/doc/Bib/Books
+
+[papers]
+dir = ~/doc/Bib/Papers
+
