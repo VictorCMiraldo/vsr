@@ -49,11 +49,11 @@
   :defer 5)
 (use-package magit
   :straight t
-  :commands 
+  :commands
     magit
   :custom
     (setq magit-diff-refine-hunk 'all)
-  :config 
+  :config
     (global-set-key (kbd "C-x g") 'magit-status))
 
 (use-package undo-tree
@@ -111,6 +111,11 @@
     ;; 'x' execute
       "x d" 'dired
       "x g" 'magit-status
+
+    ;; 'm' merge
+      "m u" 'smerge-keep-upper
+      "m l" 'smerge-keep-lower
+      "m n" 'smerge-next
 
     ;; 'c' code
       "c d" 'xref-find-definitions
@@ -184,7 +189,7 @@
     (company-transformers '(company-sort-by-backend-importance
                             company-sort-prefer-same-case-prefix
                             company-sort-by-occurrence))
- 
+
     ;; Flushright any annotations for a compleition;
     ;; e.g., the description of what a snippet template word expands into.
     (company-tooltip-align-annotations t)
@@ -251,6 +256,22 @@
 ;; Language Server ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
+(defun my/flymake-goto-next-error ()
+  (interactive)
+  (flymake-goto-next-error 1 '(:error) t))
+
+(defun my/flymake-goto-next-warning ()
+  (interactive)
+  (flymake-goto-next-error 1 '(:warning) t))
+
+(defun my/flymake-goto-prev-error ()
+  (interactive)
+  (flymake-goto-prev-error 1 '(:error) t))
+
+(defun my/flymake-goto-prev-warning ()
+  (interactive)
+  (flymake-goto-prev-error 1 '(:warning) t))
+
 (use-package eglot
   :straight t
   :config
@@ -268,10 +289,15 @@
   :config
     (evil-leader/set-key
       ;; Redefine next-error to use flymake's
-      "] e" 'flymake-goto-next-error
-      "e ]" 'flymake-goto-next-error
-      "e [" 'flymake-goto-prev-error
-      "[ e" 'flymake-goto-prev-error))
+      "] e" 'my/flymake-goto-next-error
+      "e ]" 'my/flymake-goto-next-error
+      "e [" 'my/flymake-goto-prev-error
+      "[ e" 'my/flymake-goto-prev-error
+      "] w" 'my/flymake-goto-next-warning
+      "w ]" 'my/flymake-goto-next-warning
+      "w [" 'my/flymake-goto-prev-warning
+      "[ w" 'my/flymake-goto-prev-warning))
+
 
 ;;;;;;;;;;;;;
 ;; Haskell ;;
@@ -375,7 +401,7 @@
 (when (file-exists-p agda-mode-path)
   (use-package agda-mode
     :no-require
-    :init 
+    :init
       (load-file agda-mode-path)
       (evil-leader/set-key
         ;; 'c' code
@@ -383,7 +409,7 @@
         "c d" 'agda2-goto-definition
         "c b" 'agda2-go-back
         "c g" 'agda2-next-goal)
-    :bind 
+    :bind
       (:map agda2-mode-map
         ("M-<right>"   . agda2-goto-definition)
         ("M-<left>"    . agda2-go-back)
@@ -405,14 +431,14 @@
   ;; (#x12345 . "ReplacementFont")
   ;; ((#x12300 . #x12333) "ReplacementFont")
   ;;
-  (setq vcm/lacking-font-points '( 
+  (setq vcm/lacking-font-points '(
     ((#x1d552 . #x1d56b) . "DejaVu Sans") ;; lowecase bb: 𝕥, 𝕗, ...
   ))
-  
+
   (when (fboundp 'set-fontset-font)
     (defun vcm/fix-unicode (&optional frame)
-      (mapcar 
-        '(lambda (s) (set-fontset-font "fontset-default" (car s) (cdr s) frame)) 
+      (mapcar
+        '(lambda (s) (set-fontset-font "fontset-default" (car s) (cdr s) frame))
         vcm/lacking-font-points)
     )
     (vcm/fix-unicode)
@@ -654,4 +680,3 @@
 ;; line numbers everywhere
 (global-linum-mode t)
 (linum-relative-toggle)
-
