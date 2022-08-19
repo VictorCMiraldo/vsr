@@ -10,6 +10,20 @@
   home.sessionVariables = {
     EDITOR = "vim";
     KEYCHAIN_ROOT = "CB4A4FBA";
+    LOCALES_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
+  };
+
+  # Manages our XDG user dirs
+  xdg.userDirs = {
+    enable = true;
+    desktop = "$HOME/tmp/Desktop";
+    documents = "$HOME/doc";
+    download = "$HOME/tmp";
+    templates = "$HOME/.templates";
+    music = "$HOME/data/Music";
+    videos = "$HOME/data/Videos";
+    pictures = "$HOME/data/Pictures";
+    createDirectories = true;
   };
 
   # This value determines the Home Manager release that your
@@ -33,7 +47,7 @@
   ############
 
   imports = [
-    ./xsession/config.nix
+    ./xmonad/config.nix
     ./fonts/config.nix
     ./programs/pass.nix
     ./programs/gpg.nix

@@ -14,10 +14,9 @@
     '';
 
   home.file.".bashrc".text = builtins.readFile ./bashrc + ''
-      # GPG Integration and usage as SSH agent
-      export GPG_TTY=$(tty)
-      ${config.programs.gpg.package}/bin/gpg-connect-agent updatestartuptty /bye > /dev/null
-      '';
+      GPG_TTY=$(tty) 
+      export GPG_TTY
+  '';
 
   home.file.".profile".source = ./profile;
 }
