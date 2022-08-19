@@ -29,7 +29,7 @@ in {
       "module/home" = {
         type = "custom/text";
         content = "%{T2}"
-                + "%{A:rofi -show p -modi p\\\\:rofi-power-menu:}⏻%{A} "
+                + "%{A:rofi -show p -modi p\\\\:rofi-power-menu:}襤%{A} "
                 + "%{A:caja .:}%{A} "
                 + "%{A:firefox:}爵%{A} "
                 + "%{A:mate-control-center:}%{A}"
