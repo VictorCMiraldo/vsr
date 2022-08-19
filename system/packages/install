@@ -8,10 +8,8 @@ software-properties-common
 ## Binaries
 curl
 ufw
-blueman
 vlc
 pavucontrol
-pasystray
 
 # Ricing
 lxappearance
