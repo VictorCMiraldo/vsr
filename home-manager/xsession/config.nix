@@ -42,8 +42,9 @@ in {
       pasystray &
       mate-screensaver &
 
-      # Start the gpg-agent
-      gpg-agent --daemon &
+      # Start the gpg-agent, following the instructions from linux.die.net/man/1/gpg-agent
+      eval $(gpg-agent --daemon --enable-ssh-support)
+      export SSH_AUTH_LOCK="$(${config.programs.gpg.pkg}/bin/gpgconf --list-dirs agent-ssh-socket)"
       '';
     windowManager.xmonad = {
       enable = true;

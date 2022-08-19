@@ -9,7 +9,6 @@
   # My environment variables
   home.sessionVariables = {
     EDITOR = "vim";
-    GNUPGHOME = "$HOME/keychain/gnupg";
     KEYCHAIN_ROOT = "CB4A4FBA";
   };
 
@@ -37,6 +36,7 @@
     ./xsession/config.nix
     ./fonts/config.nix
     ./programs/pass.nix
+    ./programs/gpg.nix
     ./programs/bash/config.nix
     ./programs/emacs/config.nix
     ./programs/vim/config.nix
