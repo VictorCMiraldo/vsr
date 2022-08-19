@@ -31,7 +31,8 @@ in {
         content = "%{T2}"
                 + "%{A:rofi -show p -modi p\\\\:rofi-power-menu:}⏻%{A} "
                 + "%{A:caja .:}%{A} "
-                + "%{A:firefox:}爵%{A}"
+                + "%{A:firefox:}爵%{A} "
+                + "%{A:mate-control-center:}%{A}"
                 + "%{T-}";
         format-content-font = 2;
         content-padding = 1;

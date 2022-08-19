@@ -9,16 +9,6 @@ in {
     ./rofi.nix 
   ];
 
-  # We'll get xmonad compiling through the home-manager, but installation
-  # will be manual, through a script:
-  home.file.".local/share/applications/xmonad.desktop".text = ''
-    [Desktop Entry]
-    Type=Application
-    Name=XMonad
-    Exec=/home/victor/.xmonad/xmonadrc
-    NoDisplay=true
-  '';
-
   home.file.".xmonad/install.sh" = {
     executable = true;
     text = ''
@@ -37,6 +27,17 @@ in {
       # old value was: ['windowmanager', 'panel', 'filemanager', 'dock']
     '';
   };
+
+
+  # We'll get xmonad compiling through the home-manager, but installation
+  # will be manual, through a script:
+  home.file.".local/share/applications/xmonad.desktop".text = ''
+    [Desktop Entry]
+    Type=Application
+    Name=XMonad
+    Exec=/home/victor/.xmonad/xmonadrc
+    NoDisplay=true
+  '';
 
   home.file.".xmonad/xmonadrc" = {
     executable = true;

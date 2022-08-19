@@ -8,6 +8,7 @@ import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.StatusBar
 import XMonad.Hooks.StatusBar.PP 
 import XMonad.Layout.LayoutModifier
+import XMonad.Layout.NoBorders
 import qualified XMonad.StackSet as SS
 import qualified Reflection as R
 
@@ -23,6 +24,7 @@ myConfig = (def
   , focusedBorderColor = R.accent
   , workspaces = myWorkspaces
   , manageHook = manageHook def <+> manageDocks <+> myManageHook
+  , layoutHook = smartBorders . avoidStruts $ layoutHook def
   } `removeKeys` myRemovedKeys)
   `additionalKeys` myKeys
 
@@ -37,7 +39,7 @@ myKeys = [
   , ((myMod , xK_e),              myCycleScreen (windows . SS.view))
   , ((myMod .|. shiftMask, xK_e), myCycleScreen (windows . SS.shift))
   -- Swap keyboard layouts
-  -- , ((myMod , xK_i) , spawn "/home/victor/repos/vsr/scripts/kbd-layout-switch")
+  , ((myMod , xK_i) , spawn "kbd-layout-switch")
   ]
 
 myRemovedKeys :: [(KeyMask, KeySym)]
@@ -102,7 +104,7 @@ myManageHook = composeAll
 --------------
 
 main :: IO ()
-main = xmonad $ myBar $ ewmh $ myConfig
+main = xmonad $ myBar $ ewmhFullscreen $ ewmh $ myConfig
 
 -----------------
 -- * Polybar * --
