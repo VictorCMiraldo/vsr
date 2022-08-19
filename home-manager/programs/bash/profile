@@ -34,3 +34,6 @@ if [ -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
   . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
 fi 
 
+if [ -n "$VSR_ROOT" ] && [ -e "$VSR_ROOT/system/env.sh" ]; then
+  . "$VSR_ROOT/system/env.sh"
+fi

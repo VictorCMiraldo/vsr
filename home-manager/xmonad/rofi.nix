@@ -10,7 +10,7 @@ let
     echo -en "\0no-custom\x1ftrue\n"
     echo -en "\0message\x1fSelect password to copy, ESC to abort\n"
     if [[ ! -z "$@" ]]; then
-      coproc (${pkgs.pass}/bin/pass -c "$@")
+      coproc (${pkgs.pass}/bin/pass -c "$@" && notify-send "Copied '$@' to clipboard")
       exit 0
     else
       find "$PASSWORD_STORE_DIR" -type f \

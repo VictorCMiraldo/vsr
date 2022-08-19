@@ -8,8 +8,10 @@
 
   # My environment variables
   home.sessionVariables = {
+    VSR_ROOT = builtins.toString ./..;
     EDITOR = "vim";
     KEYCHAIN_ROOT = "CB4A4FBA";
+    LANG = "en_US.utf8";
     LOCALES_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
   };
 

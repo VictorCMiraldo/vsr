@@ -8,8 +8,6 @@ set -euo pipefail
 # - nix + home-manager
 # - gtk2/3 themes
 # - apt packages to complement my home-manager config
-chmod +x ${wd}/scripts/*
-chmod +x "${wd}/system/install-system.sh"
 ${wd}/system/install-system.sh
 
 ## Setup our base directory structure
@@ -80,3 +78,8 @@ ln -fs $(readlink -f "${wd}/home-manager") "$HOME/.config/nixpkgs"
 # Now we actually run the home-manager and switch everything
 . $HOME/.nix-profile/etc/profile.d/nix.sh
 $HOME/.nix-profile/bin/home-manager switch
+
+# And finish off installing xmonad
+~/.xmonad/install.sh
+
+echo "All good! Please log off then on again"

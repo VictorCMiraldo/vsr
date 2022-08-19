@@ -59,5 +59,20 @@ if [[ "${VSR_SYSTEM_UFW}" -ne "1" ]]; then
   echo "VSR_SYSTEM_UFW=1" >> ${wd}/previous-install.state
 fi
 
+# Configure lightdm autologin
+if [[ "${VSR_LIGHTDM_AUTOLOGIN}" -ne "1" ]]; then
+  echo "Configuring lightDM auto-login"
+  sudo cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bckp
+  sudo patch /etc/lightdm/lightdm.conf <<EOF
+126,127c126,127
+< #autologin-user=
+< #autologin-user-timeout=0
+---
+> autologin-user=victor
+> autologin-user-timeout=0
+EOF
+ echo "VSR_LIGHTDM_AUTOLOGIN=1" >> ${wd}/previous-install.state
+fi
+
 echo "Done"
 

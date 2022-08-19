@@ -9,6 +9,8 @@ in {
     ./rofi.nix 
   ];
 
+  programs.feh.enable = true;
+
   home.file.".xmonad/install.sh" = {
     executable = true;
     text = ''
@@ -28,7 +30,6 @@ in {
     '';
   };
 
-
   # We'll get xmonad compiling through the home-manager, but installation
   # will be manual, through a script:
   home.file.".local/share/applications/xmonad.desktop".text = ''
@@ -44,6 +45,7 @@ in {
     text = ''
       #! /bin/sh
       . ${config.home.homeDirectory}/.profile
+      feh --bg-scale ${builtins.toString ./wallpaper.jpg} &
       ${config.home.homeDirectory}/.xmonad/xmonad-x86_64-linux
     '';
   };
