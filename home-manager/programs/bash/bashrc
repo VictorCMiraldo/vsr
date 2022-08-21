@@ -118,8 +118,5 @@ for t in $HOME/.nix-profile/share/bash-completion/completions/*; do
 done
 
 export NIX_PATH=$HOME/.nix-defexpr/channels${NIX_PATH:+:$NIX_PATH}
-if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then 
-  . "$HOME/.nix-profile/etc/profile.d/nix.sh"
-fi
 eval "$(direnv hook bash)"
 

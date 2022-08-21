@@ -9,8 +9,9 @@
   # My environment variables
   home.sessionVariables = {
     VSR_ROOT = builtins.toString ./..;
+
     EDITOR = "vim";
-    KEYCHAIN_ROOT = "CB4A4FBA";
+
     LANG = "en_US.utf8";
     LOCALES_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
   };
@@ -38,11 +39,6 @@
   # changes in each release.
   home.stateVersion = "22.05";
 
-  home.packages = with pkgs; [
-    unison
-    arandr
-  ];
-
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -51,8 +47,8 @@
   imports = [
     ./xmonad/config.nix
     ./fonts/config.nix
-    ./programs/pass.nix
-    ./programs/gpg.nix
+    ./programs/utilities.nix
+    ./programs/pass-and-gpg.nix
     ./programs/bash/config.nix
     ./programs/emacs/config.nix
     ./programs/vim/config.nix

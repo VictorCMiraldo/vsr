@@ -11,6 +11,11 @@ in {
 
   programs.feh.enable = true;
 
+  # Installing xmonad is easy: register it as the window manager of our mate session
+  # and disable all other required components:
+  # - panels & docks will interfere with polybar's tray
+  # - filemanager will interfere with some other graphical settings such
+  #   as the cursor and the background. We still can use caja as a file manager.
   home.file.".xmonad/install.sh" = {
     executable = true;
     text = ''
@@ -44,8 +49,15 @@ in {
     executable = true;
     text = ''
       #! /bin/sh
+      # Load important variables, bringing nix binaries into path
       . ${config.home.homeDirectory}/.profile
+
+      # Set the bg and default cursor; Forgetting to set the cursor name will
+      # result in xmonad inheriting the X-shaped default cursor
       feh --bg-scale ${builtins.toString ./wallpaper.jpg} &
+      xsetroot -cursor_name left_ptr
+
+      # Run xmonad
       ${config.home.homeDirectory}/.xmonad/xmonad-x86_64-linux
     '';
   };

@@ -19,10 +19,5 @@ configuration {
   window {
     display-name: " ";
   }
-
-  timeout {
-    delay: 10;
-    action: "kb-cancel";
-  }
 }''
 
