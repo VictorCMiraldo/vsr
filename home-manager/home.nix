@@ -14,10 +14,6 @@
 
     LANG = "en_US.utf8";
     LOCALES_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
-
-    # This fixes the bug where firefox crashes when a open-file dialog
-    # is open.
-    GTK_USE_PORTAL = 1;
   };
 
   # Manages our XDG user dirs

@@ -31,7 +31,7 @@ myConfig = (def
 myKeys :: [((KeyMask, KeySym), X ())]
 myKeys = [
   -- Launch rofi in all its flavours
-    ((myMod, xK_d), spawn "rofi -show run")
+    ((myMod, xK_d), spawn "rofi -show drun")
   , ((myMod, xK_q), spawn "rofi -show p -modi \"p:rofi-power-menu --choices=logout/shutdown/reboot/suspend\"")
   , ((myMod, xK_c), spawn "rofi -show calc")
   , ((myMod, xK_p), spawn "rofi -show p -modi p:rofi-pass")
