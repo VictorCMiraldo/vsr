@@ -21,7 +21,7 @@ in {
     text = ''
       #! /bin/bash
       gsettings set org.mate.session.required-components windowmanager xmonad
-      gsettings set org.mate.session required-components-list "['windowmanager']"
+      gsettings set org.mate.session required-components-list "['windowmanager', 'filemanager']"
     '';
   };
 
