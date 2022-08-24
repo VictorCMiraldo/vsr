@@ -84,7 +84,9 @@ myManageHook = composeAll
     ]
   where
     -- Sometimes these windows are floated annoyingly large,
-    -- llok into doRectFloat from XMonad.Hooks.ManageHelpers
+    -- look into doRectFloat from XMonad.Hooks.ManageHelpers.
+    -- 
+    -- The class name can be found with the xprop utility
     floats :: [String]
     floats = 
       [ "Blueman-manager"
