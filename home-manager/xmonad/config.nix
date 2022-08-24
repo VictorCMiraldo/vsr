@@ -9,6 +9,10 @@ in {
     ./rofi.nix 
   ];
 
+  home.packages = [
+    pkgs.qalculate-gtk
+  ];
+
   programs.feh.enable = true;
 
   # Installing xmonad is easy: register it as the window manager of our mate session

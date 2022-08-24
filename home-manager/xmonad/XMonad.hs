@@ -34,6 +34,7 @@ myKeys = [
     ((myMod, xK_d), spawn "rofi -show drun")
   , ((myMod, xK_q), spawn "rofi -show p -modi \"p:rofi-power-menu --choices=logout/shutdown/reboot/suspend\"")
   , ((myMod, xK_p), spawn "rofi -show p -modi p:rofi-pass")
+  , ((myMod, xK_c), spawn "qalculate-gtk")
   -- Swap focused physical screens
   , ((myMod , xK_e),              myCycleScreen (windows . SS.view))
   , ((myMod .|. shiftMask, xK_e), myCycleScreen (windows . SS.shift))
@@ -88,7 +89,9 @@ myManageHook = composeAll
     floats = 
       [ "Blueman-manager"
       , "Pavucontrol"
+      , "Mate-volume-control"
       , "Nm-connection-editor"
+      , "Qalculate-gtk"
       ]
 
     -- Which windows to simply float, basec on theur className
