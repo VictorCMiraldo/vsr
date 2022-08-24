@@ -3,21 +3,9 @@ let
 in '' 
 configuration {
   font: "Hack Nerd Font Medium 10";
-
-  calc {
-    display-name: " ";
-  }
-
-  drun {
-    display-name: " ";
-  }
-
-  run {
-    display-name: " ";
-  }
-
-  window {
-    display-name: " ";
-  }
+  display-calc: " ";
+  display-drun: " ";
+  display-run: " ";
+  display-window: " ";
 }''
 

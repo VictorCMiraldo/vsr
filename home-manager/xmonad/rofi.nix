@@ -1,8 +1,8 @@
 {pkgs, ...}:
 {
+  # We'll only use rofi-power-menu from nix, rofi will be installed through debian to avoid
+  # weird GTK errors
   home.packages = [ 
-    # Brings in rofi and the plugins we rely on
-    (pkgs.rofi.override { plugins = [ pkgs.rofi-calc ]; }) 
     pkgs.rofi-power-menu 
   ];
 
