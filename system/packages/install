@@ -13,6 +13,8 @@ pavucontrol
 pass
 pass-extension-otp
 emacs-gtk
+rofi
+moreutils
 
 # Ricing
 lxappearance
