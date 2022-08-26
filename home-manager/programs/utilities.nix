@@ -14,8 +14,7 @@ let
   };
 in {
   home.packages = with pkgs; [
-    unison
-    arandr
+    # unison
     pandoc
 
     haskell.compiler.ghc902
