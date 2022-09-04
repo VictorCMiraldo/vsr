@@ -1,0 +1,26 @@
+#! /usr/bin/env bash
+echo -en "\0prompt\x1f\n"
+echo -en "\0no-custom\x1ftrue\n"
+echo -en "\0message\x1fSelect password to copy, ESC to abort\n"
+
+hist="$HOME/.cache/rofi3.passcache"
+if [[ ! -z "$@" ]]; then
+  echo "$@" | cat - <(cat "$hist" | grep -v "$@") | sponge "$hist"
+  bname=${@##*/}
+  if [[ "$bname" == "2fa" ]]; then
+    coproc { pass otp -c "$@"; notify-send "Copied 2FA code from '$@'"; }
+  else
+    coproc { pass -c "$@"; notify-send "Copied '$@'"; }
+  fi
+  exit 0
+else
+  if [ -f "$hist" ]; then
+    cat "$hist"
+    find "$PASSWORD_STORE_DIR" -type f -not -name '.*' \
+      | sed "s:$PASSWORD_STORE_DIR/::" | sed "s/\.gpg//" | comm --nocheck-order -23 - "$hist"
+  else
+    find "$PASSWORD_STORE_DIR" -type f -not -name '.*' \
+      | sed "s:$PASSWORD_STORE_DIR/::" | sed "s/\.gpg//"
+  fi
+fi
+

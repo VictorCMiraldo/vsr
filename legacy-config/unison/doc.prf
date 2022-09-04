@@ -1,0 +1,21 @@
+# Sync my documents directory
+path = doc
+mountpoint = doc
+
+## Copy everything on conflict
+copyonconflict = true
+
+## Back some stuff up
+backup = Name *.hs
+backup = Name *.tex
+backup = Name *.pdf
+backup = Name *.agda
+backup = Name *.doc
+backup = Name *.docx
+backup = Name *.odt
+backup = Name *.jpg
+backup = Name *.png
+backup = Name *.md
+
+## Bring in default settings
+include common

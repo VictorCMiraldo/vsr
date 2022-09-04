@@ -41,6 +41,7 @@ cabal.sandbox.config
 ################
 *~
 *\#
+*.swp
  
 # Packages #
 ############

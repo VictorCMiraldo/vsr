@@ -1,7 +1,11 @@
 #! /bin/bash
 
-vsr_root="${BASH_SOURCE%/*}/.."
-source "$vsr_root/prelude"
+if [ -z "$VSR_ROOT" ]; then
+  echo "I don't know where vsr_root is!"
+  exit 1
+fi
+
+source "$VSR_ROOT/prelude"
 
 function print_usage() {
   errcho "usage: vsr-bckp <dst> <additional rsync opts>"

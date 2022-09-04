@@ -41,10 +41,10 @@ elif [[ "$#" -gt "1" ]]; then
   print_usage
 fi
 
-if [[ "$(uname -n)" == "blackbean" ]]; then
+if [[ "$(uname -n)" == "dev-lt-60" ]]; then
   remote_hostname="beetroot"
 else
-  remote_hostname="blackbean"
+  remote_hostname="dev-lt-60"
 fi
 
 local_root="/home/victor"

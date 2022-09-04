@@ -1,8 +1,7 @@
 #!/bin/bash
+source "$VSR_ROOT/prelude"
 set -uo pipefail
 
-vsr_root="${BASH_SOURCE%/*}/.."
-source "$vsr_root/prelude"
 
 function showHelp() {
   errcho "usage: vsr-generate-sys-startup"
@@ -24,10 +23,15 @@ function showHelp() {
 # First we go and compress the keychain, putting it in our current
 # directory.
 
+if [ -d "$HOME/tmp/sys-bootstrap" ]; then
+  echo "There already exists a system bootstrap folder. Erase that please"
+  exit 1
+fi
+
 mkdir -p $HOME/tmp/sys-bootstrap
 cd $HOME/tmp/sys-bootstrap
 tar -acf keychain.tar.gz $HOME/keychain
-tar -acf vsr.tar.gz $vsr_root
+tar -acf vsr.tar.gz $VSR_ROOT
 
 
 
