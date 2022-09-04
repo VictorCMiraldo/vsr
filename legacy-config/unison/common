@@ -9,6 +9,9 @@ addversionno = true
 
 # Names and paths to ignore
 
+# Don't sync direnv
+ignore = Name .direnv
+
 # It's superfluous to backup git directory
 ignore = Name .git
 

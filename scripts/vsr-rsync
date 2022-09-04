@@ -1,7 +1,11 @@
 #! /bin/bash
 
-vsr_root="${BASH_SOURCE%/*}/.."
-source "$vsr_root/prelude"
+if [ -z "$VSR_ROOT" ]; then
+  echo "I don't know where vsr_root is!"
+  exit 1
+fi
+
+source "$VSR_ROOT/prelude"
 
 function print_usage() {
   errcho "usage: sys-rsync [--yes] <folder> <dst> <additional rsync opts>"
@@ -36,18 +40,9 @@ shift; shift
 
 RSYNC_OPTS=("-aEh"
             "--progress"
-            # "--preallocate" 
-            "--exclude-from=$vsr_root/config/rsync/folder-backup.exc"
-            "--include-from=$vsr_root/config/rsync/folder-backup.inc"
+            "--exclude-from=$VSR_ROOT/legacy-config/rsync/folder-backup.exc"
+            "--include-from=$VSR_ROOT/legacy-config/rsync/folder-backup.inc"
             )
-
-# And we can sudo
-# sudo -k
-# errcho "I need sudo."
-# if ! sudo true; then
-#   errcho "Sorry, aborting."
-#   exit 1
-# fi
 
 if [ ! -e "$HOME/$src" ]; then
   errcho "!! Source ( $src ) does not exist."
