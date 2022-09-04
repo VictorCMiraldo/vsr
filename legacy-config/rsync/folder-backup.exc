@@ -17,3 +17,6 @@ Dropbox/
 *.idx
 *.ptb
 tmp/
+dist-newstyle/
+.direnv*
+

@@ -62,16 +62,17 @@ fi
 # Configure lightdm autologin
 if [[ "${VSR_LIGHTDM_AUTOLOGIN}" -ne "1" ]]; then
   echo "Configuring lightDM auto-login"
-  sudo cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bckp
-  sudo patch /etc/lightdm/lightdm.conf <<EOF
-126,127c126,127
-< #autologin-user=
-< #autologin-user-timeout=0
----
-> autologin-user=victor
-> autologin-user-timeout=0
-EOF
- echo "VSR_LIGHTDM_AUTOLOGIN=1" >> ${wd}/previous-install.state
+  if [ ! -d "/etc/lightdm" ]; then
+    echo "LightDM doesn't seem to be installed!"
+  else
+    if [ -f "/etc/lightdm/lightdm.conf" ]; then
+      echo "Backing up old lightdm.conf"
+      sudo mv /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bckp
+    fi
+  
+    echo -n "autologin-user=victor\nautologin-user-timeout=0" | sudo tee /etc/lightdm/lightdm.conf
+    echo "VSR_LIGHTDM_AUTOLOGIN=1" >> ${wd}/previous-install.state
+  fi
 fi
 
 echo "Done"

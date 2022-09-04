@@ -19,7 +19,13 @@ in {
         height = "23px";
         separator = "|";
         tray-padding = 2;
-        tray-position = "right";
+        tray-position = 
+          # On my work-machine we unfortunately running Ubuntu, which did some magic to the system
+          # tray hence, I need to rely on the mate-panels for the system tray. Hence, we'll disable
+          # the system tray from polybar.
+          if builtins.getEnv "HOSTNAME" == "dev-lt-60" 
+          then "none"
+          else "right";
         tray-maxsize = 15;
         module-margin = 1;
         modules-left = "power home xmonad";

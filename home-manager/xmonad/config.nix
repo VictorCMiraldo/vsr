@@ -22,11 +22,18 @@ in {
   #   as the cursor and the background. We still can use caja as a file manager.
   home.file.".xmonad/install.sh" = {
     executable = true;
-    text = ''
-      #! /bin/bash
-      gsettings set org.mate.session.required-components windowmanager xmonad
-      gsettings set org.mate.session required-components-list "['windowmanager']"
-    '';
+    text = 
+      if builtins.getEnv "HOSTNAME" == "dev-lt-60"
+      then ''
+        #! /bin/bash
+        gsettings set org.mate.session.required-components windowmanager xmonad
+        gsettings set org.mate.session required-components-list "['windowmanager', 'panel']"
+      ''
+      else ''
+        #! /bin/bash
+        gsettings set org.mate.session.required-components windowmanager xmonad
+        gsettings set org.mate.session required-components-list "['windowmanager']"
+      '';
   };
 
   home.file.".xmonad/uninstall.sh" = {
@@ -60,6 +67,10 @@ in {
       # result in xmonad inheriting the X-shaped default cursor
       feh --bg-scale ${builtins.toString ./wallpaper.jpg} &
       xsetroot -cursor_name left_ptr
+
+      # If we're at our work machine, we need a mate-panel to use as a dock, since polybar refuses
+      # to pick the dock up properly. Probably due to some ubuntu magic.
+      ${if builtins.getEnv "HOSTNAME" == "dev-lt-60" then "mate-panel &" else ""}
 
       # Run xmonad
       ${config.home.homeDirectory}/.xmonad/xmonad-x86_64-linux
