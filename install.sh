@@ -53,12 +53,7 @@ mkdir -p "$HOME/.unison" \
 ## Link our templates
 ln -fs $(readlink -f "${wd}/legacy-config/templates") "$HOME/.templates"
 
-## Link our papis config
-mkdir -p "$HOME/.config"
-ln -fs $(readlink -f "${wd}/legacy-config/papis") "$HOME/.config/papis"
-
 ## Finishing up
-
 
 # Link our scripts folder
 if [[ ! -e "$HOME/.bin" ]]; then
