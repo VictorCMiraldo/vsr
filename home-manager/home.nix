@@ -53,6 +53,7 @@
     ./programs/emacs/config.nix
     ./programs/vim/config.nix
     ./programs/ssh/config.nix
+    ./programs/papis/config.nix
   ];
 
   ############

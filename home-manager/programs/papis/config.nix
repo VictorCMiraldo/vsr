@@ -1,8 +1,8 @@
 {config, pkgs, ...}:
 {
   home.packages = [
-    papis
+    pkgs.papis
   ];
 
-  home.file.".config/papis/config" = ./config
+  home.file.".config/papis/config".source = ./papis-config;
 }
