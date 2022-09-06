@@ -15,6 +15,7 @@ pass-extension-otp
 emacs-gtk
 rofi
 moreutils
+xcape
 
 # Ricing
 lxappearance
