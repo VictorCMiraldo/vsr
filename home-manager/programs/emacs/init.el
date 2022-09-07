@@ -288,11 +288,18 @@
       "e ]" 'my/flymake-goto-next-error
       "e [" 'my/flymake-goto-prev-error
       "[ e" 'my/flymake-goto-prev-error
-      "] w" 'my/flymake-goto-next-warning
-      "w ]" 'my/flymake-goto-next-warning
-      "w [" 'my/flymake-goto-prev-warning
-      "[ w" 'my/flymake-goto-prev-warning))
+      "] W" 'my/flymake-goto-next-warning
+      "W ]" 'my/flymake-goto-next-warning
+      "W [" 'my/flymake-goto-prev-warning
+      "[ W" 'my/flymake-goto-prev-warning))
 
+;;;;;;;;;;;;
+;; Python ;;
+;;;;;;;;;;;;
+
+(use-package python-mode
+  :straight t
+  :mode ("\\.py\\'" . python-mode))
 
 ;;;;;;;;;;;;;
 ;; Haskell ;;
@@ -305,6 +312,7 @@
 
 (use-package haskell-mode
   :straight t
+  ;; Do NOT turn the HLS immediately, for some projects it can be VERY slow.
   ;; :hook (haskell-mode . eglot-ensure)
   :bind (:map haskell-mode-map
     ("<f8>"        . haskell-navigate-imports)
