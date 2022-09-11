@@ -312,6 +312,7 @@
 
 (use-package haskell-mode
   :straight t
+  :mode ("\\.hs\\'" . haskell-mode)
   ;; Do NOT turn the HLS immediately, for some projects it can be VERY slow.
   ;; :hook (haskell-mode . eglot-ensure)
   :bind (:map haskell-mode-map
@@ -401,52 +402,55 @@
   (let ((coding-system-for-read 'utf-8))
         (shell-command-to-string "agda-mode locate")))
 
-(when (file-exists-p agda-mode-path)
-  (use-package agda-mode
-    :no-require
-    :init
-      (load-file agda-mode-path)
-      (evil-leader/set-key
-        ;; 'c' code
-        "c l" 'agda2-load
-        "c d" 'agda2-goto-definition
-        "c b" 'agda2-go-back
-        "c g" 'agda2-next-goal)
-    :bind
-      (:map agda2-mode-map
-        ("M-<right>"   . agda2-goto-definition)
-        ("M-<left>"    . agda2-go-back)
-        ("M-<up>"      . agda2-previous-goal)
-        ("M-<down>"    . agda2-next-goal)
-       :map evil-normal-state-map
-        ([mouse-2]     . agda2-goto-definition-mouse))
-    :custom
-       ;; use font-lock for agda2; maybe one day we sit and carefully customize things.
-       (agda2-highlight-face-groups 'default-faces)
-       (agda2-program-args nil)
-       (agda2-program-name "agda"))
-
-  ;; Font hack adapted from: https://stackoverflow.com/questions/33074370/how-can-i-use-a-different-ttf-fonts-for-certain-utf-8-characters-in-emacs
-  ;; Add some specific font points that need to be displayed with
-  ;; another font; and which font to use for them. Ranges and single points
-  ;; are supported:
-  ;;
-  ;; (#x12345 . "ReplacementFont")
-  ;; ((#x12300 . #x12333) "ReplacementFont")
-  ;;
-  (setq vcm/lacking-font-points '(
-    ((#x1d552 . #x1d56b) . "DejaVu Sans") ;; lowecase bb: 𝕥, 𝕗, ...
-  ))
-
-  (when (fboundp 'set-fontset-font)
-    (defun vcm/fix-unicode (&optional frame)
-      (mapcar
-        '(lambda (s) (set-fontset-font "fontset-default" (car s) (cdr s) frame))
-        vcm/lacking-font-points)
-    )
-    (vcm/fix-unicode)
-    (add-hook 'after-make-frame-functions 'vcm/fix-unicode))
-)
+;; Bug! agda-mode is always being loaded, overriding Haskell's mode keybindings!
+;;
+;; (when (file-exists-p agda-mode-path)
+;;   (use-package agda-mode
+;;     :no-require
+;;     :mode ("\\.agda\\'" . agda-mode)
+;;     :init
+;;       (load-file agda-mode-path)
+;;       (evil-leader/set-key
+;;         ;; 'c' code
+;;         "c l" 'agda2-load
+;;         "c d" 'agda2-goto-definition
+;;         "c b" 'agda2-go-back
+;;         "c g" 'agda2-next-goal)
+;;     :bind
+;;       (:map agda2-mode-map
+;;         ("M-<right>"   . agda2-goto-definition)
+;;         ("M-<left>"    . agda2-go-back)
+;;         ("M-<up>"      . agda2-previous-goal)
+;;         ("M-<down>"    . agda2-next-goal)
+;;        :map evil-normal-state-map
+;;         ([mouse-2]     . agda2-goto-definition-mouse))
+;;     :custom
+;;        ;; use font-lock for agda2; maybe one day we sit and carefully customize things.
+;;        (agda2-highlight-face-groups 'default-faces)
+;;        (agda2-program-args nil)
+;;        (agda2-program-name "agda"))
+;; 
+;;   ;; Font hack adapted from: https://stackoverflow.com/questions/33074370/how-can-i-use-a-different-ttf-fonts-for-certain-utf-8-characters-in-emacs
+;;   ;; Add some specific font points that need to be displayed with
+;;   ;; another font; and which font to use for them. Ranges and single points
+;;   ;; are supported:
+;;   ;;
+;;   ;; (#x12345 . "ReplacementFont")
+;;   ;; ((#x12300 . #x12333) "ReplacementFont")
+;;   ;;
+;;   (setq vcm/lacking-font-points '(
+;;     ((#x1d552 . #x1d56b) . "DejaVu Sans") ;; lowecase bb: 𝕥, 𝕗, ...
+;;   ))
+;; 
+;;   (when (fboundp 'set-fontset-font)
+;;     (defun vcm/fix-unicode (&optional frame)
+;;       (mapcar
+;;         '(lambda (s) (set-fontset-font "fontset-default" (car s) (cdr s) frame))
+;;         vcm/lacking-font-points)
+;;     )
+;;     (vcm/fix-unicode)
+;;     (add-hook 'after-make-frame-functions 'vcm/fix-unicode))
+;; )
 
 
 ;;;;;;;;;;;

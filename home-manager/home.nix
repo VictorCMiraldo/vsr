@@ -1,6 +1,7 @@
-{ config, pkgs, ... }:
-
-{
+{ config, pkgs, lib, ... }:
+let
+  isWorkMachine = builtins.getEnv "HOSTNAME" == "dev-lt-60";
+in {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home.username = "victor";
@@ -58,7 +59,7 @@
 
   ############
 
-  programs.git = {
+  programs.git = lib.mkIf (! isWorkMachine) {
     enable = true;
     userName = "Victor Miraldo";
     userEmail = "victor.miraldo@fastmail.com";

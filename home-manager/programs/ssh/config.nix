@@ -1,6 +1,8 @@
-{pkgs, ...}:
-{
-  programs.ssh = {
+{pkgs, lib, ...}:
+let
+  isWorkMachine = builtins.getEnv "HOSTNAME" == "dev-lt-60";
+in {
+  programs.ssh = lib.mkIf (! isWorkMachine) {
     enable = true;
     matchBlocks = {
       "pizero" = {
