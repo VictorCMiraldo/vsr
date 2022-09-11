@@ -1,7 +1,5 @@
 { config, pkgs, lib, ... }:
-let
-  isWorkMachine = builtins.getEnv "HOSTNAME" == "dev-lt-60";
-in {
+{
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home.username = "victor";
@@ -45,7 +43,13 @@ in {
 
   ############
 
+  # We'll the necessary system-wide options in the vsr namespace.
+  # All the options we use are declared in options.nix.
+  # For now, it's just one.
+  vsr.isWorkMachine = builtins.getEnv "HOSTNAME" == "dev-lt-60";
+
   imports = [
+    ./options.nix
     ./xmonad/config.nix
     ./fonts/config.nix
     ./programs/utilities.nix
@@ -54,14 +58,7 @@ in {
     ./programs/emacs/config.nix
     ./programs/vim/config.nix
     ./programs/ssh/config.nix
+    ./programs/git.nix
     ./programs/papis/config.nix
   ];
-
-  ############
-
-  programs.git = lib.mkIf (! isWorkMachine) {
-    enable = true;
-    userName = "Victor Miraldo";
-    userEmail = "victor.miraldo@fastmail.com";
-  };
 }
