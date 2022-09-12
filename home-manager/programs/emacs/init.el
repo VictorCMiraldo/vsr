@@ -404,9 +404,7 @@
 
 (when (file-exists-p agda-mode-path)
   (message "Agda exists in: %s" agda-mode-path)
-  (use-package agda-mode
-    :no-require
-    :mode ("\\.agda\\'" . agda2-mode)
+  (use-package agda2-mode
     :init
       (load-file agda-mode-path)
     :config
