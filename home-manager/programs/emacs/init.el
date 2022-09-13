@@ -282,6 +282,7 @@
     (eldoc-echo-area-prefer-doc-buffer t)
     (eldoc-echo-area-use-multiline-p 1)
   :config
+    (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
     (evil-leader/set-key
       ;; Redefine next-error to use flymake's
       "] e" 'my/flymake-goto-next-error
