@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 import XMonad
 import XMonad.Util.Run (safeSpawn)
-import XMonad.Util.EZConfig (additionalKeys, removeKeys)
+import XMonad.Util.EZConfig (additionalKeys, additionalMouseBindings, removeKeys)
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.EwmhDesktops
@@ -9,8 +9,12 @@ import XMonad.Hooks.StatusBar
 import XMonad.Hooks.StatusBar.PP 
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.NoBorders
+import XMonad.Actions.MouseGestures
+import XMonad.Actions.CycleWS
 import qualified XMonad.StackSet as SS
 import qualified Reflection as R
+import qualified Data.Map as M
+import Data.IORef
 
 ------------------------------------------
 -- * My Modifier and Top-Level Config * --
@@ -18,7 +22,7 @@ import qualified Reflection as R
 
 myMod = mod1Mask
 
-myConfig = (def
+myConfig = ((def
   { terminal = "mate-terminal"
   , borderWidth = 2
   , focusedBorderColor = R.accent
@@ -26,7 +30,7 @@ myConfig = (def
   , manageHook = manageHook def <+> manageDocks <+> myManageHook
   , layoutHook = smartBorders . avoidStruts $ layoutHook def
   } `removeKeys` myRemovedKeys)
-  `additionalKeys` myKeys
+  `additionalKeys` myKeys)
 
 myKeys :: [((KeyMask, KeySym), X ())]
 myKeys = [
@@ -103,12 +107,42 @@ myManageHook = composeAll
     manageFF :: ManageHook
     manageFF = (className =? "Firefox" <&&> resource =? "Dialog") --> doFloat
 
+--------------------------------
+-- * Fancy Trackpad Actions * --
+--------------------------------
+
+-- Why not use left and right scrolling (by default buttons 6 and 7), to change to the previous/next workspace?
+-- The trick is to keep a counter and only switch every n clicks; otherwise its way too fast and
+-- we can't keep track of it. Counter starts at 0, scrolling left decreases it, scrolling right increases it.
+-- As soon as its absolute value reaches cLICKS_TO_CYCLE, we call either prevWS or nextWS.
+
+cLICKS_TO_CYCLE :: Int
+cLICKS_TO_CYCLE = 6
+
+horizontalScrollWorkspaces :: (LayoutClass l Window) => XConfig l -> IO (XConfig l)
+horizontalScrollWorkspaces conf = do
+  ref <- newIORef 0
+  let myMouseBindingsIO :: [((ButtonMask, Button), Window -> X ())]
+      myMouseBindingsIO = 
+        [ ((0, 6), const $ countIORef ref (\x -> x-1) (<= (-cLICKS_TO_CYCLE)) prevWS)
+        , ((0, 7), const $ countIORef ref (+1) (>= cLICKS_TO_CYCLE) nextWS)
+        ]
+  return $ conf `additionalMouseBindings` myMouseBindingsIO
+  where
+    countIORef :: IORef Int -> (Int -> Int) -> (Int -> Bool) -> X () -> X ()
+    countIORef r upd8 predi act = do
+      doMe <- io $ atomicModifyIORef r (\i -> if predi i then (0, act) else (upd8 i, return ()))
+      doMe
+
 --------------
 -- * Main * --
 --------------
 
 main :: IO ()
-main = xmonad $ myBar $ ewmhFullscreen $ ewmh $ myConfig
+main = do
+  let pureConfig = myBar $ ewmhFullscreen $ ewmh $ myConfig
+  impureConfig <- horizontalScrollWorkspaces pureConfig
+  xmonad impureConfig
 
 -----------------
 -- * Polybar * --
