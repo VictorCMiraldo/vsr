@@ -393,6 +393,11 @@
       "c f" 'haskell-mode-stylish-buffer
       "c K" 'haskell-process-kill
       "c s" 'eglot)
+
+    ;; We use stylish-haskell at Channable, so if the buffer is there, please change my default of ormolu!
+    (when (string-prefix-p "/home/victor/channable" (buffer-file-name))
+      (setq haskell-mode-stylish-haskell-path "stylish-haskell")
+    )
 )
 
 ;;;;;;;;;;
