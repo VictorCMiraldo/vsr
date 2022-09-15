@@ -15,6 +15,8 @@ import qualified XMonad.StackSet as SS
 import qualified Reflection as R
 import qualified Data.Map as M
 import Data.IORef
+import Control.Concurrent
+import Control.Monad
 
 ------------------------------------------
 -- * My Modifier and Top-Level Config * --
@@ -121,11 +123,12 @@ cLICKS_TO_CYCLE = 6
 
 horizontalScrollWorkspaces :: (LayoutClass l Window) => XConfig l -> IO (XConfig l)
 horizontalScrollWorkspaces conf = do
-  ref <- newIORef 0
+  goLeft <- asyncNBeforeTimeout cLICKS_TO_CYCLE 0.3
+  goRight <- asyncNBeforeTimeout cLICKS_TO_CYCLE 0.3
   let myMouseBindingsIO :: [((ButtonMask, Button), Window -> X ())]
       myMouseBindingsIO = 
-        [ ((0, 6), const $ countIORef ref (\x -> x-1) (<= (-cLICKS_TO_CYCLE)) prevWS)
-        , ((0, 7), const $ countIORef ref (+1) (>= cLICKS_TO_CYCLE) nextWS)
+        [ ((0, 6), const $ io goLeft >>= \c -> when c prevWS)
+        , ((0, 7), const $ io goRight >>= \c -> when c nextWS)
         ]
   return $ conf `additionalMouseBindings` myMouseBindingsIO
   where
@@ -141,7 +144,9 @@ horizontalScrollWorkspaces conf = do
 main :: IO ()
 main = do
   let pureConfig = myBar $ ewmhFullscreen $ ewmh $ myConfig
-  impureConfig <- horizontalScrollWorkspaces pureConfig
+  -- Don't touch the horizontalScroll... it can crash xmonad. Probably due to a deadlock or something...
+  -- impureConfig <- horizontalScrollWorkspaces pureConfig
+  let impureConfig = pureConfig
   xmonad impureConfig
 
 -----------------
@@ -202,3 +207,33 @@ myCycleScreen act = do
  where
    screenId :: SS.Screen i l a sid sd -> i
    screenId = SS.tag . SS.workspace
+
+-- | Given an @n@ and a @t@, returns an action @act@ that,
+-- when ran @n@ times in less than @t@ seconds, returns true.
+-- Otherwise, returns false.
+asyncNBeforeTimeout :: Int -> Float -> IO (IO Bool)
+asyncNBeforeTimeout n toutF = do
+  when (n < 2) $ error "Pick n to be at least 2"
+
+  let toutMicroS = ceiling $ toutF * 1000000
+  
+  gate <- newEmptyMVar
+  ctr <- newIORef 0
+
+  tid <- forkIO $ forever $ do
+    takeMVar gate
+    threadDelay toutMicroS
+    atomicWriteIORef ctr 0
+
+  return $ do
+    val <- atomicModifyIORef' ctr (\x -> (x+1, x))
+    if val <= 0
+    -- The value is (leq) 1, this is the first call to the action. Open the gate for the timeout-thread!
+    then putMVar gate () >> return False
+    -- It's not the first run, the timeouter is running and will eventally set the ioref to 0, that's fine!
+    -- Just return whether we reached the count or not!
+    else if val >= n - 1
+         then atomicWriteIORef ctr 0 >> return True
+         else return False
+
+
