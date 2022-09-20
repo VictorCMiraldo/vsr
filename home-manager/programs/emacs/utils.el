@@ -13,13 +13,14 @@
            (message "Only one file buffer: %s" bufs)))
 )
 
-(defun vcm/next-file-buffer ()
-  "Switches to the next file buffer"
+(defun vcm/prev-file-buffer ()
+  "Switches to the buffer that was visited previously to this. If you repeat this command, you'll see
+   buffers alternating."
   (interactive)
   (vcm/goto-file-buffer 'cadr)
 )
 
-(defun vcm/prev-file-buffer ()
+(defun vcm/next-file-buffer ()
   "Switches to the previous file buffer"
   (interactive)
   (vcm/goto-file-buffer #'(lambda (x) (car (last x))))

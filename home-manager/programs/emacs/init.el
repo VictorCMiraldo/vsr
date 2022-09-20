@@ -15,6 +15,9 @@
 ;; Bring in use-package through straight, so we can preserve most of the config
 (straight-use-package 'use-package)
 
+;; bring in some of my own definitions
+(load "~/.emacs.d/utils.el")
+
 ;; We don't want a poluted mode line
 (use-package diminish :straight t)
 
@@ -53,13 +56,19 @@
 
 (use-package undo-tree
   :straight t
-  :config (global-undo-tree-mode))
+  :custom
+    (undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
+  :config
+    (global-undo-tree-mode))
 
 ;; Set up evil mode
 (use-package evil
   :straight t
   :init
   (setq evil-want-keybinding nil)
+  :bind (:map evil-normal-state-map
+    ("g t" . #'vcm/next-file-buffer)
+    ("g T" . #'vcm/prev-file-buffer))
   :config
   (diminish 'undo-tree-mode)
   (evil-mode 1)
@@ -73,6 +82,7 @@
 
   ;; And I want > and < to shift lines one column at a time
   (evil-shift-width 1))
+
 (use-package evil-leader
   :straight t
   :after evil
@@ -691,4 +701,3 @@
 ;; line numbers everywhere
 (global-linum-mode t)
 (linum-relative-toggle)
-
