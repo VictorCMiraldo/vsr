@@ -23,6 +23,8 @@ in {
     haskellPackages.hpack
     haskellPackages.lhs2tex
 
+    python39Packages.jedi-language-server
+
     agdaWithStdlib
   ];
 }

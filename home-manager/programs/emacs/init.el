@@ -50,9 +50,7 @@
   :commands
     magit
   :custom
-    (setq magit-diff-refine-hunk 'all)
-  :config
-    (global-set-key (kbd "C-x g") 'magit-status))
+    (setq magit-diff-refine-hunk 'all))
 
 (use-package undo-tree
   :straight t
@@ -127,6 +125,7 @@
       "c D" 'xref-find-references
       "c a" 'align-regexp
       "c j" 'fill-paragraph
+      "c s" 'eglot
 
     ;; 'p' project
       "p f" 'projectile-find-file
@@ -279,9 +278,6 @@
 
 (use-package eglot
   :straight t
-  :config
-    (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))
-    (diminish 'eldoc-mode)
   :custom
     ;; don't ask for closing the server connection,
     (eglot-autoshutdown t)
@@ -292,7 +288,9 @@
     (eldoc-echo-area-prefer-doc-buffer t)
     (eldoc-echo-area-use-multiline-p 1)
   :config
+    (diminish 'eldoc-mode)
     (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
+    (add-to-list 'eglot-server-programs '(python-mode . ("jedi-language-server")))
     (evil-leader/set-key
       ;; Redefine next-error to use flymake's
       "] e" 'my/flymake-goto-next-error
@@ -401,8 +399,7 @@
     (evil-leader/set-key
       ;; 'c' code
       "c f" 'haskell-mode-stylish-buffer
-      "c K" 'haskell-process-kill
-      "c s" 'eglot)
+      "c K" 'haskell-process-kill)
 
     ;; We use stylish-haskell at Channable, so if the buffer is there, please change my default of ormolu!
     (when (string-prefix-p "/home/victor/channable" (buffer-file-name))
