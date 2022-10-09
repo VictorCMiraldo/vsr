@@ -225,6 +225,12 @@
   :commands projectile-project-root
   :bind-keymap
     ("C-c p" . projectile-command-map)
+  :custom
+    (projectile-globally-ignored-directories
+      '(".git"
+        ".stack-work"
+        ".direnv"
+        "dist-*"))
   :config
       (projectile-mode t)
       (helm-projectile-on) ;; enable helm-projectile
