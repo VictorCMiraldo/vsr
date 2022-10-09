@@ -1,47 +1,27 @@
-Victor's System Resources
-=========================
+VSR
+===
 
 This is a repo organizing my system configuration and
 scripts, including a bootstrapping script to help
 start up on a fresh install of a debian-based distro.
 
-In `config/` one finds a variety of sytem config files.
+To install on a fresh system run `install.sh` and will perform all the steps
+that are required. The actual install is divided in two parts, the system-level install
+that will prepare the underlying system and the user-level install, managed by `nix`:
 
-In `scripts/` one finds a variety of utility scripts I use often.
+1. The `system/` folder contains the changes that I like to perform
+on my underlying system. These include:
+    1. Managing a selection of apt packages.
+    1. Installing `nix` and `home-manager`
+    1. Setting up my `sshd` config
+    1. Setting up my `ufw` config
+    1. Enabling automatic loggin on lightDM
+Under `system/env.sh` we place any environment settings that are needed on this step.
+That file will be sourced by my [bash profile](home-manager/programs/bash/profile) later on, 
+so we don't loose any of it. The system installation script will produce a 
+`system/previous-install.state` file, indicating which steps have already been 
+succesfuly performed. Maybe at some point I should
+switch to NixOS, but not right now. It's a little hacky but gets the job done.
+1. The user-level config is maintained by `home-manager`, hence a mere `home-manager switch` will
+do the job.
 
-Running `install` will do a number of things:
-  1) Override the system's defaults with soft links
-     to my versions of configs in `config/`
-  2) Append a line to the default bash_profile, calling
-     my addendun's to it.
-  3) Remove the linux default directory structure and
-     replace it with mine.
-
-Note that the `install` script will **not** install other
-packages in the system. It merely installs `vsr` into the system.
-
-Setting up my env on a fresh install
-====================================
-
-To install my full config in a freshly-installed distro is pretty simple.
-First, run `vsr-generate-sys-startup`, and copy `~/tmp/sys-bootstrap/` to a pendrive. We will need the data in there to start the system up.
-
-In the fresh machine now, we do:
-
-  1) Extract `vsr.tar.gz` to `~/repos/mine/vsr`
-  2) Run `~/repos/mine/vsr/install`
-  3) Extract `keychain.tar.gz` to `~/usr/keychain`
-  4) log off then on again. Some changes only take place at login
-  5) Run `pkg-maintain` to install the necessary software (this takes
-     a long time and half the software installations require answering
-     yes/no questions, so make sure to stay close by!)
-  6) log off then on again.
-  7) Generate an ssh key for the new machine (we need `pass` for this,
-     hence step 5 needs to happen before) register this key
-     within the vps. You should have root access to the vps anyway (go look
-     inside the keychain and `.../vsr/config/ssh/config`).
-  8) Run `vsr-unison`
-  9) The system should be mainly set-up, now we need
-     some additional software.
-      - *emacs*: run `cd $VSR_ROOT/config/emacs && ./install`
-      - *xmonad*: install manually from `$VSR_ROOT/config/xmonad`
