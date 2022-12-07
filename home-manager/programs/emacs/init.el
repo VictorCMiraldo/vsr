@@ -456,6 +456,7 @@
         ("M-<left>"    . agda2-go-back)
         ("M-<up>"      . agda2-previous-goal)
         ("M-<down>"    . agda2-next-goal)
+       :map evil-normal-state-map
         ([mouse-2]     . agda2-goto-definition-mouse))
     :custom
        ;; use font-lock for agda2; maybe one day we sit and carefully customize things.
