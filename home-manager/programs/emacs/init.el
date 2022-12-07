@@ -55,6 +55,7 @@
 (use-package undo-tree
   :straight t
   :custom
+    (undo-tree-auto-save-history nil)
     (undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
   :config
     (global-undo-tree-mode))
@@ -66,7 +67,9 @@
   (setq evil-want-keybinding nil)
   :bind (:map evil-normal-state-map
     ("g t" . #'vcm/next-file-buffer)
-    ("g T" . #'vcm/prev-file-buffer))
+    ("g T" . #'vcm/prev-file-buffer)
+    ; Unbind mouse-2 so we can use it later
+    ([mouse-2] . nil))
   :config
   (diminish 'undo-tree-mode)
   (evil-mode 1)
@@ -225,10 +228,22 @@
   :commands projectile-project-root
   :bind-keymap
     ("C-c p" . projectile-command-map)
+  :custom
+    ;; If projectile becomes slow, we can always go back to 'alien,
+    ;; with the disadvantage that our files won't be filtered anymore.
+    (projectile-indexing-method 'hybrid)
+    (projectile-globally-ignored-file-suffixes '(".agdai" ".hi" ".dyn_hi" ".o" ".pyc" "#"))
+    (projectile-globally-ignored-directories '(
+        "^\\.git$"
+        "^\\.stack-work$"
+        "^\\dist-newstyle$"
+        "^\\.direnv$"
+        "^\\.cache$"
+    ))
   :config
-      (projectile-mode t)
-      (helm-projectile-on) ;; enable helm-projectile
-      (defun string-empty-p (str) (string= "" str)))
+    (projectile-mode t)
+    (helm-projectile-on) ;; enable helm-projectile
+    (defun string-empty-p (str) (string= "" str)))
 
 ;; Helm-projectile is great for opening files quickly,
 ;; tell it to be loaded whenever helm-projectile-on is called.
@@ -291,6 +306,7 @@
     (diminish 'eldoc-mode)
     (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
     (add-to-list 'eglot-server-programs '(python-mode . ("jedi-language-server")))
+    (bind-key (kbd "<mouse-2>") #'xref-find-definitions)
     (evil-leader/set-key
       ;; Redefine next-error to use flymake's
       "] e" 'my/flymake-goto-next-error
@@ -402,7 +418,9 @@
       "c K" 'haskell-process-kill)
 
     ;; We use stylish-haskell at Channable, so if the buffer is there, please change my default of ormolu!
-    (when (string-prefix-p "/home/victor/channable" (buffer-file-name))
+    ;; Unless we're in imaginator, obviously! :)
+    (when (and (string-prefix-p "/home/victor/channable" (buffer-file-name))
+               (not (string-prefix-p "/home/victor/channable/imaginator" (buffer-file-name))))
       (setq haskell-mode-stylish-haskell-path "stylish-haskell")
     )
 )
@@ -417,9 +435,14 @@
 
 (when (file-exists-p agda-mode-path)
   (message "Agda exists in: %s" agda-mode-path)
+  (defun my-agda2-mode-hook ()
+    "Custom behaviours for `agda2-mode'."
+    (message "Hook ran")
+    (activate-input-method "Agda"))
   (use-package agda2-mode
     :init
       (load-file agda-mode-path)
+      (add-hook 'agda2-mode-hook 'my-agda2-mode-hook)
     :config
       (evil-leader/set-key
         ;; 'c' code
@@ -433,7 +456,6 @@
         ("M-<left>"    . agda2-go-back)
         ("M-<up>"      . agda2-previous-goal)
         ("M-<down>"    . agda2-next-goal)
-       :map evil-normal-state-map
         ([mouse-2]     . agda2-goto-definition-mouse))
     :custom
        ;; use font-lock for agda2; maybe one day we sit and carefully customize things.
