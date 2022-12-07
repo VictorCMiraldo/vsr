@@ -359,6 +359,7 @@
 
     ;; sets up ormolu as our reformatter
     (haskell-mode-stylish-haskell-path "ormolu")
+    (haskell-mode-stylish-haskell-args '("--no-cabal"))
 
     ;; Keep my code indented with 2 spaces
     (haskell-indent-offset 2)
@@ -422,6 +423,7 @@
     (when (and (string-prefix-p "/home/victor/channable" (buffer-file-name))
                (not (string-prefix-p "/home/victor/channable/imaginator" (buffer-file-name))))
       (setq haskell-mode-stylish-haskell-path "stylish-haskell")
+      (setq haskell-mode-stylish-haskell-args nil)
     )
 )
 
