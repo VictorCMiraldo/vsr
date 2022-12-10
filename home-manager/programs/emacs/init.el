@@ -318,6 +318,14 @@
       "W [" 'my/flymake-goto-prev-warning
       "[ W" 'my/flymake-goto-prev-warning))
 
+;;;;;;;;;
+;; Nix ;;
+;;;;;;;;;
+
+(use-package nix-mode
+  :straight t
+  :mode ("\\.nix\\'" . nix-mode))
+
 ;;;;;;;;;;;;
 ;; Python ;;
 ;;;;;;;;;;;;
