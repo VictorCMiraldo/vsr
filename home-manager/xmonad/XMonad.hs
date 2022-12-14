@@ -1,4 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE RecordWildCards #-}
 import XMonad
 import XMonad.Util.Run (safeSpawn)
 import XMonad.Util.EZConfig (additionalKeys, additionalMouseBindings, removeKeys)
@@ -16,14 +17,18 @@ import qualified Reflection as R
 import qualified Data.Map as M
 import Data.IORef
 import Data.List (isPrefixOf, isSuffixOf)
+import Data.Monoid (All(..))
 import Control.Concurrent
 import Control.Monad
+import Foreign.C.Types 
 
 ------------------------------------------
 -- * My Modifier and Top-Level Config * --
 ------------------------------------------
 
 myMod = mod1Mask
+
+myModCode = 108
 
 myConfig = ((def
   { terminal = "mate-terminal"
@@ -115,6 +120,65 @@ myManageHook = composeAll
     manageGimp = (fmap ("Gimp" `isPrefixOf`) className <&&> fmap ("dialog" `isSuffixOf`) (stringProperty "WM_WINDOW_ROLE")) --> doFloat
 
 
+-----------------------
+-- * My Event Hook * --
+-----------------------
+
+data MyGlobalEventState = MyGlobalEventState { 
+  -- | Keeps track of whether our mod key is up or down
+  mgesModIsDown :: Bool,
+
+  -- | While our mod key is down, keeps track of how many horizontal
+  -- pixels have we scrolled through.
+  mgesAccuX :: CInt,
+  mgesLastX :: Maybe CInt
+  }
+
+newMyGlobalEventState :: MyGlobalEventState
+newMyGlobalEventState = MyGlobalEventState False 0 Nothing
+
+x_THRESHOLD :: CInt
+x_THRESHOLD = 30
+
+myEventHook :: IORef MyGlobalEventState -> Event -> X All
+myEventHook iost (MotionEvent { ev_x = x, ev_y = y }) = do
+  st <- io $ readIORef iost
+  when (mgesModIsDown st) $ do
+    let st' = myHandleMovementEvent st x y
+    st'' <- gaugeMovement st'
+    io $ writeIORef iost st''
+  return (All True)
+myEventHook iost KeyEvent {..} = do
+  st <- io $ readIORef iost
+  let st' = myHandleKeyEvent st ev_x ev_keycode ev_state
+  io $ writeIORef iost st'
+  return (All True)
+myEventHook _ _ = return (All True)
+
+myHandleMovementEvent :: MyGlobalEventState -> CInt -> CInt -> MyGlobalEventState
+myHandleMovementEvent st x y
+  | not (mgesModIsDown st) = st
+  | Just lx <- mgesLastX st = st { mgesLastX = Just x , mgesAccuX = mgesAccuX st + (lx - x) }
+  | otherwise = st { mgesLastX = Just x , mgesAccuX = 0 }
+
+gaugeMovement :: MyGlobalEventState -> X MyGlobalEventState
+gaugeMovement st
+  | mgesAccuX st > x_THRESHOLD = nextWS >> return (st { mgesAccuX = 0 })
+  | mgesAccuX st < -x_THRESHOLD = prevWS >> return (st { mgesAccuX = 0 })
+  | otherwise = return st
+
+myHandleKeyEvent :: MyGlobalEventState -> CInt -> KeyCode -> KeyMask -> MyGlobalEventState
+myHandleKeyEvent st x kcode kstate 
+  | kcode == myModCode && kstate == 0 = st { mgesLastX = Just x , mgesModIsDown = True }
+  | kcode == myModCode && kstate /= 0 = st { mgesLastX = Nothing , mgesModIsDown = False }
+  | otherwise = st
+
+horizontalScrollWorkspaces :: (LayoutClass l Window) => XConfig l -> IO (XConfig l)
+horizontalScrollWorkspaces conf = do
+  iost <- newIORef newMyGlobalEventState
+  return $ conf { handleEventHook = myEventHook iost <> handleEventHook conf }
+
+{-
 --------------------------------
 -- * Fancy Trackpad Actions * --
 --------------------------------
@@ -143,6 +207,8 @@ horizontalScrollWorkspaces conf = do
       doMe <- io $ atomicModifyIORef r (\i -> if predi i then (0, act) else (upd8 i, return ()))
       doMe
 
+-}
+
 --------------
 -- * Main * --
 --------------
@@ -150,7 +216,6 @@ horizontalScrollWorkspaces conf = do
 main :: IO ()
 main = do
   let pureConfig = myBar $ ewmhFullscreen $ ewmh $ myConfig
-  -- Don't touch the horizontalScroll... it can crash xmonad. Probably due to a deadlock or something...
   -- impureConfig <- horizontalScrollWorkspaces pureConfig
   let impureConfig = pureConfig
   xmonad impureConfig
