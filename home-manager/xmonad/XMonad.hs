@@ -15,6 +15,7 @@ import qualified XMonad.StackSet as SS
 import qualified Reflection as R
 import qualified Data.Map as M
 import Data.IORef
+import Data.List (isPrefixOf, isSuffixOf)
 import Control.Concurrent
 import Control.Monad
 
@@ -87,6 +88,7 @@ ws i = myWorkspaces !! (i-1)
 myManageHook = composeAll
     [ manageFF
     , manageBasicFloats
+    , manageGimp
     ]
   where
     -- Sometimes these windows are floated annoyingly large,
@@ -108,6 +110,10 @@ myManageHook = composeAll
 
     manageFF :: ManageHook
     manageFF = (className =? "Firefox" <&&> resource =? "Dialog") --> doFloat
+
+    manageGimp :: ManageHook
+    manageGimp = (fmap ("Gimp" `isPrefixOf`) className <&&> fmap ("dialog" `isSuffixOf`) (stringProperty "WM_WINDOW_ROLE")) --> doFloat
+
 
 --------------------------------
 -- * Fancy Trackpad Actions * --
