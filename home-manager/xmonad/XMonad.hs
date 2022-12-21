@@ -10,8 +10,8 @@ import XMonad.Hooks.StatusBar
 import XMonad.Hooks.StatusBar.PP 
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.NoBorders
-import XMonad.Actions.MouseGestures
 import XMonad.Actions.CycleWS
+import XMonad.Actions.CycleRecentWS
 import qualified XMonad.StackSet as SS
 import qualified Reflection as R
 import qualified Data.Map as M
@@ -37,6 +37,7 @@ myConfig = ((def
   , workspaces = myWorkspaces
   , manageHook = manageHook def <+> manageDocks <+> myManageHook
   , layoutHook = smartBorders . avoidStruts $ layoutHook def
+  , startupHook = myStartupHook
   } `removeKeys` myRemovedKeys)
   `additionalKeys` myKeys)
 
@@ -52,6 +53,7 @@ myKeys = [
   , ((myMod .|. shiftMask, xK_e), myCycleScreen (windows . SS.shift))
   -- Swap keyboard layouts
   , ((myMod , xK_i) , spawn "kbd-layout-switch")
+  , ((myMod , xK_Tab), cycleRecentWS [xK_Alt_L] xK_Tab xK_grave)
   ]
 
 myRemovedKeys :: [(KeyMask, KeySym)]
@@ -120,94 +122,104 @@ myManageHook = composeAll
     manageGimp = (fmap ("Gimp" `isPrefixOf`) className <&&> fmap ("dialog" `isSuffixOf`) (stringProperty "WM_WINDOW_ROLE")) --> doFloat
 
 
------------------------
--- * My Event Hook * --
------------------------
+------------------------------------
+-- * My Events && Startup Hooks * --
+------------------------------------
 
-data MyGlobalEventState = MyGlobalEventState { 
-  -- | Keeps track of whether our mod key is up or down
-  mgesModIsDown :: Bool,
+-- The block below is used to implement horizontal workspace scrolling 
+-- with moving the mouse while @myMod@ is down
 
-  -- | While our mod key is down, keeps track of how many horizontal
-  -- pixels have we scrolled through.
-  mgesAccuX :: CInt,
-  mgesLastX :: Maybe CInt
-  }
+-- | For that to even have a chance of working, we need to subscribe xmonad to 
+-- listen to the keyevents of @myMod@ within X
+myStartupHook :: X ()
+myStartupHook = do
+  XConf { display = dpy, theRoot = rootw } <- ask
+  void $ io $ do
+    myKeyCode <- keysymToKeycode dpy xK_Alt_R
+    grabKey dpy myKeyCode anyModifier rootw True grabModeAsync grabModeAsync
 
-newMyGlobalEventState :: MyGlobalEventState
-newMyGlobalEventState = MyGlobalEventState False 0 Nothing
+-- | Utility to subscribe to pointer motion events
+myGrabPointer :: X ()
+myGrabPointer = do
+  XConf { display = dpy, theRoot = rootw } <- ask
+  void $ io $ grabPointer dpy rootw False pointerMotionMask 
+                grabModeAsync grabModeAsync none none currentTime
 
-x_THRESHOLD :: CInt
-x_THRESHOLD = 30
+-- | Utility to unsubscribe from pointer events
+myUngrabPointer :: X ()
+myUngrabPointer = do
+  XConf { display = dpy, theRoot = rootw } <- ask
+  io $ ungrabPointer dpy currentTime
 
-myEventHook :: IORef MyGlobalEventState -> Event -> X All
+-- | Now, for our next trick, we implement a simple automaton that
+-- changes state depending on the rules we implemented.
+myEventHook :: IORef MyHorizontalDragState -> Event -> X All
 myEventHook iost (MotionEvent { ev_x = x, ev_y = y }) = do
   st <- io $ readIORef iost
-  when (mgesModIsDown st) $ do
+  when (mhdsModIsDown st) $ do
     let st' = myHandleMovementEvent st x y
     st'' <- gaugeMovement st'
     io $ writeIORef iost st''
-  return (All True)
-myEventHook iost KeyEvent {..} = do
-  st <- io $ readIORef iost
-  let st' = myHandleKeyEvent st ev_x ev_keycode ev_state
-  io $ writeIORef iost st'
-  return (All True)
+  return (All False)
+myEventHook iost KeyEvent {..} 
+  | ev_keycode == myModCode = do
+    st <- io $ readIORef iost
+    -- Grab the pointer on keydown, ungrab it on keyup
+    st' <- case ev_event_type of
+              2 -> myGrabPointer >> return (st { mhdsLastX = Just ev_x , mhdsModIsDown = True })
+              3 -> myUngrabPointer >> return (st { mhdsLastX = Nothing , mhdsModIsDown = False })
+              _ -> return st
+    io $ writeIORef iost st'
+    return (All True)
 myEventHook _ _ = return (All True)
 
-myHandleMovementEvent :: MyGlobalEventState -> CInt -> CInt -> MyGlobalEventState
-myHandleMovementEvent st x y
-  | not (mgesModIsDown st) = st
-  | Just lx <- mgesLastX st = st { mgesLastX = Just x , mgesAccuX = mgesAccuX st + (lx - x) }
-  | otherwise = st { mgesLastX = Just x , mgesAccuX = 0 }
 
-gaugeMovement :: MyGlobalEventState -> X MyGlobalEventState
+data MyHorizontalDragState = MyHorizontalDragState { 
+  -- | Keeps track of whether our mod key is up or down
+  mhdsModIsDown :: Bool,
+
+  -- | While our mod key is down, keeps track of how many horizontal
+  -- pixels have we scrolled through.
+  mhdsAccuX :: CInt,
+  mhdsLastX :: Maybe CInt
+  } deriving (Show)
+
+newMyHorizontalDragState :: MyHorizontalDragState
+newMyHorizontalDragState = MyHorizontalDragState False 0 Nothing
+
+-- This is how many horizontal pixels do we have to move the mouse to
+-- trigger a workspace switch
+x_THRESHOLD :: CInt
+x_THRESHOLD = 100
+
+myHandleMovementEvent :: MyHorizontalDragState -> CInt -> CInt -> MyHorizontalDragState
+myHandleMovementEvent st x y
+  | not (mhdsModIsDown st) = st
+  | Just lx <- mhdsLastX st = st { mhdsLastX = Just x , mhdsAccuX = mhdsAccuX st + (lx - x) }
+  | otherwise = st { mhdsLastX = Just x , mhdsAccuX = 0 }
+
+gaugeMovement :: MyHorizontalDragState -> X MyHorizontalDragState
 gaugeMovement st
-  | mgesAccuX st > x_THRESHOLD = nextWS >> return (st { mgesAccuX = 0 })
-  | mgesAccuX st < -x_THRESHOLD = prevWS >> return (st { mgesAccuX = 0 })
+  | mhdsAccuX st > x_THRESHOLD = do
+    moveTo Prev (Not emptyWS) 
+    return (st { mhdsAccuX = 0 })
+  | mhdsAccuX st < -x_THRESHOLD = do
+    moveTo Next (Not emptyWS) 
+    return (st { mhdsAccuX = 0 })
   | otherwise = return st
 
-myHandleKeyEvent :: MyGlobalEventState -> CInt -> KeyCode -> KeyMask -> MyGlobalEventState
-myHandleKeyEvent st x kcode kstate 
-  | kcode == myModCode && kstate == 0 = st { mgesLastX = Just x , mgesModIsDown = True }
-  | kcode == myModCode && kstate /= 0 = st { mgesLastX = Nothing , mgesModIsDown = False }
-  | otherwise = st
-
 horizontalScrollWorkspaces :: (LayoutClass l Window) => XConfig l -> IO (XConfig l)
 horizontalScrollWorkspaces conf = do
-  iost <- newIORef newMyGlobalEventState
-  return $ conf { handleEventHook = myEventHook iost <> handleEventHook conf }
-
-{-
---------------------------------
--- * Fancy Trackpad Actions * --
---------------------------------
-
--- Why not use left and right scrolling (by default buttons 6 and 7), to change to the previous/next workspace?
--- The trick is to keep a counter and only switch every n clicks; otherwise its way too fast and
--- we can't keep track of it. Counter starts at 0, scrolling left decreases it, scrolling right increases it.
--- As soon as its absolute value reaches cLICKS_TO_CYCLE, we call either prevWS or nextWS.
-
-cLICKS_TO_CYCLE :: Int
-cLICKS_TO_CYCLE = 6
-
-horizontalScrollWorkspaces :: (LayoutClass l Window) => XConfig l -> IO (XConfig l)
-horizontalScrollWorkspaces conf = do
-  goLeft <- asyncNBeforeTimeout cLICKS_TO_CYCLE 0.3
-  goRight <- asyncNBeforeTimeout cLICKS_TO_CYCLE 0.3
-  let myMouseBindingsIO :: [((ButtonMask, Button), Window -> X ())]
-      myMouseBindingsIO = 
-        [ ((0, 6), const $ io goLeft >>= \c -> when c prevWS)
-        , ((0, 7), const $ io goRight >>= \c -> when c nextWS)
-        ]
-  return $ conf `additionalMouseBindings` myMouseBindingsIO
+  iost <- newIORef newMyHorizontalDragState
+  return $ conf { 
+    handleEventHook = myEventHookWrapper iost <> handleEventHook conf 
+  }
   where
-    countIORef :: IORef Int -> (Int -> Int) -> (Int -> Bool) -> X () -> X ()
-    countIORef r upd8 predi act = do
-      doMe <- io $ atomicModifyIORef r (\i -> if predi i then (0, act) else (upd8 i, return ()))
-      doMe
-
--}
+    -- convenience wrapper to easily install a logging function for when we need to debug this.
+    myEventHookWrapper :: IORef MyHorizontalDragState -> Event -> X All
+    myEventHookWrapper iost ev = do
+      -- io $ appendFile "/home/victor/my-event-hook" (show ev ++ "\n")
+      myEventHook iost ev
 
 --------------
 -- * Main * --
@@ -216,8 +228,8 @@ horizontalScrollWorkspaces conf = do
 main :: IO ()
 main = do
   let pureConfig = myBar $ ewmhFullscreen $ ewmh $ myConfig
-  -- impureConfig <- horizontalScrollWorkspaces pureConfig
-  let impureConfig = pureConfig
+  impureConfig <- horizontalScrollWorkspaces pureConfig
+  -- let impureConfig = pureConfig
   xmonad impureConfig
 
 -----------------
