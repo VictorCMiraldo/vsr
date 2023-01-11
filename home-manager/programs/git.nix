@@ -1,7 +1,7 @@
-{config, pkgs, lib, inputs, ...}:
+{config, pkgs, lib, ...}:
 {
   config = { 
-    programs.git = lib.mkIf (! inputs.isWorkMachine) {
+    programs.git = lib.mkIf (! config.vsr.isWorkMachine) {
       enable = true;
       userName = "Victor Miraldo";
       userEmail = "victor.miraldo@fastmail.com";
