@@ -320,8 +320,7 @@
 
     ;; Yup... no properly formated markup until https://github.com/joaotavora/eglot/discussions/1151
     ;; gets sorted. :(
-    (defun eglot--format-markup (markup)
-        (message "%s" markup))
+    (defun eglot--format-markup (markup) "")
 )
 
 ;;;;;;;;;
