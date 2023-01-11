@@ -15,7 +15,7 @@
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
     in
-      { homeConfiguration.default = home-manager.lib.homeManagerConfiguration {
+      { homeConfigurations.default = home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
             extraSpecialArgs = {
               # Pass all inputs to every module. It's a bit excessive, but allows us to easily refer

@@ -1,7 +1,7 @@
-{config, pkgs, lib, ...}:
+{config, pkgs, lib, isWorkMachine, ...}:
 {
   config = { 
-    programs.ssh = lib.mkIf (! config.vsr.isWorkMachine) {
+    programs.ssh = lib.mkIf (! isWorkMachine) {
       enable = true;
       matchBlocks = {
         "pizero" = {
