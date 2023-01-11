@@ -301,7 +301,7 @@
     ;; and makes my emacs a bit slower.
     (eglot-send-changes-idle-time 5)
     (eldoc-echo-area-prefer-doc-buffer t)
-    (eldoc-echo-area-use-multiline-p nil)
+    (eldoc-echo-area-use-multiline-p 1)
   :config
     (diminish 'eldoc-mode)
     (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
