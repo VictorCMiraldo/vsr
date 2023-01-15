@@ -318,9 +318,16 @@
       "W [" 'my/flymake-goto-prev-warning
       "[ W" 'my/flymake-goto-prev-warning)
 
-    ;; Yup... no properly formated markup until https://github.com/joaotavora/eglot/discussions/1151
-    ;; gets sorted. :(
-    (defun eglot--format-markup (markup) "")
+    ;; We need to make sure to prevent very large strings to reach
+    ;; eglot--format-markup. For more details, see:
+    ;; https://github.com/joaotavora/eglot/discussions/1151
+    (advice-add 'eglot--format-markup :around #'limit-argument-length)
+    (defun limit-argument-length (orig input)
+      (let ((ty (plist-get input :kind))
+            (v  (plist-get input :value)))
+        (if (string= ty "markdown")
+            (funcall orig (list :kind ty :value (seq-take v 700)))
+            (funcall orig input))))
 )
 
 ;;;;;;;;;
@@ -693,9 +700,6 @@
     (("*Shell Command Output*"
       (display-buffer-reuse-window display-buffer-below-selected)
       (window-height . 8)))))
-
-;; Only give 15% of our vertical space
-(setq max-mini-window-height 0.1)
 
 ;; Note that ‘uniquify’ is builtin.
 ;; Gives us unique buffer names
