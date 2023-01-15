@@ -316,7 +316,19 @@
       "] W" 'my/flymake-goto-next-warning
       "W ]" 'my/flymake-goto-next-warning
       "W [" 'my/flymake-goto-prev-warning
-      "[ W" 'my/flymake-goto-prev-warning))
+      "[ W" 'my/flymake-goto-prev-warning)
+
+    ;; We need to make sure to prevent very large strings to reach
+    ;; eglot--format-markup. For more details, see:
+    ;; https://github.com/joaotavora/eglot/discussions/1151
+    (advice-add 'eglot--format-markup :around #'limit-argument-length)
+    (defun limit-argument-length (orig input)
+      (let ((ty (plist-get input :kind))
+            (v  (plist-get input :value)))
+        (if (string= ty "markdown")
+            (funcall orig (list :kind ty :value (seq-take v 700)))
+            (funcall orig input))))
+)
 
 ;;;;;;;;;
 ;; Nix ;;
