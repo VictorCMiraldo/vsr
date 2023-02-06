@@ -301,11 +301,15 @@
     ;; and makes my emacs a bit slower.
     (eglot-send-changes-idle-time 5)
     (eldoc-echo-area-prefer-doc-buffer t)
-    (eldoc-echo-area-use-multiline-p 1)
+    (eldoc-echo-area-use-multiline-p 'truncate-sym-name-if-fit)
   :config
     (diminish 'eldoc-mode)
+    ;; Set echo-area to be at most 6 lines
+    (setq max-mini-window-height 6)
+
     (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
     (add-to-list 'eglot-server-programs '(python-mode . ("jedi-language-server")))
+
     (bind-key (kbd "<mouse-2>") #'xref-find-definitions)
     (evil-leader/set-key
       ;; Redefine next-error to use flymake's
@@ -326,7 +330,7 @@
       (let ((ty (plist-get input :kind))
             (v  (plist-get input :value)))
         (if (string= ty "markdown")
-            (funcall orig (list :kind ty :value (seq-take v 700)))
+            (funcall orig (plist-put input :value (seq-take v 700)))
             (funcall orig input))))
 )
 
@@ -438,12 +442,20 @@
       "c f" 'haskell-mode-stylish-buffer
       "c K" 'haskell-process-kill)
 
-    ;; We use stylish-haskell at Channable, so if the buffer is there, please change my default of ormolu!
-    ;; Unless we're in imaginator, obviously! :)
-    (when (and (string-prefix-p "/home/victor/channable" (buffer-file-name))
-               (not (string-prefix-p "/home/victor/channable/imaginator" (buffer-file-name))))
+    ;; We use stylish-haskell in most of Channable, so if the buffer is there, please change my default of ormolu!
+    (when (string-prefix-p "/home/victor/channable" (buffer-file-name))
       (setq haskell-mode-stylish-haskell-path "stylish-haskell")
       (setq haskell-mode-stylish-haskell-args nil)
+
+      ;; Unless we're in imaginator, obviously! :)
+      (when (string-prefix-p "/home/victor/channable/imaginator" (buffer-file-name))
+        (setq haskell-mode-stylish-haskell-path "ormolu")
+        (setq haskell-mode-stylish-haskell-args '("--no-cabal")))
+
+      ;; Or megaphone! Will we use ormolu everywhere one day?!
+      (when (string-prefix-p "/home/victor/channable/megaphone" (buffer-file-name))
+        (setq haskell-mode-stylish-haskell-path "ormolu")
+        (setq haskell-mode-stylish-haskell-args nil))
     )
 )
 
