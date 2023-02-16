@@ -19,4 +19,5 @@
   '';
 
   home.file.".profile".source = ./profile;
+  home.file.".bash_aliases".source = ./bash_aliases;
 }

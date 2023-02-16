@@ -1,0 +1,4 @@
+alias nrc='nix shell -f default.nix -c'
+alias restart-work-vpn='sudo systemctl restart wg-quick@wg-dev'
+alias git-please='git push --force-with-lease'
+
