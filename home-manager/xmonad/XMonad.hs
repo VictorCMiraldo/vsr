@@ -228,8 +228,8 @@ horizontalScrollWorkspaces conf = do
 main :: IO ()
 main = do
   let pureConfig = myBar $ ewmhFullscreen $ ewmh $ myConfig
-  impureConfig <- horizontalScrollWorkspaces pureConfig
-  -- let impureConfig = pureConfig
+  -- impureConfig <- horizontalScrollWorkspaces pureConfig
+  let impureConfig = pureConfig
   xmonad impureConfig
 
 -----------------

@@ -129,6 +129,7 @@
       "c a" 'align-regexp
       "c j" 'fill-paragraph
       "c s" 'eglot
+      "c c" 'comment-or-uncomment-region
 
     ;; 'p' project
       "p f" 'projectile-find-file
@@ -455,7 +456,7 @@
       ;; Or megaphone! Will we use ormolu everywhere one day?!
       (when (string-prefix-p "/home/victor/channable/megaphone" (buffer-file-name))
         (setq haskell-mode-stylish-haskell-path "ormolu")
-        (setq haskell-mode-stylish-haskell-args nil))
+        (setq haskell-mode-stylish-haskell-args '("--no-cabal")))
     )
 )
 
@@ -469,27 +470,41 @@
 
 (when (file-exists-p agda-mode-path)
   (message "Agda exists in: %s" agda-mode-path)
-  (defun my-agda2-mode-hook ()
-    "Custom behaviours for `agda2-mode'."
-    (message "Hook ran")
-    (activate-input-method "Agda"))
+
+  ;; (defun my-agda2-mode-hook ()
+  ;;   "Custom behaviours for `agda2-mode'."
+  ;;   (message "Changing input method")
+  ;;   (evil-insert-state)
+  ;;   (set-input-method "Agda")
+  ;;   (evil-normal-state))
+
   (use-package agda2-mode
     :init
       (load-file agda-mode-path)
-      (add-hook 'agda2-mode-hook 'my-agda2-mode-hook)
+      ; (add-hook 'agda2-mode-hook 'my-agda2-mode-hook)
     :config
       (evil-leader/set-key
         ;; 'c' code
         "c l" 'agda2-load
         "c d" 'agda2-goto-definition
         "c b" 'agda2-go-back
-        "c g" 'agda2-next-goal)
+        "c g" 'agda2-next-goal
+        "c G" 'agda2-previous-goal
+        "c ," 'agda2-goal-and-context
+        "c ." 'agda2-goal-and-context-and-inferred
+        "c ;" 'agda2-goal-and-context-and-checked
+        "c r" 'agda2-refine
+        "c c" 'agda2-make-case
+        "c t" 'agda2-goal-type
+      )
+      (set-input-method "Agda")
     :bind
       (:map agda2-mode-map
         ("M-<right>"   . agda2-goto-definition)
         ("M-<left>"    . agda2-go-back)
         ("M-<up>"      . agda2-previous-goal)
         ("M-<down>"    . agda2-next-goal)
+        ("C-C C-."     . agda2-goal-and-context-and-inferred)
        :map evil-normal-state-map
         ([mouse-2]     . agda2-goto-definition-mouse))
     :custom

@@ -28,11 +28,14 @@ in {
         #! /bin/bash
         gsettings set org.mate.session.required-components windowmanager xmonad
         gsettings set org.mate.session required-components-list "['windowmanager', 'panel']"
+        gsettings set org.freedesktop.ibus.panel.emoji hotkey "[]"
       ''
       else ''
         #! /bin/bash
         gsettings set org.mate.session.required-components windowmanager xmonad
         gsettings set org.mate.session required-components-list "['windowmanager']"
+        # I really don'y want ibus intercepting C-.
+        gsettings set org.freedesktop.ibus.panel.emoji hotkey "[]"
       '';
   };
 
@@ -42,6 +45,7 @@ in {
       #! /bin/bash
       gsettings set org.mate.session.required-components windowmanager marco
       gsettings reset org.mate.session required-components-list
+      gsettings reset org.freedesktop.ibus.panel.emoji hotkey
       # old value was: ['windowmanager', 'panel', 'filemanager', 'dock']
     '';
   };
