@@ -59,6 +59,7 @@
     ./programs/vim/config.nix
     ./programs/ssh/config.nix
     ./programs/git.nix
+    ./programs/matrixcli.nix
     ./programs/papis/config.nix
   ];
 }
