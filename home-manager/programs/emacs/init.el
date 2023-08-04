@@ -21,45 +21,6 @@
 ;; We don't want a poluted mode line
 (use-package diminish :straight t)
 
-;; Provides a nice centered text for writing
-(use-package olivetti
-  :straight t
-  :hook (markdown . olivetti-mode)
-  :custom
-    (olivetti-body-width 110))
-
-(use-package markdown-mode
-  :straight t)
-
-;; Making it easier to discover Emacs key presses.
-;; This is actually pretty cool.
-(use-package which-key
-  :straight t
-  :defer 5
-  :diminish
-  :config (which-key-mode)
-          (which-key-setup-side-window-bottom)
-          (setq which-key-idle-delay 0.7))
-
-;; Can't survive without magit or timemachine
-(use-package git-timemachine
-  :straight t
-  :defer 5)
-(use-package magit
-  :straight t
-  :commands
-    magit
-  :custom
-    (setq magit-diff-refine-hunk 'all))
-
-(use-package undo-tree
-  :straight t
-  :custom
-    (undo-tree-auto-save-history nil)
-    (undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
-  :config
-    (global-undo-tree-mode))
-
 ;; Set up evil mode
 (use-package evil
   :straight t
@@ -117,6 +78,7 @@
     ;; 'x' execute
       "x d" 'dired
       "x g" 'magit-status
+      "x b" 'helm-mini
 
     ;; 'm' merge
       "m u" 'smerge-keep-upper
@@ -130,11 +92,16 @@
       "c j" 'fill-paragraph
       "c s" 'eglot
       "c c" 'comment-or-uncomment-region
+      "c i" 'helm-imenu
 
     ;; 'p' project
-      "p f" 'projectile-find-file
-      "p /" 'projectile-grep
-      "p p" 'projectile-switch-project)
+      "p d" 'project-dired
+      "p f" 'project-find-file
+      "p /" 'project-find-regexp
+      "p G" 'helm-grep-do-git-grep
+      "p g" 'helm-grep-do-ag
+      "p R" 'project-query-replace-regexp
+      "p s" 'project-eshell)
 
   ;; Enable evil-leader everywhere
   (global-evil-leader-mode))
@@ -148,29 +115,36 @@
   :straight t
   :config (global-evil-surround-mode 1))
 
+(use-package undo-tree
+  :straight t
+  :diminish
+  :custom
+    (undo-tree-auto-save-history nil)
+    (undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
+  :config
+    (global-undo-tree-mode))
+
 ;; Set-up helm
 (use-package helm
   :straight t
   :diminish
   :init (helm-mode t)
-  :bind (("M-x"     . helm-M-x)
-        ("C-x C-f" . helm-find-files)
-        ("C-x b"   . helm-mini)     ;; See buffers & recent files; more useful.
-        ("C-x r b" . helm-filtered-bookmarks)
-        ("C-x C-r" . helm-recentf)  ;; Search for recently edited files
-        ("C-c i"   . helm-imenu)
-        ("C-h a"   . helm-apropos)
-
-        :map helm-map
-        ;; We can list ‘actions’ on the currently selected item by C-z.
-        ("C-z" . helm-select-action)
-        ;; Let's keep tab-completetion anyhow.
-        ("TAB"   . helm-execute-persistent-action)
-        ("<tab>" . helm-execute-persistent-action))
+  :bind (
+    ("M-x"     . helm-M-x)
+    :map helm-map
+    ;; We can list ‘actions’ on the currently selected item by C-z.
+    ("C-z" . helm-select-action)
+    ;; Let's keep tab-completetion anyhow.
+    ("TAB"   . helm-execute-persistent-action)
+    ("<tab>" . helm-execute-persistent-action)
+    ("C-j" . helm-next-line)
+    ("C-k" . helm-previous-line)
+    )
   :custom
-  ;; I don't want helm involved with code completion
-  (helm-mode-handle-completion-in-region nil))
+    (helm-allow-mouse t)
 
+    ;; I don't want helm involved with code completion
+    (helm-mode-handle-completion-in-region nil))
 
 ;; Enable fancy autocomplete from company
 (use-package company
@@ -222,44 +196,24 @@
   :config
     (global-company-mode))
 
-;; Projectile
-(use-package projectile
-  :diminish
-  :straight t
-  :commands projectile-project-root
-  :bind-keymap
-    ("C-c p" . projectile-command-map)
-  :custom
-    ;; If projectile becomes slow, we can always go back to 'alien,
-    ;; with the disadvantage that our files won't be filtered anymore.
-    (projectile-indexing-method 'hybrid)
-    (projectile-globally-ignored-file-suffixes '(".agdai" ".hi" ".dyn_hi" ".o" ".pyc" "#"))
-    (projectile-globally-ignored-directories '(
-        "^\\.git$"
-        "^\\.stack-work$"
-        "^\\dist-newstyle$"
-        "^\\.direnv$"
-        "^\\.cache$"
-    ))
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;; project.el niceties ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; I want emacs to ust whichever root I put a .project.el file in as
+;; the project root, if the project is not in git.
+(defun local/project-find-root (dir)
+  (let ((override (locate-dominating-file dir ".project.el")))
+    (if override
+      (cons 'transient override)
+      nil)))
+
+(use-package project
+  :straight (:type built-in)
   :config
-    (projectile-mode t)
-    (helm-projectile-on) ;; enable helm-projectile
-    (defun string-empty-p (str) (string= "" str)))
-
-;; Helm-projectile is great for opening files quickly,
-;; tell it to be loaded whenever helm-projectile-on is called.
-(use-package helm-projectile
-  :straight t
-  :commands helm-projectile-on)
-
-(use-package linum-relative
-  :diminish
-  :straight t
-  :custom
-  ;; use relative numbers everywhere
-  (linum-relative-global-mode t)
-  ;; Make linum show the actual line on the current line
-  (linum-relative-current-symbol ""))
+    (setq project-vc-merge-submodules nil)
+    (add-to-list 'project-find-functions #'local/project-find-root)
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Direnv Integration ;;
@@ -271,6 +225,22 @@
   :demand
   :config
   (envrc-global-mode))
+
+;;;;;;;;;
+;; Git ;;
+;;;;;;;;;
+
+;; Can't survive without magit or timemachine
+(use-package git-timemachine
+  :straight t
+  :defer 5)
+(use-package magit
+  :straight t
+  :commands
+    magit
+  :custom
+    (setq magit-diff-refine-hunk 'all))
+
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Language Server ;;
@@ -293,7 +263,7 @@
   (flymake-goto-prev-error 1 '(:warning) t))
 
 (use-package eglot
-  :straight t
+  :straight (:type built-in)
   :custom
     ;; don't ask for closing the server connection,
     (eglot-autoshutdown t)
@@ -335,6 +305,13 @@
             (funcall orig input))))
 )
 
+;;;;;;;;;;;;;;
+;; Markdown ;;
+;;;;;;;;;;;;;;
+
+(use-package markdown-mode
+  :straight t)
+
 ;;;;;;;;;
 ;; Nix ;;
 ;;;;;;;;;
@@ -354,11 +331,6 @@
 ;;;;;;;;;;;;;
 ;; Haskell ;;
 ;;;;;;;;;;;;;
-
-(setq loc-stack-list '())
-(defun loc-stack-push ()
-  (interactive)
-  (setq loc-stack-list ((buffer-name) . (mark)) . loc-stack-list))
 
 (use-package haskell-mode
   :straight t
@@ -650,19 +622,10 @@
                 (unless (file-remote-p default-directory)
                   (auto-revert-mode))))
   :custom
-    (dired-sidebar-subtree-line-prefix "__")
+    (dired-sidebar-subtree-line-prefix "  ")
   :config
    (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
    (push 'rotate-windows dired-sidebar-toggle-hidden-commands))
-
-(use-package all-the-icons-dired
-  :straight (:host github :repo "jtbm37/all-the-icons-dired"))
-
-(use-package all-the-icons
-  :straight t
-  :if (display-graphic-p)
-  :hook (dired-mode . all-the-icons-dired-mode))
-
 
 ;;;;;;;;;;;;
 ;; Ricing ;;
@@ -711,6 +674,24 @@
 ;;;;;;;;;;;;;;;;;;;
 ;; Final Details ;;
 ;;;;;;;;;;;;;;;;;;;
+
+;; Show line numbers in a relative manner
+(use-package display-line-numbers
+  :straight (:type built-in)
+  :config
+    (setq display-line-numbers-type 'relative)
+    (global-display-line-numbers-mode)
+)
+
+;; Making it easier to discover Emacs key presses.
+;; This is actually pretty cool.
+(use-package which-key
+  :straight t
+  :defer 5
+  :diminish
+  :config (which-key-mode)
+          (which-key-setup-side-window-bottom)
+          (setq which-key-idle-delay 0.7))
 
 ;; Some ispell configuration
 ;;
@@ -766,7 +747,3 @@
 
 ;; Delete trailing whitespaces on saving
 (add-hook 'write-file-hooks 'delete-trailing-whitespace)
-
-;; line numbers everywhere
-(global-linum-mode t)
-(linum-relative-toggle)

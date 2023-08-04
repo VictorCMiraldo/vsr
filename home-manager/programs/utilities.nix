@@ -26,6 +26,8 @@ in {
     python39Packages.jedi-language-server
 
     agdaWithStdlib
+
+    ripgrep
   ];
 }
 
