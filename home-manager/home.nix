@@ -36,7 +36,7 @@
   # You can update Home Manager without changing this value. See
   # the Home Manager release notes for a list of state version
   # changes in each release.
-  home.stateVersion = "22.11";
+  home.stateVersion = "23.05";
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -59,7 +59,6 @@
     ./programs/vim/config.nix
     ./programs/ssh/config.nix
     ./programs/git.nix
-    ./programs/matrixcli.nix
     ./programs/papis/config.nix
   ];
 }

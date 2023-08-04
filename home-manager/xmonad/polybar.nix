@@ -35,9 +35,9 @@ in {
       "module/home" = {
         type = "custom/text";
         content = "%{T2}"
-                + "%{A:rofi -show p -modi p\\\\:rofi-power-menu:}襤%{A} "
-                + "%{A:caja .:}%{A} "
-                + "%{A:firefox:}爵%{A} "
+                + "%{A:rofi -show p -modi p\\\\:rofi-power-menu:}⏻%{A} "
+                + "%{A:caja .:}󰋜%{A} "
+                + "%{A:firefox:}󰖟%{A} "
                 + "%{A:mate-control-center:}%{A}"
                 + "%{T-}";
         format-content-font = 2;
@@ -64,8 +64,8 @@ in {
       "module/cpu" = {
         type = "internal/cpu";
         interval = 3;
-        label = "﬙ %{F${my-theme.colors.notify-ok}}%percentage%%{F-}%";
-        label-warn = "﬙ %{F${my-theme.colors.notify-warn}}%percentage%%{F-}%";
+        label = "󰘚 %{F${my-theme.colors.notify-ok}}%percentage%%{F-}%";
+        label-warn = "󰘚 %{F${my-theme.colors.notify-warn}}%percentage%%{F-}%";
         format-warn = "<label-warn>";
         warn-percentage = 85;
       };
@@ -81,10 +81,10 @@ in {
         format-volume = "<ramp-volume> <label-volume>";
         label-volume = "%percentage%%";
         label-volume-padding = "2px";
-        ramp-volume-0 = "奄";
-        ramp-volume-1 = "奔";
-        ramp-volume-2 = "墳";
-        label-muted = "奄 ﰸ ";
+        ramp-volume-0 = "";
+        ramp-volume-1 = "";
+        ramp-volume-2 = "󰕾";
+        label-muted = "󰖁 ";
         click-right = "~/.nix-profile/bin/pavucontrol";
         use-ui-max = false;
         interval = 5;

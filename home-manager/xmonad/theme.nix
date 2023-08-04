@@ -1,4 +1,4 @@
-{ 
+{
   colors = {
     # The focus coor
     focus = "#4DDF76";
