@@ -30,11 +30,8 @@ fi
 xmodmap -e "clear lock"
 xmodmap -e "keycode 66 = Escape Caps_Lock"
 
-# Make Num_Lock into Escape; mapping Shift+Num_Lock to the traditional behavior
-xmodmap -e "clear mod2"
-xmodmap -e "keycode 77 = Escape Num_Lock"
-
 # Swap Left Alt and Left Control
+xmodmap -e "clear mod2"
 xmodmap -e "clear mod1"
 xmodmap -e "clear control"
 xmodmap -e "keycode 64  = Control_L"
@@ -44,23 +41,23 @@ xmodmap -e "add mod1    = Alt_L Meta_L"
 
 # TMP: We're switching back to mod1!
 xmodmap -e "add mod1    = Alt_R"
-# Add Alt_R to mod4 group so xmonad intercepts it nicely
-# xmodmap -e "clear mod4"
-# xmodmap -e "add mod4    = Alt_R Super_L Super_R"
-
-# Addapted from xcape manual.
 
 # Map an unused modifier's keysym to the return's keycode and make it a
 # control modifier. It needs to be an existing key so that emacs won't
-# spazz out when you press it. Hyper_L is a good candidate.
-spare_modifier="Hyper_L"
+# spazz out when you press it. ISO_Level5_Shift is a good candidate.
+# We can't use hyper no longer since emacs seems to intercept it.
+spare_modifier="ISO_Level5_Shift"
 xmodmap -e "keycode 36 = $spare_modifier"
-xmodmap -e "remove mod4 = $spare_modifier" # hyper_l is mod4 by default
+xmodmap -e "remove mod4 = $spare_modifier"
 xmodmap -e "add Control = $spare_modifier"
 
 # Map "Return" to an unused keycode (to keep it around for xcape to
 # use).
 xmodmap -e "keycode 250 = Return"
+
+# Also map return to num-lock so we don't loose it in case we kill xcape because
+# this file is somewhat buggy...
+xmodmap -e "keycode 77 = Return Num_Lock"
 
 # Are we already running xcape? if so; kill it!
 curr_xcape=$(pgrep xcape)
