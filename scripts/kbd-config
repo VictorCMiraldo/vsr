@@ -47,7 +47,7 @@ xmodmap -e "add mod1    = Alt_R"
 # spazz out when you press it. ISO_Level5_Shift is a good candidate.
 # We can't use hyper no longer since emacs seems to intercept it.
 spare_modifier="ISO_Level5_Shift"
-xmodmap -e "keycode 36 = $spare_modifier"
+xmodmap -e "keycode 36 = $spare_modifier Return"
 xmodmap -e "remove mod4 = $spare_modifier"
 xmodmap -e "add Control = $spare_modifier"
 
