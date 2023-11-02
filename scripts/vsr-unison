@@ -48,7 +48,7 @@ else
 fi
 
 local_root="/home/victor"
-remote_root="ssh://$remote_hostname.local:$VSR_SSH_PORT//home/victor"
+remote_root="ssh://$remote_hostname:$VSR_SSH_PORT//home/victor"
 for prof in ${allprofs[*]}; do
   unison $prof -root "$local_root" -root "$remote_root"
 done

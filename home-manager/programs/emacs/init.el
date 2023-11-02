@@ -99,9 +99,16 @@
       "p f" 'project-find-file
       "p /" 'project-find-regexp
       "p G" 'helm-grep-do-git-grep
-      "p g" 'helm-grep-do-ag
+      "p g" 'helm-do-grep-ag
       "p R" 'project-query-replace-regexp
-      "p s" 'project-eshell)
+      "p s" 'project-eshell
+
+    ;; 'r' register
+      "r y" 'helm-show-kill-ring
+
+    ;; 'd' dired
+      "d e" 'dired-create-empty-file
+    )
 
   ;; Enable evil-leader everywhere
   (global-evil-leader-mode))
@@ -208,6 +215,8 @@
       (cons 'transient override)
       nil)))
 
+;; TODO: ignore agdai files; ignore .project.el file
+
 (use-package project
   :straight (:type built-in)
   :config
@@ -224,7 +233,10 @@
   :straight t
   :demand
   :config
-  (envrc-global-mode))
+    (evil-leader/set-key
+      "d r" 'envrc-reload)
+    (envrc-global-mode)
+)
 
 ;;;;;;;;;
 ;; Git ;;
@@ -429,6 +441,11 @@
       (when (string-prefix-p "/home/victor/channable/megaphone" (buffer-file-name))
         (setq haskell-mode-stylish-haskell-path "ormolu")
         (setq haskell-mode-stylish-haskell-args '("--no-cabal")))
+
+      ;; Or macgyver! Forumolu there! LOL
+      (when (string-prefix-p "/home/victor/channable/sharkmachine/macgyver" (buffer-file-name))
+        (setq haskell-mode-stylish-haskell-path "fourmolu")
+        (setq haskell-mode-stylish-haskell-args '("--no-cabal")))
     )
 )
 
@@ -616,7 +633,7 @@
   :straight t
   :commands (dired-sidebar-toggle-sidebar)
   :init
-    (evil-leader/set-key "d" 'dired-sidebar-toggle-sidebar)
+    (evil-leader/set-key "d t" 'dired-sidebar-toggle-sidebar)
     (add-hook 'dired-sidebar-mode-hook
               (lambda ()
                 (unless (file-remote-p default-directory)

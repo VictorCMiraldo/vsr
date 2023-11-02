@@ -1,0 +1,7 @@
+#! /bin/bash
+
+pkill polybar
+pkill mate-panel
+polybar &
+pkill mate-panel
+
