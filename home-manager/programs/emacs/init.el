@@ -207,15 +207,34 @@
 ;; project.el niceties ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; I want emacs to ust whichever root I put a .project.el file in as
-;; the project root, if the project is not in git.
+;; Define our own project.el backend. If we see a ".project.el" file
+;; somewhere, that will indicate a project, each line of that file will
+;; be a pattern used to ignore files. 
 (defun local/project-find-root (dir)
-  (let ((override (locate-dominating-file dir ".project.el")))
-    (if override
-      (cons 'transient override)
-      nil)))
+  (let* ( (override (locate-dominating-file dir ".project.el"))
+          (dotfile (concat override ".project.el")) )
+    (when (and override (file-readable-p dotfile))
+      (let ((igns nil) (line ""))
+	    (with-temp-buffer
+	      (insert-file-contents-literally dotfile)
+	      (goto-char (point-min))
+	      (while (not (eobp))
+		(setq line 
+                      (buffer-substring-no-properties 
+                        (line-beginning-position) 
+                        (line-end-position)))
+                (unless (or (string= line "") (string-prefix-p "#" line))
+                  (setq igns (cons line igns)))
+                (forward-line 1)
+              ))
 
-;; TODO: ignore agdai files; ignore .project.el file
+            (list 'project-find-root override (cons ".project.el" igns))))))
+
+(cl-defmethod project-ignores ((project (head project-find-root)) _dir)
+  (car (cdr (cdr project))))
+
+(cl-defmethod project-root ((project (head project-find-root)))
+  (car (cdr project)))
 
 (use-package project
   :straight (:type built-in)
