@@ -476,72 +476,73 @@
   (let ((coding-system-for-read 'utf-8))
         (shell-command-to-string "agda-mode locate")))
 
-;; (when (file-exists-p agda-mode-path)
-;;   (message "Agda exists in: %s" agda-mode-path)
-;; 
-;;   ;; (defun my-agda2-mode-hook ()
-;;   ;;   "Custom behaviours for `agda2-mode'."
-;;   ;;   (message "Changing input method")
-;;   ;;   (evil-insert-state)
-;;   ;;   (set-input-method "Agda")
-;;   ;;   (evil-normal-state))
-;; 
-;;   (use-package agda2-mode
-;;     :init
-;;       (load-file agda-mode-path)
-;;       ; (add-hook 'agda2-mode-hook 'my-agda2-mode-hook)
-;;     :config
-;;       (evil-leader/set-key
-;;         ;; 'c' code
-;;         "c l" 'agda2-load
-;;         "c d" 'agda2-goto-definition
-;;         "c b" 'agda2-go-back
-;;         "c g" 'agda2-next-goal
-;;         "c G" 'agda2-previous-goal
-;;         "c ," 'agda2-goal-and-context
-;;         "c ." 'agda2-goal-and-context-and-inferred
-;;         "c ;" 'agda2-goal-and-context-and-checked
-;;         "c r" 'agda2-refine
-;;         "c c" 'agda2-make-case
-;;         "c t" 'agda2-goal-type
-;;       )
-;;       (set-input-method "Agda")
-;;     :bind
-;;       (:map agda2-mode-map
-;;         ("M-<right>"   . agda2-goto-definition)
-;;         ("M-<left>"    . agda2-go-back)
-;;         ("M-<up>"      . agda2-previous-goal)
-;;         ("M-<down>"    . agda2-next-goal)
-;;         ("C-C C-."     . agda2-goal-and-context-and-inferred)
-;;        :map evil-normal-state-map
-;;         ([mouse-2]     . agda2-goto-definition-mouse))
-;;     :custom
-;;        ;; use font-lock for agda2; maybe one day we sit and carefully customize things.
-;;        (agda2-highlight-face-groups 'default-faces)
-;;        (agda2-program-args nil)
-;;        (agda2-program-name "agda"))
-;; 
-;;   ;; Font hack adapted from: https://stackoverflow.com/questions/33074370/how-can-i-use-a-different-ttf-fonts-for-certain-utf-8-characters-in-emacs
-;;   ;; Add some specific font points that need to be displayed with
-;;   ;; another font; and which font to use for them. Ranges and single points
-;;   ;; are supported:
-;;   ;;
-;;   ;; (#x12345 . "ReplacementFont")
-;;   ;; ((#x12300 . #x12333) "ReplacementFont")
-;;   ;;
-;;   (setq vcm/lacking-font-points '(
-;;     ((#x1d552 . #x1d56b) . "DejaVu Sans") ;; lowecase bb: 𝕥, 𝕗, ...
-;;   ))
-;; 
-;;   (when (fboundp 'set-fontset-font)
-;;     (defun vcm/fix-unicode (&optional frame)
-;;       (mapcar
-;;         '(lambda (s) (set-fontset-font "fontset-default" (car s) (cdr s) frame))
-;;         vcm/lacking-font-points)
-;;     )
-;;     (vcm/fix-unicode)
-;;     (add-hook 'after-make-frame-functions 'vcm/fix-unicode))
-;; )
+(when (file-exists-p agda-mode-path)
+  (message "Agda exists in: %s" agda-mode-path)
+
+  ;; (defun my-agda2-mode-hook ()
+  ;;   "Custom behaviours for `agda2-mode'."
+  ;;   (message "Changing input method")
+  ;;   (evil-insert-state)
+  ;;   (set-input-method "Agda")
+  ;;   (evil-normal-state))
+
+  (use-package agda2-mode
+    :init
+      (load-file agda-mode-path)
+      ; (add-hook 'agda2-mode-hook 'my-agda2-mode-hook)
+    :mode ("\\.hs\\'" . haskell-mode)
+    :config
+      (evil-leader/set-key
+        ;; 'c' code
+        "c l" 'agda2-load
+        "c d" 'agda2-goto-definition
+        "c b" 'agda2-go-back
+        "c g" 'agda2-next-goal
+        "c G" 'agda2-previous-goal
+        "c ," 'agda2-goal-and-context
+        "c ." 'agda2-goal-and-context-and-inferred
+        "c ;" 'agda2-goal-and-context-and-checked
+        "c r" 'agda2-refine
+        "c c" 'agda2-make-case
+        "c t" 'agda2-goal-type
+      )
+      (set-input-method "Agda")
+    :bind
+      (:map agda2-mode-map
+        ("M-<right>"   . agda2-goto-definition)
+        ("M-<left>"    . agda2-go-back)
+        ("M-<up>"      . agda2-previous-goal)
+        ("M-<down>"    . agda2-next-goal)
+        ("C-C C-."     . agda2-goal-and-context-and-inferred)
+       :map evil-normal-state-map
+        ([mouse-2]     . agda2-goto-definition-mouse))
+    :custom
+       ;; use font-lock for agda2; maybe one day we sit and carefully customize things.
+       (agda2-highlight-face-groups 'default-faces)
+       (agda2-program-args nil)
+       (agda2-program-name "agda"))
+
+  ;; Font hack adapted from: https://stackoverflow.com/questions/33074370/how-can-i-use-a-different-ttf-fonts-for-certain-utf-8-characters-in-emacs
+  ;; Add some specific font points that need to be displayed with
+  ;; another font; and which font to use for them. Ranges and single points
+  ;; are supported:
+  ;;
+  ;; (#x12345 . "ReplacementFont")
+  ;; ((#x12300 . #x12333) "ReplacementFont")
+  ;;
+  (setq vcm/lacking-font-points '(
+    ((#x1d552 . #x1d56b) . "DejaVu Sans") ;; lowecase bb: 𝕥, 𝕗, ...
+  ))
+
+  (when (fboundp 'set-fontset-font)
+    (defun vcm/fix-unicode (&optional frame)
+      (mapcar
+        '(lambda (s) (set-fontset-font "fontset-default" (car s) (cdr s) frame))
+        vcm/lacking-font-points)
+    )
+    (vcm/fix-unicode)
+    (add-hook 'after-make-frame-functions 'vcm/fix-unicode))
+)
 
 
 ;;;;;;;;;;;

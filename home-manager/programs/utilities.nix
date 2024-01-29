@@ -17,13 +17,13 @@ in {
     # unison
     pandoc
 
-    haskell.compiler.ghc902
+    haskell.compiler.ghc962
     haskellPackages.cabal-install
     haskellPackages.ormolu
     haskellPackages.hpack
     haskellPackages.lhs2tex
 
-    python39Packages.jedi-language-server
+    python311Packages.jedi-language-server
 
     agdaWithStdlib
 
