@@ -27,6 +27,9 @@ in {
 
     agdaWithStdlib
 
+    typescript
+    nodePackages_latest.typescript-language-server
+
     ripgrep
   ];
 }

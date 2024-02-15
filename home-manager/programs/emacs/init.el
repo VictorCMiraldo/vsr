@@ -97,9 +97,8 @@
     ;; 'p' project
       "p d" 'project-dired
       "p f" 'project-find-file
-      "p /" 'project-find-regexp
       "p G" 'helm-grep-do-git-grep
-      "p g" 'helm-do-grep-ag
+      "p /" 'local/helm-do-grep-ag
       "p R" 'project-query-replace-regexp
       "p s" 'project-eshell
 
@@ -207,9 +206,22 @@
 ;; project.el niceties ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun local/current-project-root ()
+  (interactive)
+  (let ( (p (project-current nil)) )
+       (if p
+         (project-root p)
+         (error "Not inside a project"))))
+
+(defun local/helm-do-grep-ag (arg)
+  "Runs helm-do-gre-ap; but in the project's root instead of `default-directory`"
+  (interactive "P")
+  (require 'helm-files)
+  (helm-grep-ag (expand-file-name (local/current-project-root)) arg))
+
 ;; Define our own project.el backend. If we see a ".project.el" file
 ;; somewhere, that will indicate a project, each line of that file will
-;; be a pattern used to ignore files. 
+;; be a pattern used to ignore files.
 (defun local/project-find-root (dir)
   (let* ( (override (locate-dominating-file dir ".project.el"))
           (dotfile (concat override ".project.el")) )
@@ -219,9 +231,9 @@
 	      (insert-file-contents-literally dotfile)
 	      (goto-char (point-min))
 	      (while (not (eobp))
-		(setq line 
-                      (buffer-substring-no-properties 
-                        (line-beginning-position) 
+		(setq line
+                      (buffer-substring-no-properties
+                        (line-beginning-position)
                         (line-end-position)))
                 (unless (or (string= line "") (string-prefix-p "#" line))
                   (setq igns (cons line igns)))
@@ -358,6 +370,15 @@
 (use-package python-mode
   :straight t
   :mode ("\\.py\\'" . python-mode))
+
+;;;;;;;;;;;;;;;;
+;; TypeScript ;;
+;;;;;;;;;;;;;;;;
+
+(use-package typescript-mode
+  :straight t
+  :mode ("\\.ts\\'" . typescript-mode))
+
 
 ;;;;;;;;;;;;;
 ;; Haskell ;;
