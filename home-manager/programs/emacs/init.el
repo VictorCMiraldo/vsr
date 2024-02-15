@@ -627,6 +627,20 @@
     ("tex" "sty" "cls" "ltx" "texi" "txi" "texinfo" "dtx" "lhs")))
   (TeX-one-master "\\.\\(texi?\\|dtx\\|lhs\\)$"))
 
+;;;;;;;;;;;;;;;
+;; Git Links ;;
+;;;;;;;;;;;;;;;
+
+(use-package git-link
+  :diminish
+  :straight (:host github :repo "sshaw/git-link")
+  :config
+    (setq git-link-use-commit t)
+    (evil-leader/set-key
+      "p l" 'git-link))
+
+
+
 ;;;;;;;;;;;;;;;;;
 ;; Indentation ;;
 ;;;;;;;;;;;;;;;;;
