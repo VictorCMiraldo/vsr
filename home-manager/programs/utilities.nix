@@ -17,7 +17,7 @@ in {
     # unison
     pandoc
 
-    haskell.compiler.ghc962
+    haskell.compiler.ghc964
     haskellPackages.cabal-install
     haskellPackages.ormolu
     haskellPackages.hpack
@@ -33,5 +33,3 @@ in {
     ripgrep
   ];
 }
-
-

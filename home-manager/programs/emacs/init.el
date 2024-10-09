@@ -281,6 +281,14 @@
   :straight t
   :commands
     magit
+  :config
+      (evil-leader/set-key
+        ;; 'r' rebase
+        "r k" #'git-rebase-move-line-up
+        "r j" #'git-rebase-move-line-down
+        "r s" #'git-rebase-squash
+        "r w" #'git-rebase-reword
+      )
   :custom
     (setq magit-diff-refine-hunk 'all))
 
@@ -483,9 +491,15 @@
         (setq haskell-mode-stylish-haskell-args '("--no-cabal")))
 
       ;; Or macgyver! Forumolu there! LOL
-      (when (string-prefix-p "/home/victor/channable/sharkmachine/macgyver" (buffer-file-name))
+      (when (string-prefix-p "/home/victor/channable/macgyver" (buffer-file-name))
         (setq haskell-mode-stylish-haskell-path "fourmolu")
         (setq haskell-mode-stylish-haskell-args '("--no-cabal")))
+
+      ;; Or sharkmachine-interface Forumolu there ook! LOL
+      (when (string-prefix-p "/home/victor/channable/sharkmachine-interface" (buffer-file-name))
+        (setq haskell-mode-stylish-haskell-path "fourmolu")
+        (setq haskell-mode-stylish-haskell-args '("--no-cabal")))
+
     )
 )
 
@@ -511,21 +525,21 @@
     :init
       (load-file agda-mode-path)
       ; (add-hook 'agda2-mode-hook 'my-agda2-mode-hook)
-    :mode ("\\.hs\\'" . haskell-mode)
+    :mode ("\\.agda\\'" . agda2-mode)
     :config
       (evil-leader/set-key
-        ;; 'c' code
-        "c l" 'agda2-load
-        "c d" 'agda2-goto-definition
-        "c b" 'agda2-go-back
-        "c g" 'agda2-next-goal
-        "c G" 'agda2-previous-goal
-        "c ," 'agda2-goal-and-context
-        "c ." 'agda2-goal-and-context-and-inferred
-        "c ;" 'agda2-goal-and-context-and-checked
-        "c r" 'agda2-refine
-        "c c" 'agda2-make-case
-        "c t" 'agda2-goal-type
+        ;; 'a' agda
+        "a l" 'agda2-load
+        "a d" 'agda2-goto-definition
+        "a b" 'agda2-go-back
+        "a g" 'agda2-next-goal
+        "a G" 'agda2-previous-goal
+        "a ," 'agda2-goal-and-context
+        "a ." 'agda2-goal-and-context-and-inferred
+        "a ;" 'agda2-goal-and-context-and-checked
+        "a r" 'agda2-refine
+        "a c" 'agda2-make-case
+        "a t" 'agda2-goal-type
       )
       (set-input-method "Agda")
     :bind
