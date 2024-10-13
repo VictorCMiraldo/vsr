@@ -33,14 +33,6 @@ if [[ "${VSR_SYSTEM_PKG_MAINTAIN}" -ne "1" ]]; then
   ${wd}/packages/pkg-maintain.sh --verbose --update
   echo "VSR_SYSTEM_PKG_MAINTAIN=1" >> ${wd}/previous-install.state
 fi
-
-# Install nix and home-manager
-if [[ "${VSR_SYSTEM_NIX}" -ne "1" ]]; then
-  echo "Installing nix..."
-  chmod +x "${wd}/nix/install.sh"
-  ${wd}/nix/install.sh
-  echo "VSR_SYSTEM_NIX=1" >> ${wd}/previous-install.state
-fi
  
 # Configure ssh
 if [[ "${VSR_SYSTEM_SSHD}" -ne "1" ]]; then
@@ -52,26 +44,39 @@ if [[ "${VSR_SYSTEM_SSHD}" -ne "1" ]]; then
   echo "VSR_SYSTEM_SSHD=1" >> ${wd}/previous-install.state
 fi
 
-# Configure the firewall
-if [[ "${VSR_SYSTEM_UFW}" -ne "1" ]]; then
-  echo "Configuring ufw..."
-  vsr-ufw
-  echo "VSR_SYSTEM_UFW=1" >> ${wd}/previous-install.state
-fi
+# Now, I don't want to perform a lot of steps on the Channable
+# machine, so let's guard against that.
+if ! [[ "$(hostname)" == dev-* ]]; then 
 
-# Configure lightdm autologin
-if [[ "${VSR_LIGHTDM_AUTOLOGIN}" -ne "1" ]]; then
-  echo "Configuring lightDM auto-login"
-  if [ ! -d "/etc/lightdm" ]; then
-    echo "LightDM doesn't seem to be installed!"
-  else
-    if [ -f "/etc/lightdm/lightdm.conf" ]; then
-      echo "Backing up old lightdm.conf"
-      sudo mv /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bckp
+  # Configure the firewall
+  if [[ "${VSR_SYSTEM_UFW}" -ne "1" ]]; then
+    echo "Configuring ufw..."
+    vsr-ufw
+    echo "VSR_SYSTEM_UFW=1" >> ${wd}/previous-install.state
+  fi
+
+  # Install nix and home-manager
+  if [[ "${VSR_SYSTEM_NIX}" -ne "1" ]]; then
+    echo "Installing nix..."
+    chmod +x "${wd}/nix/install.sh"
+    ${wd}/nix/install.sh
+    echo "VSR_SYSTEM_NIX=1" >> ${wd}/previous-install.state
+  fi
+
+  # Configure lightdm autologin
+  if [[ "${VSR_LIGHTDM_AUTOLOGIN}" -ne "1" ]]; then
+    echo "Configuring lightDM auto-login"
+    if [ ! -d "/etc/lightdm" ]; then
+      echo "LightDM doesn't seem to be installed!"
+    else
+      if [ -f "/etc/lightdm/lightdm.conf" ]; then
+        echo "Backing up old lightdm.conf"
+        sudo mv /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bckp
+      fi
+    
+      echo -n "autologin-user=victor\nautologin-user-timeout=0" | sudo tee /etc/lightdm/lightdm.conf
+      echo "VSR_LIGHTDM_AUTOLOGIN=1" >> ${wd}/previous-install.state
     fi
-  
-    echo -n "autologin-user=victor\nautologin-user-timeout=0" | sudo tee /etc/lightdm/lightdm.conf
-    echo "VSR_LIGHTDM_AUTOLOGIN=1" >> ${wd}/previous-install.state
   fi
 fi
 

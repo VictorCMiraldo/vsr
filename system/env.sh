@@ -9,3 +9,4 @@ export VSR_SSH_PORT=2142
 # `builtins.getnEnv "HOSTNAME` in home-manager. This adds some important
 # stuff such as disabling the tray on polybar for my work machine.
 export HOSTNAME=$(hostname)
+
