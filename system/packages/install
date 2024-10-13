@@ -14,15 +14,19 @@ pass
 pass-extension-otp
 moreutils
 xcape
+htop
 
 ## WM
 sway
+swayidle
+swaylock
 waybar
 wofi
 wofi-pass
 brightnessctl
+alacritty
+xdg-desktop-portal-wlr
+xdg-desktop-portal
 
 ## Ricing
-lxappearance
-arc-theme
 papirus-icon-theme
