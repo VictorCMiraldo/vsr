@@ -16,15 +16,15 @@ in {
           border-radius: 0px;
           border: none;
           border-bottom: 3px solid ${my-theme.colors.inactive-border};
-          background-color: ${my-theme.colors.inactive-bg};
+          background-color: ${my-theme.colors.unfocused-bg};
+          color: ${my-theme.colors.active-text};
       }
       #inner-box {
-          background-color: ${my-theme.colors.inactive-bg};
-
+          background-color: ${my-theme.colors.unfocused-bg};
       }
       #outer-box {
           margin: 5px;
-          padding:20px;
+          padding:2px;
           background-color: ${my-theme.colors.inactive-bg};
       }
 
@@ -45,6 +45,7 @@ in {
       }
 
       #text:selected {
+          color: ${my-theme.colors.active-text};
       }
     '';
 }

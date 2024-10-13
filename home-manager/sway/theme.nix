@@ -1,6 +1,5 @@
 {
   colors = {
-    # The focus coor
     inactive-border = "#333333";
     inactive-text = "#888888";
     inactive-bg = "#5f676a";

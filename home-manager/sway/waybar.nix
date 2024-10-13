@@ -105,8 +105,8 @@ in {
 
       "network": {
           "interval": 3,
-          "format-wifi": " {essid}", // Icon: wifi
-          "format-ethernet": "🖧 {ifname}: {ipaddr}/{cidr}", // Icon: ethernet
+          "format-wifi": "  {essid}", // Icon: wifi
+          "format-ethernet": "🖧  {ifname}: {ipaddr}/{cidr}", // Icon: ethernet
           "format-disconnected": "⚠  Disconnected",
           "tooltip-format": "{ifname}: {ipaddr} (signal: {signalStrength}%)"
       },
@@ -117,7 +117,7 @@ in {
           "format-muted": "󰖁 Muted", // Icon: volume-mute
           "format-icons": {
               "headphones": "", // Icon: headphones
-              "default": ["", ""] // Icons: volume-down, volume-up
+              "default": [" ", " "] // Icons: volume-down, volume-up
           },
           "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
           "on-click-right": "alacritty --title='Sound Mixer' --command='pulsemixer'",
@@ -195,7 +195,7 @@ in {
     }
 
     #waybar {
-        background-color: ${my-theme.colors.inactive-bg};
+        background-color: ${my-theme.colors.unfocused-bg};
         color: ${my-theme.colors.active-text}; 
         font-family: ${my-theme.fonts.normal-name};
         font-size: 14px;
