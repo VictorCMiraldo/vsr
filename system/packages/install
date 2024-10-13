@@ -12,12 +12,17 @@ vlc
 pavucontrol
 pass
 pass-extension-otp
-emacs-gtk
-rofi
 moreutils
 xcape
 
-# Ricing
+## WM
+sway
+waybar
+wofi
+wofi-pass
+brightnessctl
+
+## Ricing
 lxappearance
 arc-theme
 papirus-icon-theme

@@ -12,6 +12,8 @@
     urgent-border = "#2f343a";
     urgent-text = "#ffffff";
     urgent-bg = "#900000";
+
+    unfocused-bg = "#222222";
   };
 
   fonts = {

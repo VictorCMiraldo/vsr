@@ -5,7 +5,7 @@ let
   my-theme = import ./theme.nix;
 in {
   imports = [ 
-    # ./wofi.nix 
+    ./wofi.nix 
     ./waybar.nix 
     ./xkb.nix 
   ];
@@ -23,6 +23,9 @@ in {
       #! /bin/sh
       # Load important variables, bringing nix binaries into path
       . ${config.home.homeDirectory}/.profile
+
+      # Set the themes we use
+      gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
 
       # xsetroot -cursor_name left_ptr
 
