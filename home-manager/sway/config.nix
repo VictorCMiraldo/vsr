@@ -24,9 +24,6 @@ in {
       # Load important variables, bringing nix binaries into path
       . ${config.home.homeDirectory}/.profile
 
-      # Set the themes we use
-      gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
-
       # xsetroot -cursor_name left_ptr
 
       # Run sway
@@ -46,10 +43,14 @@ in {
     executable = true;
     text = ''
       #! /bin/sh
+
+      # Set the themes we'd like to use.
+      gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
+
       cp ${config.home.homeDirectory}/.config/sway/my-sway.desktop /usr/share/wayland-sessions/
       '';
   };
 
-  # Uncommend when the config is more final.
-  # home.file.".config/sway/config".source = ./sway-config
+  home.file.".config/sway/config".source = ./sway-config;
+  home.file.".config/sway/binds.sway".source = ./sway-keybinds;
 }

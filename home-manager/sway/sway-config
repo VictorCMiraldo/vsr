@@ -1,0 +1,78 @@
+########################
+# System Configuration #
+########################
+
+## include the default sway config
+include /etc/sway/config.d/*
+
+## Configure locking and idle behavior
+exec swayidle -w \
+     timeout 300 'swaylock -f -c 000000' \
+     timeout 360 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+     before-sleep 'swaylock -f -c 000000'
+
+## Ensure we can screen-share
+
+# Now we gotta ger the desktop portals going, otherwise
+# we can't screen share anything and there seems to be
+# other weird things that wont work.
+exec /usr/libexec/xdg-desktop-portal-wlr
+exec /usr/libexec/xdg-desktop-portal -r
+
+## Define my utilities
+# Set a menu for $mod+d and a passmenu for mod+p
+set $menu wofi --show drun
+set $passmenu my-wofi-pass -s
+set $passmenutype my-wofi-pass -s -t
+set $term alacritty
+
+## Get a bar going
+exec waybar
+
+#########################
+# Outputs Configuration #
+#########################
+
+output eDP-1 {
+  mode 2560x1600
+  scale 1.3
+}
+
+output 'Dell Inc. DELL U2719D BM2TX13' {
+  mode 2560x1440
+  scale 1
+}
+
+set $wallpapers /home/victor/.local/share/wallpapers
+output * bg `find $wallpapers | shuf -n 1` fill #24546b
+
+########################
+# Inputs Configuration #
+########################
+
+# Use our own layout with AltGr mapped to Super, giving us an
+# additional Mod4
+input "type:keyboard" {
+  xkb_layout "us_alt_gr_remapped_to_super"
+}
+
+input "type:touchpad" {
+  dwt enabled
+  dwtp enabled
+  tap enabled
+  tap_button_map lrm
+}
+
+###############
+# Keybindings #
+###############
+
+include /home/victor/.config/sway/binds.sway
+
+##############
+# For Window #
+##############
+
+# Check https://wiki.archlinux.org/title/Sway#Floating_windows
+for_window [title="Firefox - Sharing Indicator"] floating enable
+# for_window [title="(?:Open|Save) (?:File|Folder|As)"] floating enable, resize set width 1030 height 710
