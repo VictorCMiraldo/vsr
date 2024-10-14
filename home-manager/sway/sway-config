@@ -28,6 +28,9 @@ set $term alacritty
 ## Get a bar going
 exec waybar
 
+## No need to display borders on a single window
+smart_borders on
+
 #########################
 # Outputs Configuration #
 #########################
