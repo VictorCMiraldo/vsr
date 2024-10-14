@@ -6,6 +6,7 @@ let
 in {
   imports = [ 
     ./wofi.nix 
+    ./wofi-pass.nix 
     ./waybar.nix 
     ./xkb.nix 
   ];

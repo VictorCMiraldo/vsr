@@ -22,8 +22,7 @@ exec /usr/libexec/xdg-desktop-portal -r
 ## Define my utilities
 # Set a menu for $mod+d and a passmenu for mod+p
 set $menu wofi --show drun
-set $passmenu my-wofi-pass -s
-set $passmenutype my-wofi-pass -s -t
+set $passmenu my-wofi-pass
 set $term alacritty
 
 ## Get a bar going
