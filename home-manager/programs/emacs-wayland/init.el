@@ -1,6 +1,9 @@
 (require 'use-package)
 (package-initialize)
 
+;; Set support for a custom.el file.
+(setq custom-file (expand-file-name "custom.el"))
+
 ;; I need a few packages that are not in ELPA, and
 ;; I don't feel like adding the entirety of MELPA
 ;; just for that. The package-vc-install can handle this
@@ -678,7 +681,5 @@
 
 ;;;;;;;;;;;;;;;; Custom
 
-;; Set support for a custom.el file.
-(setq custom-file (expand-file-name "custom.el"))
 (ignore-errors (load custom-file))
 

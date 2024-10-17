@@ -10,7 +10,7 @@ set $term alacritty
 bindsym $mod+i xkb_switch_layout next
 
 bindsym --to-code { 
-  $mod+Shift+Esc reload
+  $mod+Shift+Escape reload
   $mod+Shift+q exit
 
   $mod+Shift+c kill

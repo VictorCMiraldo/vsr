@@ -63,7 +63,7 @@
     ./programs/utilities.nix
     ./programs/pass-and-gpg.nix
     ./programs/bash/config.nix
-    ./programs/emacs/config.nix
+    ./programs/emacs-wayland/config.nix
     ./programs/vim/config.nix
     ./programs/ssh/config.nix
     ./programs/git.nix
