@@ -10,14 +10,14 @@ set $term alacritty
 bindsym $mod+i xkb_switch_layout next
 
 bindsym --to-code { 
-  # Basics first: get this thing to behave like XMonad
-  $mod+q reload
-
+  $mod+Shift+Esc reload
   $mod+Shift+q exit
+
   $mod+Shift+c kill
 
   $mod+d exec $menu
   $mod+p exec $passmenu
+  $mod+q exec $powermenu
 
   # Grave is `
   $mod+Shift+grave exec swaylock -f -c 000000

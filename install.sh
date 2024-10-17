@@ -19,7 +19,7 @@ mydirs=("$HOME/tmp/Desktop"
         "$HOME/repos"
         "$HOME/doc"
         "$HOME/bin")
- 
+
 for d in ${mydirs[*]}; do
    if [[ ! -d "$d" ]]; then
        mkdir -p "$d"
@@ -42,7 +42,7 @@ for d in ${rmdirs[*]}; do
 done
 
 ## Legagy Config are those aspects of my config that
-## were not ported to home-manager still 
+## were not ported to home-manager still
 
 ## Link our unison profiles; we create a dedicated directory because unison loves
 ## to keep some of its own local control files in there, so better not pollute
@@ -74,7 +74,7 @@ ln -fs $(readlink -f "${wd}/home-manager") "$HOME/.config/nixpkgs"
 . $HOME/.nix-profile/etc/profile.d/nix.sh
 $HOME/.nix-profile/bin/home-manager switch
 
-# And finish off installing xmonad
-~/.xmonad/install.sh
+# And finish off installing the display manager.
+~/.config/sway/install.sh
 
 echo "All good! Please log off then on again"

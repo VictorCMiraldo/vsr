@@ -33,7 +33,7 @@ if [[ "${VSR_SYSTEM_PKG_MAINTAIN}" -ne "1" ]]; then
   ${wd}/packages/pkg-maintain.sh --verbose --update
   echo "VSR_SYSTEM_PKG_MAINTAIN=1" >> ${wd}/previous-install.state
 fi
- 
+
 # Configure ssh
 if [[ "${VSR_SYSTEM_SSHD}" -ne "1" ]]; then
   echo "Configuing sshd..."
@@ -46,7 +46,7 @@ fi
 
 # Now, I don't want to perform a lot of steps on the Channable
 # machine, so let's guard against that.
-if ! [[ "$(hostname)" == dev-* ]]; then 
+if ! [[ "$(hostname)" == dev-* ]]; then
 
   # Configure the firewall
   if [[ "${VSR_SYSTEM_UFW}" -ne "1" ]]; then
@@ -73,7 +73,7 @@ if ! [[ "$(hostname)" == dev-* ]]; then
         echo "Backing up old lightdm.conf"
         sudo mv /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bckp
       fi
-    
+
       echo -n "autologin-user=victor\nautologin-user-timeout=0" | sudo tee /etc/lightdm/lightdm.conf
       echo "VSR_LIGHTDM_AUTOLOGIN=1" >> ${wd}/previous-install.state
     fi
@@ -81,4 +81,3 @@ if ! [[ "$(hostname)" == dev-* ]]; then
 fi
 
 echo "Done"
-

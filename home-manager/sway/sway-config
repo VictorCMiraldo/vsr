@@ -22,7 +22,8 @@ exec /usr/libexec/xdg-desktop-portal -r
 ## Define my utilities
 # Set a menu for $mod+d and a passmenu for mod+p
 set $menu wofi --show drun
-set $passmenu my-wofi-pass
+set $passmenu wofi-pass
+set $powermenu wofi-power
 set $term alacritty
 
 ## Get a bar going
@@ -45,8 +46,13 @@ output 'Dell Inc. DELL U2719D BM2TX13' {
   scale 1
 }
 
-set $wallpapers /home/victor/.local/share/wallpapers
-output * bg `find $wallpapers | shuf -n 1` fill #24546b
+output 'Iiyama North America PL3288UH 1169612412778' {
+  mode 3840x2160
+  scale 1.25
+}
+
+# output * bg `ls -1 /home/victor/.local/share/wallpapers | xargs realpath | shuf -n 1` stretch #24546b
+output * bg /home/victor/.local/share/wallpapers/wp1.jpg stretch #24546b
 
 ########################
 # Inputs Configuration #
