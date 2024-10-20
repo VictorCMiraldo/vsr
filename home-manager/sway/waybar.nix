@@ -28,7 +28,8 @@ in {
           "battery",
           "tray",
           "clock#date",
-          "clock#time"
+          "clock#time",
+          "custom/notification"
       ],
 
       "backlight": {
@@ -168,9 +169,29 @@ in {
       "tray": {
           "icon-size": 21,
           "spacing": 10
+      },
+
+      "custom/notification": {
+        "tooltip": false,
+        "format": "{icon}",
+        "format-icons": {
+          "notification": "<span foreground='red'><sup></sup></span>",
+          "none": "",
+          "dnd-notification": "<span foreground='red'><sup></sup></span>",
+          "dnd-none": "",
+          "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+          "inhibited-none": "",
+          "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+          "dnd-inhibited-none": ""
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
       }
     }
-
     '';
 
   home.file.".config/waybar/style.css".text = 
@@ -248,6 +269,11 @@ in {
         margin-left: 12px;
         margin-right: 12px;
         min-width: 60px;
+    }
+
+    #custom-notification {
+      margin-left: 10px;
+      margin-right: 10px;
     }
 
     #cpu {
