@@ -1,16 +1,33 @@
 #!/bin/bash
 
-entries="⇠ Logout\n⏾ Suspend\n⭮ Reboot\n⏻ Shutdown"
+set -o pipefail
 
-selected=$(echo -e $entries | wofi -i --height 230 --width 250 --dmenu --cache-file /dev/null | awk '{print tolower($2)}')
+entries="⏻ Shutdown\n⇠ Logout\n⭮ Reboot\n⏾ Suspend"
+confirm=" ⃠  Abort\n✔ Confirm" 
 
-case $selected in
-  logout)
-    swaymsg exit;;
-  suspend)
-    exec systemctl suspend;;
-  reboot)
-    exec systemctl reboot;;
-  shutdown)
-    exec systemctl poweroff -i;;
-esac
+function ask() {
+  echo -e $1 |\
+    wofi -i --height 230 --width 250 --dmenu --cache-file /dev/null |\
+    awk '{print tolower($2)}'
+}
+
+function main() {
+  option=$(ask "${entries}")
+  if [ "$?" -eq "0" ]; then
+    sure=$(ask "${confirm}")
+    if [ "$?" -eq "0" ] && [[ "$sure" == "confirm" ]]; then
+      case $option in
+        logout)
+          swaymsg exit;;
+        suspend)
+          exec systemctl suspend;;
+        reboot)
+          exec systemctl reboot;;
+        shutdown)
+          exec systemctl poweroff -i;;
+      esac
+    fi
+  fi
+}
+
+main

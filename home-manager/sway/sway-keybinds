@@ -18,6 +18,7 @@ bindsym --to-code {
   $mod+d exec $menu
   $mod+p exec $passmenu
   $mod+q exec $powermenu
+  Print exec $screenshotmenu
 
   # Grave is `
   $mod+Shift+grave exec swaylock -f -c 000000

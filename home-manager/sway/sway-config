@@ -24,6 +24,7 @@ exec /usr/libexec/xdg-desktop-portal -r
 set $menu wofi --show drun
 set $passmenu wofi-pass
 set $powermenu wofi-power
+set $screenshotmenu wofi-screenshot
 set $term alacritty
 
 ## Get a bar going
