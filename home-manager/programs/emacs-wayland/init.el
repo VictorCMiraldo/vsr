@@ -13,6 +13,13 @@
   (package-vc-install "https://codeberg.org/pranshu/haskell-ts-mode"))
 (unless (package-installed-p 'evil-leader)
   (package-vc-install "https://github.com/cofi/evil-leader"))
+
+;; annalist is a dependency of evil-collection
+(unless (package-installed-p 'annalist)
+  (package-vc-install "https://github.com/noctuid/annalist.el"))
+(unless (package-installed-p 'evil-collection)
+  (package-vc-install "https://github.com/emacs-evil/evil-collection"))
+
 ;; inheritenv is a dependency of envrc
 (unless (package-installed-p 'inheritenv)
   (package-vc-install "https://github.com/purcell/inheritenv"))
@@ -204,10 +211,6 @@
     ;; to fetch the previous command.
     (savehist-mode)
 
-    ;; Make right-click do something sensible
-    (when (display-graphic-p)
-      (context-menu-mode))
-
     ;; Stop blinking the cursor
     (blink-cursor-mode -1)
 
@@ -243,23 +246,18 @@
     (completions-detailed t) ; Show annotations
 
     ;; So here we try to get some sanity around TAB.
-    (tab-always-indent t) ; When I hit TAB, ident
-    (indent-tabs-mode nil) ;; Does not allow indent to ever insert tabs
-    (tab-width 2)
-    (standard-indent 2)
-    (indent-line-function tab-to-tab-stop)
+    (tab-always-indent 'complete)
+    ;; (tab-first-completion 'eol)
+    ;; (indent-tabs-mode nil) ;; Does not allow indent to ever insert tabs
+    ;; (tab-width 2)
+    ;; (standard-indent 2)
+    ;; (indent-line-function tab-to-tab-stop)
+
+    ;; Only show commands that apply to the current mode
+    (read-extended-command-predicate #'command-completion-default-include-p)
 
     ;; Make backspace properly erase as many spaces as a tab
     (backward-delete-char-untabify-method 'hungry)
-
-    (completion-auto-help 'always) ; Open completion always; `lazy' another option
-    (completions-max-height 20) ; This is arbitrary
-    (completions-detailed t)
-    (completions-format 'one-column)
-    (completions-group t)
-    (completion-auto-select 'second-tab); Much more eager
-    ;(setopt completion-auto-select t)                     ; See `C-h v completion-auto-select' for more possible values
-
 
     (x-underline-at-descent-line nil) ; Prettier underlines
     (switch-to-buffer-obey-display-actions t) ; Make switching buffers more consistent
@@ -268,6 +266,24 @@
 
     ;; Fix archaic defaults
     (sentence-end-double-space nil)
+
+    ;; Centralized location for backups.
+    (backup-directory-alist '(("." . "~/.emacs.d/backups")))
+
+    ;; Silently delete execess backup versions
+    (delete-old-versions t)
+
+    ;; Only keep the last 1000 backups of a file.
+    (kept-old-versions 10)
+
+    ;; Even version controlled files get to be backed up.
+    (vc-make-backup-files t)
+
+    ;; Follow symlinks
+    (vc-follow-symlinks t)
+
+    ;; Use version numbers for backup files.
+    (version-control t)
 
   :bind
     (:map minibuffer-mode-map
@@ -282,11 +298,15 @@
     (setq-default electric-indent-inhibit t)
     (electric-indent-mode -1)
 
+    ;; Make it very easy to see the line with the cursor.
+    (global-hl-line-mode t)
 
     (setq major-mode-remap-alist
         '((haskell-mode . haskell-ts-mode)
           (bash-mode . bash-ts-mode)
           (python-mode . python-ts-mode)))
+
+    (global-prettify-symbols-mode 1)
 )
 
 (use-package which-key
@@ -379,7 +399,11 @@
     (setq evil-visual-state-cursor '(hollow "orange"))
     (setq evil-emacs-state-cursor '(hollow "magenta"))
 )
-
+(use-package evil-collection
+  :after evil
+  :config
+  (setq evil-collection-want-unimpaired-p nil)
+  (evil-collection-init))
 (use-package undo-tree
   :ensure t
   :diminish
@@ -388,6 +412,10 @@
     (undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
   :config
     (global-undo-tree-mode))
+
+(defun prev-window ()
+  (interactive)
+  (other-window -1))
 
 (use-package evil-leader
   :after evil
@@ -505,19 +533,31 @@
     (completion-styles '(orderless))
 )
 
-;; TODO: Think on how to integrate with leader
 (use-package avy
   :ensure t
-  :demand t)
+  :after embark
+  :demand t
+  :config
+    ;; Add the option to run embark when using avy
+    (defun avy-action-embark (pt)
+    (unwind-protect
+        (save-excursion
+          (goto-char pt)
+          (embark-act))
+      (select-window
+       (cdr (ring-ref avy-ring 0))))
+    t)
+
+    (setf (alist-get ?\; avy-dispatch-alist) 'avy-action-embark)
+)
 
 (use-package embark
   :ensure t
   :demand t
-  :bind (("C-c a" . embark-act))
+  :bind (("C-;" . embark-act))
 )
 
-(use-package embark-consult
-  :ensure t)
+(use-package embark-consult :ensure t)
 
 ;; Modify search results en masse
 (use-package wgrep
@@ -590,14 +630,20 @@
     ;; don't ask for closing the server connection,
     (eglot-autoshutdown t)
 
-    (eglot-send-changes-idle-time 1)
     (eglot-extend-to-xref t) ; activate Eglot in referenced non-project files
+
+    (eglot-send-changes-idle-time 3)
 
     ;; I love docs, but let me open that buffer please!
     (eldoc-echo-area-prefer-doc-buffer t)
     (eldoc-echo-area-use-multiline-p 'truncate-sym-name-if-fit)
 
   :config
+    (diminish 'edoc-mode)
+    ;; Set echo-area to be at most 3 lines
+    (setq max-mini-window-height 3)
+
+
     (fset #'jsonrpc--log-event #'ignore)  ; massive perf boost---don't log every event
 
     ;; Redefine next-error to use flymake's
@@ -637,22 +683,22 @@
       ;; Unless we're in imaginator, obviously! :)
       (when (string-prefix-p "/home/victor/channable/imaginator" n)
         (setq vcm/haskell-formatter-path "ormolu")
-        (setq vcm/haskell-formatter-args '("--no-cabal")))
+        (setq vcm/haskell-formatter-args nil))
 
       ;; Or megaphone! Will we use ormolu everywhere one day?!
       (when (string-prefix-p "/home/victor/channable/megaphone" n)
         (setq vcm/haskell-formatter-path "ormolu")
-        (setq vcm/haskell-formatter-args '("--no-cabal")))
+        (setq vcm/haskell-formatter-args nil))
 
       ;; Or macgyver! Forumolu there! LOL
       (when (string-prefix-p "/home/victor/channable/macgyver" n)
         (setq vcm/haskell-formatter-path "fourmolu")
-        (setq vcm/haskell-formatter-args '("--no-cabal")))
+        (setq vcm/haskell-formatter-args nil))
 
       ;; Or sharkmachine-interface Forumolu there ook! LOL
       (when (string-prefix-p "/home/victor/channable/sharkmachine-interface" n)
         (setq vcm/haskell-formatter-path "fourmolu")
-        (setq vcm/haskell-formatter-args '("--no-cabal"))))
+        (setq vcm/haskell-formatter-args nil)))
   )
 )
 
@@ -666,6 +712,26 @@
   (haskell-format-buffer))
 
 (use-package haskell-ts-mode
+ :hook 
+   (haskell-ts-mode
+    .
+    (lambda ()
+       (push '("<-" . "←") prettify-symbols-alist)
+       (push '("=>" . "⇒") prettify-symbols-alist)
+       (push '("==" . "≡") prettify-symbols-alist)
+       (push '("/=" . "≢") prettify-symbols-alist)
+       (push '(">=" . "≥") prettify-symbols-alist)
+       (push '("<=" . "≤") prettify-symbols-alist)
+       (push '("!!" . "‼") prettify-symbols-alist)
+       (push '("&&" . "∧") prettify-symbols-alist)
+       (push '("||" . "∨") prettify-symbols-alist)
+       (push '("~>" . "⇝") prettify-symbols-alist)
+       (push '("<~" . "⇜") prettify-symbols-alist)
+       (push '("><" . "⋈") prettify-symbols-alist)
+       (push '("-<" . "↢") prettify-symbols-alist)
+       (push '("::" . "∷") prettify-symbols-alist)
+       (push '("forall" . "∀") prettify-symbols-alist)))
+
   :custom
     ;; Abso-freaking-lutely not! Leave my TAB alone!
     (haskell-ts-use-indent nil)
@@ -677,7 +743,24 @@
     )
 )
 
+;;;;;;;;;
+;; Git ;;
+;;;;;;;;;
 
+(use-package magit
+  :commands
+    magit
+  :config
+      (evil-leader/set-key
+        ;; 'r' rebase
+        "r k" #'git-rebase-move-line-up
+        "r j" #'git-rebase-move-line-down
+        "r s" #'git-rebase-squash
+        "r w" #'git-rebase-reword
+      )
+  :custom
+    (setq magit-diff-refine-hunk 'all)
+)
 
 ;;;;;;;;;;;;;;;; Custom
 
