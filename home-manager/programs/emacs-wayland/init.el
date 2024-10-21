@@ -13,153 +13,26 @@
   (package-vc-install "https://codeberg.org/pranshu/haskell-ts-mode"))
 (unless (package-installed-p 'evil-leader)
   (package-vc-install "https://github.com/cofi/evil-leader"))
-
-;; annalist is a dependency of evil-collection
-(unless (package-installed-p 'annalist)
+(unless (package-installed-p 'annalist) ;; annalist is a dependency of evil-collection
   (package-vc-install "https://github.com/noctuid/annalist.el"))
 (unless (package-installed-p 'evil-collection)
   (package-vc-install "https://github.com/emacs-evil/evil-collection"))
-
-;; inheritenv is a dependency of envrc
-(unless (package-installed-p 'inheritenv)
+(unless (package-installed-p 'inheritenv) ;; inheritenv is a dependency of envrc
   (package-vc-install "https://github.com/purcell/inheritenv"))
 (unless (package-installed-p 'envrc)
   (package-vc-install "https://github.com/purcell/envrc"))
 (unless (package-installed-p 'emacs-reformatter)
   (package-vc-install "https://github.com/purcell/emacs-reformatter"))
-
-;; What we'd want:
-;;
-;; 45| .... lala
-;; 46| ..c
-;;
-;; tab_press = do
-;;   let prev_indent
-;;   let this_indent =
-;;         let p-to-0 = get text until beginning of line
-;;          in p-to-0 ~ '[ \t]*' -- only spaces until the col 0
-;;             `and` column p == k -- same col as previous line
-;; 
-;;   -- is the point at the previous line's indent?
-;;   let at_previous p = this_indent = prev_indent
-;;
-;;   case (at_begining p, at_previous p) of
-;;      (True, False) -> add until at_previous
-;;      (_, True) -> add tab-width spaces
-;;      -- now, we're not at the beginning 
-;;      (False, False) -> 
-;;   let p = (point)
-;;   if col p == o
-
-;;   if is_beginning (point)
-;;   then insert tab-width spaces
-;;   else 
-;;   case point:
-;;     beginning_of_line ->
-;;       case previous_line_indent:
-;;         0 -> insert tad-width spaces.
-;;         n -> insert n spaces.
-;;       indent as much as previous line on first press.
-
-(defun my/prev-line-indent ()
-  "Returns the indentation level of the previous non-empty line"
-  (interactive) ;; to be removed
-  (save-excursion
-    (beginning-of-line)
-    (if (re-search-backward "^[^\n]" nil t)
-      (let ((end (save-excursion (forward-line 1) (point))))
-        (or (looking-at "[ \t]")
-            (skip-chars-forward "^ \t" end))
-        (skip-chars-forward " \t" end)
-        (current-column)
-      )
-    )
-  )
-)
-
-(defun my/point-in-line-state ()
-  "Returns this line's and point state. Returns:
-
-      'in-empty-line when the line is empty.
-
-      'in-bol when the point is at the beginning of a non-empty line.
-
-      'in-eol when the point is at the end of a non-empty line.
-
-      'in-middle when the point is at the middle of a non-empty line AND
-         the prefix up to the point contains non-whitespace characters.
-
-      INT when the point is not in the beginning of the line,
-         but the prefix up to the point is only whitespace characters. The 
-         int is the identation level of this line: the column of the first non-whitespace
-         character in this line."
-  (interactive)
-  (save-excursion
-    (cond
-      ;; Check for beginning or end of line. Beginning first.
-      ((string-match "^[[:blank:]]*\n$" (thing-at-point 'line t))
-        'in-blank-line)
-      ((eolp)
-        'in-eol)
-
-      ;; Ok, not bol nor eol!
-      ;; Now, try to skip backwards until we're not seeing a tab or a space.
-      ;; if we skip nothing, we're mid word!
-      ((= (skip-chars-backward " \t") 0)
-        'in-middle)
-
-      ;; If the above check skipped all the way to the beginning,
-      ;; we are in the blank-prefix.
-      ((= (current-column) 0)
-        (skip-chars-forward " \t"))
-
-      ;; Else, we're in the middle of a non-empty line.
-      (t
-        'in-middle))
-  )
-)
-
-;; (use-package nano-theme
-;;   :ensure t
-;;   :custom-face
-;;     (nano-foreground ((t (:foreground "#ecf0c1"))))
-;;     (nano-background ((t (:foreground "#0f111b"))))
-;;     (nano-highlight  ((t (:foreground "#1b1c36"))))
-;;     (nano-critical   ((t (:foreground "#e33400"))))
-;;     (nano-salient    ((t (:foreground "#00a4cc"))))
-;;     (nano-strong     ((t (:foreground "#e39400"))))
-;;     (nano-popout     ((t (:foreground "#f2ce00"))))
-;;     (nano-subtle     ((t (:foreground "#7a5ccc"))))
-;;     (nano-faded      ((t (:foreground "#b3a1e6"))))
-;;   :config
-;;     (nano-dark)
-;; )
-
-;; (use-package nano-modeline
-;;   :after doom-themes
-;;   :ensure t
-;;   :custom
-;;     (nano-modeline-position 'nano-modeline-footer)
-;;   :config
-;;     (nano-modeline-prog-mode t)
-;;     (add-hook 'prog-mode-hook #'nano-modeline-prog-mode)
-;;     (add-hook 'eat-mode-hook #'nano-modeline-eat-mode)
-;;     (add-hook 'messages-buffer-mode-hook #'nano-modeline-message-mode)
-;; )
-
-;; (unless (package-installed-p 'mood-line)
-;;   (package-vc-install "https://gitlab.com/jessieh/mood-line"))
-;; (use-package mood-line
-;;   :config
-;;     (mood-line-mode)
-;;   :custom
-;;     (mood-line-glyph-alist mood-line-glyphs-unicode)
-;; )
-
 (unless (package-installed-p 'themes)
   (package-vc-install "https://github.com/doomemacs/themes"))
 (unless (package-installed-p 'doom-nano-modeline)
   (package-vc-install "https://github.com/ronisbr/doom-nano-modeline"))
+(unless (package-installed-p 'nerd-icons)
+  (package-vc-install "https://github.com/rainstormstudio/nerd-icons.el"))
+(unless (package-installed-p 'nerd-icons-dired)
+  (package-vc-install "https://github.com/rainstormstudio/nerd-icons-dired"))
+(unless (package-installed-p 'nerd-icons-corfu)
+  (package-vc-install "https://github.com/LuigiPiucco/nerd-icons-corfu"))
 
 (use-package doom-themes
   :custom
@@ -176,23 +49,15 @@
     (doom-nano-modeline-mode 1)
 )
 
-;;
-;; (unless (package-installed-p 'nerd-icons)
-;;   (package-vc-install "https://github.com/rainstormstudio/nerd-icons.el"))
-;; (unless (package-installed-p 's)
-;;   (package-vc-install "https://github.com/magnars/s.el"))
-;; (unless (package-installed-p 'f)
-;;   (package-vc-install "https://github.com/rejeep/f.el"))
-;; (unless (package-installed-p 'shrink-path)
-;;   (package-vc-install "https://github.com/zbelial/shrink-path.el"))
-;; (unless (package-installed-p 'doom-modeline)
-;;   (package-vc-install "https://github.com/seagle0128/doom-modeline"))
-;;
-;; (use-package shrink-path :demand)
-;; (use-package doom-modeline :init (doom-modeline-mode 1))
+(use-package nerd-icons
+  :custom
+    (nerd-icons-font-family "Symbols Nerd Font Mono")
+)
 
-
-
+(use-package nerd-icons-dired
+  :hook
+    (dired-mode . nerd-icons-dired-mode)
+)
 
 (use-package emacs
   :init
@@ -247,11 +112,11 @@
 
     ;; So here we try to get some sanity around TAB.
     (tab-always-indent 'complete)
-    ;; (tab-first-completion 'eol)
-    ;; (indent-tabs-mode nil) ;; Does not allow indent to ever insert tabs
-    ;; (tab-width 2)
-    ;; (standard-indent 2)
-    ;; (indent-line-function tab-to-tab-stop)
+    (tab-first-completion 'eol)
+    (indent-tabs-mode nil) ;; Does not allow indent to ever insert tabs
+    (tab-width 2)
+    (standard-indent 2)
+    (indent-line-function #'indent-relative-first-indent-point)
 
     ;; Only show commands that apply to the current mode
     (read-extended-command-predicate #'command-completion-default-include-p)
@@ -372,7 +237,6 @@
 )
 
 
-
 ;; Evil!
 
 (use-package evil
@@ -423,14 +287,14 @@
   (evil-leader/set-leader "<SPC>")
   (evil-leader/set-key
     ;; ']' next
-      "] e"    'next-error
-      "] b"    'next-buffer
-      "] w"    'other-window
+      "] e" 'next-error
+      "] b" 'next-buffer
+      "] w" 'other-window
 
     ;; '[' pref
-      "[ e"    'previous-error
-      "[ b"    'previous-buffer
-      "[ w"    'prev-window
+      "[ e" 'previous-error
+      "[ b" 'previous-buffer
+      "[ w" 'prev-window
 
     ;; 'w' window
       "w [" 'prev-window
@@ -460,7 +324,6 @@
     ;; 'c' code
       "c d" 'xref-find-definitions
       "c D" 'xref-find-references
-      "c a" 'align-regexp
       "c j" 'fill-paragraph
       "c s" 'eglot
       "c c" 'comment-or-uncomment-region
@@ -588,7 +451,10 @@
   (:map corfu-map
         ("SPC" . corfu-insert-separator)
         ("C-n" . corfu-next)
-        ("C-p" . corfu-previous)))
+        ("C-p" . corfu-previous))
+  :config
+    (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+)
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; Eglot + Direnv ;;
@@ -712,7 +578,7 @@
   (haskell-format-buffer))
 
 (use-package haskell-ts-mode
- :hook 
+ :hook
    (haskell-ts-mode
     .
     (lambda ()
@@ -765,4 +631,99 @@
 ;;;;;;;;;;;;;;;; Custom
 
 (ignore-errors (load custom-file))
+
+;;;;;;;;;;;;;;;; Indentation Playground
+
+
+;; What we'd want:
+;;
+;; 45| .... lala
+;; 46| ..c
+;;
+;; tab_press = do
+;;   let prev_indent
+;;   let this_indent =
+;;         let p-to-0 = get text until beginning of line
+;;          in p-to-0 ~ '[ \t]*' -- only spaces until the col 0
+;;             `and` column p == k -- same col as previous line
+;;
+;;   -- is the point at the previous line's indent?
+;;   let at_previous p = this_indent = prev_indent
+;;
+;;   case (at_begining p, at_previous p) of
+;;      (True, False) -> add until at_previous
+;;      (_, True) -> add tab-width spaces
+;;      -- now, we're not at the beginning
+;;      (False, False) ->
+;;   let p = (point)
+;;   if col p == o
+
+;;   if is_beginning (point)
+;;   then insert tab-width spaces
+;;   else
+;;   case point:
+;;     beginning_of_line ->
+;;       case previous_line_indent:
+;;         0 -> insert tad-width spaces.
+;;         n -> insert n spaces.
+;;       indent as much as previous line on first press.
+
+(defun my/prev-line-indent ()
+  "Returns the indentation level of the previous non-empty line"
+  (interactive) ;; to be removed
+  (save-excursion
+    (beginning-of-line)
+    (if (re-search-backward "^[^\n]" nil t)
+      (let ((end (save-excursion (forward-line 1) (point))))
+        (or (looking-at "[ \t]")
+            (skip-chars-forward "^ \t" end))
+        (skip-chars-forward " \t" end)
+        (current-column)
+      )
+    )
+  )
+)
+
+(defun my/point-in-line-state ()
+  "Returns this line's and point state. Returns:
+
+      'in-empty-line when the line is empty.
+
+      'in-bol when the point is at the beginning of a non-empty line.
+
+      'in-eol when the point is at the end of a non-empty line.
+
+      'in-middle when the point is at the middle of a non-empty line AND
+         the prefix up to the point contains non-whitespace characters.
+
+      INT when the point is not in the beginning of the line,
+         but the prefix up to the point is only whitespace characters. The
+         int is the identation level of this line: the column of the first non-whitespace
+         character in this line."
+  (interactive)
+  (save-excursion
+    (cond
+      ;; Check for beginning or end of line. Beginning first.
+      ((string-match "^[[:blank:]]*\n$" (thing-at-point 'line t))
+        'in-blank-line)
+      ((eolp)
+        'in-eol)
+
+      ;; Ok, not bol nor eol!
+      ;; Now, try to skip backwards until we're not seeing a tab or a space.
+      ;; if we skip nothing, we're mid word!
+      ((= (skip-chars-backward " \t") 0)
+        'in-middle)
+
+      ;; If the above check skipped all the way to the beginning,
+      ;; we are in the blank-prefix.
+      ((= (current-column) 0)
+        (skip-chars-forward " \t"))
+
+      ;; Else, we're in the middle of a non-empty line.
+      (t
+        'in-middle))
+  )
+)
+
 
