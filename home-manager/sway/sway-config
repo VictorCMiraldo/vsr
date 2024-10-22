@@ -72,11 +72,12 @@ input "type:touchpad" {
   tap_button_map lrm
 }
 
-###############
-# Keybindings #
-###############
+#########################
+# Keybindings and Theme #
+#########################
 
 include /home/victor/.config/sway/binds.sway
+include /home/victor/.config/sway/theme.sway
 
 ##############
 # For Window #
