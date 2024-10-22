@@ -110,14 +110,6 @@
     (completion-cycle-threshold 1) ; TAB cycles candidates
     (completions-detailed t) ; Show annotations
 
-    ;; So here we try to get some sanity around TAB.
-    (tab-always-indent 'complete)
-    (tab-first-completion 'eol)
-    (indent-tabs-mode nil) ;; Does not allow indent to ever insert tabs
-    (tab-width 2)
-    (standard-indent 2)
-    (indent-line-function #'indent-relative-first-indent-point)
-
     ;; Only show commands that apply to the current mode
     (read-extended-command-predicate #'command-completion-default-include-p)
 
@@ -172,6 +164,15 @@
           (python-mode . python-ts-mode)))
 
     (global-prettify-symbols-mode 1)
+)
+
+(use-package notch
+  :load-path "notch/"
+  :custom
+    ;; So here we try to get some sanity around TAB, which required my own package. LOL
+    ;; Notch will load its indentation settings from `indent.el'.
+    (indent-tabs-mode nil) ;; Does not allow indent to ever insert tabs
+    (standard-indent 2) ;; configure how large the identation is.
 )
 
 (use-package which-key
@@ -244,6 +245,17 @@
   :init
     (setq evil-want-keybinding nil)
     (setq evil-undo-system 'undo-tree)
+
+  :bind 
+    (:map 
+      evil-normal-state-map
+        ([tab] . #'notch-for-tab-command)
+        ([backtab] . #'notch-back)
+     :map
+      evil-insert-state-map
+        ([tab] . #'notch-for-tab-command)
+        ([backtab] . #'notch-back)
+    )
 
   :custom
     (evil-shift-width 1)
