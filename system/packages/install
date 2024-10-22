@@ -15,6 +15,7 @@ pass-extension-otp
 moreutils
 xcape
 htop
+imagemagick
 
 ## WM
 sway

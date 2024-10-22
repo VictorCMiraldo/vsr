@@ -53,4 +53,20 @@ in {
 
   home.file.".config/sway/config".source = ./sway-config;
   home.file.".config/sway/binds.sway".source = ./sway-keybinds;
+  home.file.".config/sway/theme.sway".text = 
+  let c = my-theme.colors;
+   in ''
+    # class                 border  backgr. text    indica. child_border
+    client.focused          ${c.active-border} ${c.active-bg} ${c.active-text} ${c.active-indicator}
+    client.focused_inactive ${c.inactive-border} ${c.inactive-bg} ${c.inactive-text}
+    client.unfocused        ${c.unfocused-border} ${c.unfocused-bg} ${c.unfocused-text}
+    client.urgent           ${c.urgent-border} ${c.urgent-bg} ${c.urgent-text}
+
+    default_border pixel 2
+    default_floating_border normal 2
+    hide_edge_borders none
+
+    gaps inner 3
+    gaps outer 5
+  '';
 }
