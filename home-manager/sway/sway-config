@@ -5,8 +5,6 @@
 # Execute the session command that does all sorts of magic, including
 # ensuring we can screen-share.
 exec /home/victor/.config/sway/session.sh
-# exec /usr/libexec/xdg-desktop-portal-wlr
-# exec /usr/libexec/xdg-desktop-portal -r
 
 ## include the default sway config
 include /etc/sway/config.d/*
@@ -25,9 +23,6 @@ set $passmenu wofi-pass
 set $powermenu wofi-power
 set $screenshotmenu wofi-screenshot
 set $term alacritty
-
-## Get a bar going
-exec waybar
 
 ## No need to display borders on a single window
 smart_borders on

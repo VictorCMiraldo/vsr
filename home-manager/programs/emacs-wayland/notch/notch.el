@@ -61,7 +61,9 @@ that point. Otherwise, always indents the line `standard-indent' forward, using
     (cond
       ;; (1) At or ahead the previous line
       ((or (not prev-notch) (>= this-notch prev-notch))
-         (indent-to (+ this-notch standard-indent)))
+         (let* ((tgt (+ this-notch standard-indent))
+                (diff (mod tgt standard-indent)))
+           (indent-to (- tgt diff))))
       ;; (2) Before the previous line, move it to the previous line
       (t (indent-to prev-notch)))
 
@@ -74,15 +76,17 @@ that point. Otherwise, always indents the line `standard-indent' forward, using
 (defun notch-point-in-line-state ()
   "Returns this line's and point state. Returns:
 
-      'in-blank-line OR integerp: when the line is empty or the prefix
-         up to the point is only whitespace characters. The returned int is
-         the identation level of this line: the column of the first non-whitespace
-         character in this line.
+     'in-blank-line OR integerp: when the line is empty or the prefix
+        up to the point is only whitespace characters. The returned int is
+        the identation level of this line: the column of the first non-whitespace
+        character in this line.
 
-      'in-eow when the point is at the end of a word.
+     'in-bol when the point is at the beginning of the line on a non-empty line.
 
-      'in-middle when the point is at the middle of a non-empty line AND
-         the prefix up to the point contains non-whitespace characters."
+     'in-eow when the point is at the end of a word.
+
+     'in-middle when the point is at the middle of a non-empty line AND
+        the prefix up to the point contains non-whitespace characters."
   (save-excursion
     (cond
       ;; TODO: unify the blank prefix and blank line, it's the same situation.
@@ -92,12 +96,20 @@ that point. Otherwise, always indents the line `standard-indent' forward, using
 
       ;; Ok, not bol nor eol!
       ;; Now, try to skip backwards until we're not seeing a tab or a space.
-      ;; if we skip nothing, we're mid word!
+      ;; if we skip nothing, we're mid word, or at the beginning of a line.
       ((= (skip-chars-backward " \t") 0)
          (let ((syn (syntax-class (syntax-after (point)))))
            (cond
+             ;; The beginning-of-line on a non-empty line should be treated especially,
+             ;; since `syn' will be 0.
+             ((bolp) 'in-bol)
+
+             ;; 0 and 12 are for newlines an spaces after the point.
              ((memql syn '(0 12)) 'in-eow)
-              (t 'in-middle))))
+
+             ;; Finally, if nothing matched, we're in an arbitrary point in the middle
+             ;; of the line.
+             (t 'in-middle))))
 
       ;; If the above check skipped all the way to the beginning,
       ;; we are in the blank-prefix.
@@ -142,8 +154,16 @@ move indentation backwards.
            ;; We're in a blank line (or in the blank prefix) just bring it to
            ;; the same level as the previous indented line, similar to the behavior
            ;; of `indent-relative-first-indent-point'.
-           ((or 'in-blank-line 'in-middle (pred integerp))
-              (notch-line))
+           ((or 'in-bol 'in-middle (pred integerp))
+             (notch-line))
+
+           ;; Let's delete anything that might be ahead of the point, which will prevent
+           ;; blank spaces at the end of the line and won't interfere with the carefully
+           ;; crafted white-space arithmetic of `notch-line'.
+           ('in-blank-line
+             (kill-line)
+             (open-line 1)
+             (notch-line))
 
            ;; We're in the end of a word, good place to launch a completion!
            ('in-eow (completion-at-point))

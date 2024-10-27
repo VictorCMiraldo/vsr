@@ -27,7 +27,7 @@ in {
   home.file.".config/sway/session.sh" = {
     source = ./session.sh;
     executable = true;
-  }
+  };
 
   home.file.".config/sway/config".source = ./sway-config;
   home.file.".config/sway/binds.sway".source = ./sway-keybinds;

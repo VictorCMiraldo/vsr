@@ -246,15 +246,15 @@
     (setq evil-want-keybinding nil)
     (setq evil-undo-system 'undo-tree)
 
-  :bind 
-    (:map 
+  :bind
+    (:map
       evil-normal-state-map
-        ([tab] . #'notch-for-tab-command)
-        ([backtab] . #'notch-back)
+        ("<tab>" . #'notch-for-tab-command)
+        ("<backtab>" . #'notch-back)
      :map
       evil-insert-state-map
-        ([tab] . #'notch-for-tab-command)
-        ([backtab] . #'notch-back)
+        ("<tab>" . #'notch-for-tab-command)
+        ("<backtab>" . #'notch-back)
     )
 
   :custom
@@ -628,6 +628,12 @@
 (use-package magit
   :commands
     magit
+   :bind
+     ;; Recover our tab to toggle sections. Rebinding TAB is an endless
+     ;; aventure!
+     (:map magit-mode-map
+        ("<tab>" . #'magit-section-toggle)
+     )
   :config
       (evil-leader/set-key
         ;; 'r' rebase
@@ -643,99 +649,3 @@
 ;;;;;;;;;;;;;;;; Custom
 
 (ignore-errors (load custom-file))
-
-;;;;;;;;;;;;;;;; Indentation Playground
-
-
-;; What we'd want:
-;;
-;; 45| .... lala
-;; 46| ..c
-;;
-;; tab_press = do
-;;   let prev_indent
-;;   let this_indent =
-;;         let p-to-0 = get text until beginning of line
-;;          in p-to-0 ~ '[ \t]*' -- only spaces until the col 0
-;;             `and` column p == k -- same col as previous line
-;;
-;;   -- is the point at the previous line's indent?
-;;   let at_previous p = this_indent = prev_indent
-;;
-;;   case (at_begining p, at_previous p) of
-;;      (True, False) -> add until at_previous
-;;      (_, True) -> add tab-width spaces
-;;      -- now, we're not at the beginning
-;;      (False, False) ->
-;;   let p = (point)
-;;   if col p == o
-
-;;   if is_beginning (point)
-;;   then insert tab-width spaces
-;;   else
-;;   case point:
-;;     beginning_of_line ->
-;;       case previous_line_indent:
-;;         0 -> insert tad-width spaces.
-;;         n -> insert n spaces.
-;;       indent as much as previous line on first press.
-
-(defun my/prev-line-indent ()
-  "Returns the indentation level of the previous non-empty line"
-  (interactive) ;; to be removed
-  (save-excursion
-    (beginning-of-line)
-    (if (re-search-backward "^[^\n]" nil t)
-      (let ((end (save-excursion (forward-line 1) (point))))
-        (or (looking-at "[ \t]")
-            (skip-chars-forward "^ \t" end))
-        (skip-chars-forward " \t" end)
-        (current-column)
-      )
-    )
-  )
-)
-
-(defun my/point-in-line-state ()
-  "Returns this line's and point state. Returns:
-
-      'in-empty-line when the line is empty.
-
-      'in-bol when the point is at the beginning of a non-empty line.
-
-      'in-eol when the point is at the end of a non-empty line.
-
-      'in-middle when the point is at the middle of a non-empty line AND
-         the prefix up to the point contains non-whitespace characters.
-
-      INT when the point is not in the beginning of the line,
-         but the prefix up to the point is only whitespace characters. The
-         int is the identation level of this line: the column of the first non-whitespace
-         character in this line."
-  (interactive)
-  (save-excursion
-    (cond
-      ;; Check for beginning or end of line. Beginning first.
-      ((string-match "^[[:blank:]]*\n$" (thing-at-point 'line t))
-        'in-blank-line)
-      ((eolp)
-        'in-eol)
-
-      ;; Ok, not bol nor eol!
-      ;; Now, try to skip backwards until we're not seeing a tab or a space.
-      ;; if we skip nothing, we're mid word!
-      ((= (skip-chars-backward " \t") 0)
-        'in-middle)
-
-      ;; If the above check skipped all the way to the beginning,
-      ;; we are in the blank-prefix.
-      ((= (current-column) 0)
-        (skip-chars-forward " \t"))
-
-      ;; Else, we're in the middle of a non-empty line.
-      (t
-        'in-middle))
-  )
-)
-
-
