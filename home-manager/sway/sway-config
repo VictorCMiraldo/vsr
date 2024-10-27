@@ -2,6 +2,12 @@
 # System Configuration #
 ########################
 
+# Execute the session command that does all sorts of magic, including
+# ensuring we can screen-share.
+exec /home/victor/.config/sway/session.sh
+# exec /usr/libexec/xdg-desktop-portal-wlr
+# exec /usr/libexec/xdg-desktop-portal -r
+
 ## include the default sway config
 include /etc/sway/config.d/*
 
@@ -11,13 +17,6 @@ exec swayidle -w \
      timeout 360 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
      before-sleep 'swaylock -f -c 000000'
 
-## Ensure we can screen-share
-
-# Now we gotta ger the desktop portals going, otherwise
-# we can't screen share anything and there seems to be
-# other weird things that wont work.
-exec /usr/libexec/xdg-desktop-portal-wlr
-exec /usr/libexec/xdg-desktop-portal -r
 
 ## Define my utilities
 # Set a menu for $mod+d and a passmenu for mod+p
@@ -47,10 +46,8 @@ output 'Dell Inc. DELL U2719D BM2TX13' {
   scale 1
 }
 
-output 'Iiyama North America PL3288UH 1169612412778' {
-  mode 3840x2160
-  scale 1.25
-}
+output 'Iiyama North America PL3288UH 1169612412873' mode 3840x2160 scale 1.25
+output 'Iiyama North America PL3288UH 1169612412778' mode 3840x2160 scale 1.25
 
 # output * bg `ls -1 /home/victor/.local/share/wallpapers | xargs realpath | shuf -n 1` stretch #24546b
 output * bg /home/victor/.local/share/wallpapers/wp1.jpg stretch #24546b

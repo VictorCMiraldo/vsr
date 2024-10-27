@@ -15,10 +15,10 @@
     LOCALES_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
 
     # Sway-needed things
-    MOZ_ENABLE_WAYLAND=1;
-    GTK_USE_PORTAL=0;
-    XDG_CURRENT_DESKTOP="sway";
-    XDG_SESSION_DESKTOP="sway";
+    # MOZ_ENABLE_WAYLAND=1;
+    # GTK_USE_PORTAL=0;
+    # XDG_CURRENT_DESKTOP="sway";
+    # XDG_SESSION_DESKTOP="sway";
   };
 
   # Manages our XDG user dirs
