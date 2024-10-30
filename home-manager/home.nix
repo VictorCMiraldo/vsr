@@ -66,6 +66,7 @@
     ./programs/emacs-wayland/config.nix
     ./programs/vim/config.nix
     ./programs/ssh/config.nix
+    ./programs/unison/config.nix
     ./programs/git.nix
     ./programs/papis/config.nix
   ];
