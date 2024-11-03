@@ -11,13 +11,37 @@
         };
       };
     };
-  home.file.".ssh/authorized_keys".text = ''
-    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHSwnBiaBmNkqUJyRfOjnE0rOwb80Bgkko149d/R/pXW victor@beetroot
-    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO40gphiJ99S0qmbYqLagjuUf9+x7+6khz5CvZe2MpjO victor@blackbean
-    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOI2iuzx7gQAuxi03FGgo4hrCy897X4zUjBV7Vtg+1Ue victor@dev-lt-60
-    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAW1EheUQ22usnWqIRr0pUlE5QhDFO9mH1nG0JIYgkKo victor@dev-lt-111
+
+    # Have our authorized keys file
+    home.file.".ssh/authorized_keys".text = ''
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHSwnBiaBmNkqUJyRfOjnE0rOwb80Bgkko149d/R/pXW victor@beetroot
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO40gphiJ99S0qmbYqLagjuUf9+x7+6khz5CvZe2MpjO victor@blackbean
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOI2iuzx7gQAuxi03FGgo4hrCy897X4zUjBV7Vtg+1Ue victor@dev-lt-60
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAW1EheUQ22usnWqIRr0pUlE5QhDFO9mH1nG0JIYgkKo victor@dev-lt-111
+      '';
+
+    # Create the systemd agent unit and set up the environment variable for the socket.
+    # I'm not using home-manager for this since it will want to run the ssh-agent from within
+    # nix, and I just want to run the default one from the system!
+    home.sessionVariablesExtra = ''
+        export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
     '';
+
+    home.file.".config/systemd/user/ssh-agent.service".text = ''
+      [Unit]
+      Description=SSH key agent
+
+      [Service]
+      Type=simple
+      Environment=SSH_AUTH_SOCK=%t/ssh-agent.socket
+      ExecStart=/usr/bin/ssh-agent -D -a $SSH_AUTH_SOCK
+
+      [Install]
+      WantedBy=default.target
+    '';
+
+    # Finaly, for convenience, we'll manually add a 'AddKeysToAgent yes' to our .ssh/config
+
   };
 }
-
 
