@@ -23,14 +23,18 @@
 ;;; Commentary:
 
 ;; Indentation in emacs has way to many options I don't care about, in fact,
-;; I much rather have a predictable behavior of the `<tab>' key, so I wrote
+;; I much rather have a predictable behavior of the `TAB' command, so I wrote
 ;; my own variation on the `indent-for-tab-command'. This works best by
 ;; also binding `<backtab>' to `notch-back'.
 ;;
-;; I tried to be "as compatible as possible" with
-;;
 ;; This is not portable, this will probably not "just work", but it works for
 ;; me. :)
+;;
+;; Notes for self: 'TAB' is different from '<tab>'. The former is they ascii
+;; caracter 9 (also produced with `C-i'). The later is the tab key in your keyboard.
+;; If you bind `<tab>' to `notch-for-tab-command' you probably will need to
+;; `<remap>' it in other modes. Using 'TAB' instead for `notch' should work.
+;;
 
 (defun previous-line-notch ()
   "Returns the indentation level of the previous non-empty line or zero if at the
@@ -94,7 +98,6 @@ that point. Otherwise, always indents the line `standard-indent' forward, using
       ((string-match "^[[:blank:]]*\n$" (thing-at-point 'line t))
         'in-blank-line)
 
-      ;; Ok, not bol nor eol!
       ;; Now, try to skip backwards until we're not seeing a tab or a space.
       ;; if we skip nothing, we're mid word, or at the beginning of a line.
       ((= (skip-chars-backward " \t") 0)
@@ -145,6 +148,7 @@ move indentation backwards.
      (t
        (let ((old-tick (buffer-chars-modified-tick))
              (old-point (point))
+             (col (current-column))
              (this-notch (current-indentation))
              (prev-notch (previous-line-notch))
              (state (notch-point-in-line-state)))
@@ -154,8 +158,13 @@ move indentation backwards.
            ;; We're in a blank line (or in the blank prefix) just bring it to
            ;; the same level as the previous indented line, similar to the behavior
            ;; of `indent-relative-first-indent-point'.
-           ((or 'in-bol 'in-middle (pred integerp))
+           ((or 'in-middle (and (pred integerp) (pred (= col))))
              (notch-line))
+
+           ;; If I'm in the beginning of a non-empty line or in its blank prefix, bring
+           ;; me to the first non-space character.
+           ((or 'in-bol (and (pred integerp) (pred (< col))))
+             (skip-chars-forward " \t"))
 
            ;; Let's delete anything that might be ahead of the point, which will prevent
            ;; blank spaces at the end of the line and won't interfere with the carefully

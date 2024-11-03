@@ -4,37 +4,10 @@
 ;; Set support for a custom.el file.
 (setq custom-file (expand-file-name "custom.el"))
 
-;; I need a few packages that are not in ELPA, and
-;; I don't feel like adding the entirety of MELPA
-;; just for that. The package-vc-install can handle this
-;; just fine! :D
-
-(unless (package-installed-p 'haskell-ts-mode)
-  (package-vc-install "https://codeberg.org/pranshu/haskell-ts-mode"))
-(unless (package-installed-p 'evil-leader)
-  (package-vc-install "https://github.com/cofi/evil-leader"))
-(unless (package-installed-p 'annalist) ;; annalist is a dependency of evil-collection
-  (package-vc-install "https://github.com/noctuid/annalist.el"))
-(unless (package-installed-p 'evil-collection)
-  (package-vc-install "https://github.com/emacs-evil/evil-collection"))
-(unless (package-installed-p 'inheritenv) ;; inheritenv is a dependency of envrc
-  (package-vc-install "https://github.com/purcell/inheritenv"))
-(unless (package-installed-p 'envrc)
-  (package-vc-install "https://github.com/purcell/envrc"))
-(unless (package-installed-p 'emacs-reformatter)
-  (package-vc-install "https://github.com/purcell/emacs-reformatter"))
-(unless (package-installed-p 'themes)
-  (package-vc-install "https://github.com/doomemacs/themes"))
-(unless (package-installed-p 'doom-nano-modeline)
-  (package-vc-install "https://github.com/ronisbr/doom-nano-modeline"))
-(unless (package-installed-p 'nerd-icons)
-  (package-vc-install "https://github.com/rainstormstudio/nerd-icons.el"))
-(unless (package-installed-p 'nerd-icons-dired)
-  (package-vc-install "https://github.com/rainstormstudio/nerd-icons-dired"))
-(unless (package-installed-p 'nerd-icons-corfu)
-  (package-vc-install "https://github.com/LuigiPiucco/nerd-icons-corfu"))
-
 (use-package doom-themes
+  :init
+    (unless (package-installed-p 'themes)
+      (package-vc-install "https://github.com/doomemacs/themes"))
   :custom
     (doom-themes-enable-bold t)   ; if nil, bold is universally disabled
     (doom-themes-enable-italic t) ; if nil, italics is universally disabled
@@ -42,19 +15,48 @@
     (load-theme 'doom-nord t)
 )
 
-(use-package doom-nano-modeline
+(use-package doom-modeline
+  :ensure t
+  :init
+    (unless (package-installed-p 'f)
+      (package-vc-install "https://github.com/rejeep/f.el"))
+    (unless (package-installed-p 's)
+      (package-vc-install "https://github.com/magnars/s.el"))
+    (unless (package-installed-p 'shrink-path)
+      (package-vc-install "https://github.com/zbelial/shrink-path.el"))
+    (unless (package-installed-p 'doom-modeline)
+      (package-vc-install "https://github.com/seagle0128/doom-modeline"))
+
   :custom
-    (doom-nano-modeline-position 'bottom)
+    (doom-modeline-buffer-file-name-style 'buffer-name)
   :config
-    (doom-nano-modeline-mode 1)
+    ;; I'll define my own, custom doom-modeline, thanks!
+    (doom-modeline-def-modeline 'my-line
+      '(modals vcs check buffer-info buffer-position selection-info)
+      '(misc-info minor-modes input-method buffer-encoding process))
+
+    (add-hook 'doom-modeline-mode-hook
+              (lambda () (doom-modeline-set-modeline 'my-line 'default)))
+
+    ;; Configure other mode-lines based on major modes
+    (add-to-list 'doom-modeline-mode-alist '(haskell-mode . my-line))
+    (add-to-list 'doom-modeline-mode-alist '(python-mode . my-line))
+
+    (doom-modeline-mode 1)
 )
 
 (use-package nerd-icons
+  :init
+    (unless (package-installed-p 'nerd-icons)
+      (package-vc-install "https://github.com/rainstormstudio/nerd-icons.el"))
   :custom
     (nerd-icons-font-family "Symbols Nerd Font Mono")
 )
 
 (use-package nerd-icons-dired
+  :init
+    (unless (package-installed-p 'nerd-icons-dired)
+      (package-vc-install "https://github.com/rainstormstudio/nerd-icons-dired"))
   :hook
     (dired-mode . nerd-icons-dired-mode)
 )
@@ -249,11 +251,11 @@
   :bind
     (:map
       evil-normal-state-map
-        ("<tab>" . #'notch-for-tab-command)
+        ("TAB" . #'notch-for-tab-command)
         ("<backtab>" . #'notch-back)
      :map
       evil-insert-state-map
-        ("<tab>" . #'notch-for-tab-command)
+        ("TAB" . #'notch-for-tab-command)
         ("<backtab>" . #'notch-back)
     )
 
@@ -277,6 +279,11 @@
 )
 (use-package evil-collection
   :after evil
+  :init
+    (unless (package-installed-p 'annalist) ;; annalist is a dependency of evil-collection
+      (package-vc-install "https://github.com/noctuid/annalist.el"))
+    (unless (package-installed-p 'evil-collection)
+      (package-vc-install "https://github.com/emacs-evil/evil-collection"))
   :config
   (setq evil-collection-want-unimpaired-p nil)
   (evil-collection-init))
@@ -295,6 +302,9 @@
 
 (use-package evil-leader
   :after evil
+  :init
+    (unless (package-installed-p 'evil-leader)
+      (package-vc-install "https://github.com/cofi/evil-leader"))
   :config
   (evil-leader/set-leader "<SPC>")
   (evil-leader/set-key
@@ -458,14 +468,29 @@
 (use-package corfu
   :ensure t
   :init
-  (global-corfu-mode)
+    (unless (package-installed-p 'nerd-icons-corfu)
+      (package-vc-install "https://github.com/LuigiPiucco/nerd-icons-corfu"))
+
+    (global-corfu-mode)
   :bind
   (:map corfu-map
-        ("SPC" . corfu-insert-separator)
-        ("C-n" . corfu-next)
-        ("C-p" . corfu-previous))
+        ("SPC" . #'corfu-insert-separator)
+        ("<tab>" . #'corfu-next)
+        ("<escape>" . #'corfu-quit))
   :config
     (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+  :custom
+    ;; Only use `corfu' when calling `completion-at-point'
+    (corfu-auto nil)
+
+    ;; Behave sanely w.r.t to the separator
+    (corfu-quit-at-boundary 'separator)
+    (corfu-separator ?\s)
+    (corfu-quit-no-match 'separator)
+    (corfu-preview-current 'insert)
+
+    ;; Please cycle!
+    (corfu-cycle t)
 )
 
 ;;;;;;;;;;;;;;;;;;;;
@@ -476,6 +501,11 @@
   :after diminish
   :demand
   :init
+    (unless (package-installed-p 'inheritenv) ;; inheritenv is a dependency of envrc
+      (package-vc-install "https://github.com/purcell/inheritenv"))
+    (unless (package-installed-p 'envrc)
+      (package-vc-install "https://github.com/purcell/envrc"))
+
     (diminish 'envrc-mode)
   :config
     (evil-leader/set-key
@@ -549,6 +579,9 @@
 ;; Haskell ;;
 ;;;;;;;;;;;;;
 
+(unless (package-installed-p 'emacs-reformatter)
+  (package-vc-install "https://github.com/purcell/emacs-reformatter"))
+
 (defvar vcm/haskell-formatter-path "ormolu")
 (defvar vcm/haskell-formatter-args nil)
 (defun vcm/set-haskell-formatter-vars ()
@@ -590,25 +623,28 @@
   (haskell-format-buffer))
 
 (use-package haskell-ts-mode
- :hook
-   (haskell-ts-mode
-    .
-    (lambda ()
-       (push '("<-" . "←") prettify-symbols-alist)
-       (push '("=>" . "⇒") prettify-symbols-alist)
-       (push '("==" . "≡") prettify-symbols-alist)
-       (push '("/=" . "≢") prettify-symbols-alist)
-       (push '(">=" . "≥") prettify-symbols-alist)
-       (push '("<=" . "≤") prettify-symbols-alist)
-       (push '("!!" . "‼") prettify-symbols-alist)
-       (push '("&&" . "∧") prettify-symbols-alist)
-       (push '("||" . "∨") prettify-symbols-alist)
-       (push '("~>" . "⇝") prettify-symbols-alist)
-       (push '("<~" . "⇜") prettify-symbols-alist)
-       (push '("><" . "⋈") prettify-symbols-alist)
-       (push '("-<" . "↢") prettify-symbols-alist)
-       (push '("::" . "∷") prettify-symbols-alist)
-       (push '("forall" . "∀") prettify-symbols-alist)))
+  :init
+    (unless (package-installed-p 'haskell-ts-mode)
+      (package-vc-install "https://codeberg.org/pranshu/haskell-ts-mode"))
+  :hook
+    (haskell-ts-mode
+     .
+     (lambda ()
+        (push '("<-" . "←") prettify-symbols-alist)
+        (push '("=>" . "⇒") prettify-symbols-alist)
+        (push '("==" . "≡") prettify-symbols-alist)
+        (push '("/=" . "≢") prettify-symbols-alist)
+        (push '(">=" . "≥") prettify-symbols-alist)
+        (push '("<=" . "≤") prettify-symbols-alist)
+        (push '("!!" . "‼") prettify-symbols-alist)
+        (push '("&&" . "∧") prettify-symbols-alist)
+        (push '("||" . "∨") prettify-symbols-alist)
+        (push '("~>" . "⇝") prettify-symbols-alist)
+        (push '("<~" . "⇜") prettify-symbols-alist)
+        (push '("><" . "⋈") prettify-symbols-alist)
+        (push '("-<" . "↢") prettify-symbols-alist)
+        (push '("::" . "∷") prettify-symbols-alist)
+        (push '("forall" . "∀") prettify-symbols-alist)))
 
   :custom
     ;; Abso-freaking-lutely not! Leave my TAB alone!
@@ -619,6 +655,12 @@
       ;; 'c' code
       "c f" 'vcm/haskell-format-buffer
     )
+)
+
+(use-package python
+  :ensure nil ;; Don't install this, is builtin.
+  :custom
+  (standard-indent 4)
 )
 
 ;;;;;;;;;
