@@ -34,7 +34,6 @@
 ;; caracter 9 (also produced with `C-i'). The later is the tab key in your keyboard.
 ;; If you bind `<tab>' to `notch-for-tab-command' you probably will need to
 ;; `<remap>' it in other modes. Using 'TAB' instead for `notch' should work.
-;;
 
 (defun previous-line-notch ()
   "Returns the indentation level of the previous non-empty line or zero if at the
@@ -162,9 +161,9 @@ move indentation backwards.
              (notch-line))
 
            ;; If I'm in the beginning of a non-empty line or in its blank prefix, bring
-           ;; me to the first non-space character.
+           ;; me to the first non-space character. If we skip nothing, then notch!
            ((or 'in-bol (and (pred integerp) (pred (< col))))
-             (skip-chars-forward " \t"))
+             (if (= (skip-chars-forward " \t") 0) (notch-line)))
 
            ;; Let's delete anything that might be ahead of the point, which will prevent
            ;; blank spaces at the end of the line and won't interfere with the carefully

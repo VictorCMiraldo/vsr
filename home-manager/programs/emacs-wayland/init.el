@@ -2,7 +2,7 @@
 (package-initialize)
 
 ;; Set support for a custom.el file.
-(setq custom-file (expand-file-name "custom.el"))
+(setq custom-file "~/.emacs.d/custom.el")
 
 (use-package doom-themes
   :init
@@ -128,6 +128,9 @@
 
     ;; Centralized location for backups.
     (backup-directory-alist '(("." . "~/.emacs.d/backups")))
+
+    ;; Auto-save in /tmp plz
+    (auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
     ;; Silently delete execess backup versions
     (delete-old-versions t)
