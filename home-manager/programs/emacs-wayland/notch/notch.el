@@ -76,6 +76,13 @@ that point. Otherwise, always indents the line `standard-indent' forward, using
     (forward-char (- cur this-notch))
 ))
 
+(defcustom notch-punctuation-is-eow nil
+  "Whether the next symbol being some punctuation mark means the point is at the end of the word.
+Languages, like Python, can use this setting to help auto-completion trigger a little more aggressively.
+In languages like Agda, this is a bad idea."
+  :type 'boolean
+  :group 'notch)
+
 (defun notch-point-in-line-state ()
   "Returns this line's and point state. Returns:
 
@@ -86,40 +93,44 @@ that point. Otherwise, always indents the line `standard-indent' forward, using
 
      'in-bol when the point is at the beginning of the line on a non-empty line.
 
-     'in-eow when the point is at the end of a word.
+     'in-eow when the point is at the end of a word. This setting is affected
 
      'in-middle when the point is at the middle of a non-empty line AND
         the prefix up to the point contains non-whitespace characters."
-  (save-excursion
-    (cond
-      ;; TODO: unify the blank prefix and blank line, it's the same situation.
-      ;; Check for beginning or end of line. Beginning first.
-      ((string-match "^[[:blank:]]*\n$" (thing-at-point 'line t))
-        'in-blank-line)
 
-      ;; Now, try to skip backwards until we're not seeing a tab or a space.
-      ;; if we skip nothing, we're mid word, or at the beginning of a line.
-      ((= (skip-chars-backward " \t") 0)
-         (let ((syn (syntax-class (syntax-after (point)))))
-           (cond
-             ;; The beginning-of-line on a non-empty line should be treated especially,
-             ;; since `syn' will be 0.
-             ((bolp) 'in-bol)
+  ;; 0 and 12 are for newlines an spaces after the point.
+  ;; 1, 3 and 4 is for punctuation
+  (let ((eow-syn-classes (append '(0 12) (if notch-punctuation-is-eow '(1 3 4) nil))))
+    (save-excursion
+      (cond
+        ;; TODO: unify the blank prefix and blank line, it's the same situation.
+        ;; Check for beginning or end of line. Beginning first.
+        ((string-match "^[[:blank:]]*\n$" (thing-at-point 'line t))
+          'in-blank-line)
 
-             ;; 0 and 12 are for newlines an spaces after the point.
-             ((memql syn '(0 12)) 'in-eow)
+        ;; Now, try to skip backwards until we're not seeing a tab or a space.
+        ;; if we skip nothing, we're mid word, or at the beginning of a line.
+        ((= (skip-chars-backward " \t") 0)
+           (let ((syn (syntax-class (syntax-after (point)))))
+             (cond
+               ;; The beginning-of-line on a non-empty line should be treated especially,
+               ;; since `syn' will be 0.
+               ((bolp) 'in-bol)
 
-             ;; Finally, if nothing matched, we're in an arbitrary point in the middle
-             ;; of the line.
-             (t 'in-middle))))
+               ((memql syn eow-syn-classes) 'in-eow)
 
-      ;; If the above check skipped all the way to the beginning,
-      ;; we are in the blank-prefix.
-      ((= (current-column) 0)
-        (skip-chars-forward " \t"))
+               ;; Finally, if nothing matched, we're in an arbitrary point in the middle
+               ;; of the line.
+               (t 'in-middle))))
 
-      ;; Else, we're in the middle of a non-empty line.
-      (t 'in-middle))
+        ;; If the above check skipped all the way to the beginning,
+        ;; we are in the blank-prefix.
+        ((= (current-column) 0)
+          (skip-chars-forward " \t"))
+
+        ;; Else, we're in the middle of a non-empty line.
+        (t 'in-middle))
+    )
   )
 )
 
