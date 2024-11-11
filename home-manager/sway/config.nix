@@ -49,6 +49,9 @@ in {
   '';
 
 
+  # I dont want to be engaging in the home-manager switching every time I need to add a new output
+  # to sway. Just make me a link! Yet, I can't et mkOutOfStoreSymlink to work yet
+  home.file.".config/sway/outputs.sway".source = ./sway-outputs;
 
   # Sway, when installed by default, it creates a desktop file that
   # loads sway without really loading our `.profile`. This means

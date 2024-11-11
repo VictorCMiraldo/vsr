@@ -31,23 +31,7 @@ smart_borders on
 # Outputs Configuration #
 #########################
 
-output eDP-1 {
-  mode 2560x1600
-  scale 1.4
-}
-
-output 'Dell Inc. DELL U2719D BM2TX13' {
-  mode 2560x1440
-  scale 1
-}
-
-output 'Iiyama North America PL3288UH 1169612412873' mode 3840x2160 scale 1.25
-output 'Iiyama North America PL3288UH 1169612412778' mode 3840x2160 scale 1.25
-output 'Iiyama North America PL3288UH 1169612412872' mode 3840x2160 scale 1.25
-output 'Dell Inc. DELL SE3223Q DDCSKK3'              mode 3840x2160 scale 1.25
-
-# output * bg `ls -1 /home/victor/.local/share/wallpapers | xargs realpath | shuf -n 1` stretch #24546b
-output * bg /home/victor/.local/share/wallpapers/wp1.jpg stretch #24546b
+include /home/victor/.config/sway/outputs.sway
 
 ########################
 # Inputs Configuration #
