@@ -1,7 +1,7 @@
 {pkgs, ...}:
 {
   home.packages = with pkgs; [
-    emacs29-pgtk
+    emacs30-pgtk
   ];
 
   home.file.".emacs.d/init.el".source = ./init.el;

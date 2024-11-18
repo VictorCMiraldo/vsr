@@ -117,6 +117,13 @@
     (global-prettify-symbols-mode 1)
 )
 
+;; Profiling init
+(use-package esup
+  :vc (:url "https://github.com/jschaf/esup")
+  :config
+    (setq esup-depth 0)
+)
+
 (use-package notch
   :load-path "notch/"
   :custom
@@ -227,12 +234,12 @@
     (setq evil-emacs-state-cursor '(hollow "magenta"))
 )
 
-(unless (package-installed-p 'annalist) ;; annalist is a dependency of evil-collection
-  (package-vc-install "https://github.com/noctuid/annalist.el"))
-(unless (package-installed-p 'evil-collection)
-  (package-vc-install "https://github.com/emacs-evil/evil-collection"))
+(use-package annalist
+  ;; annalist is a dependency of evil-collection
+  :vc (:url "https://github.com/noctuid/annalist.el"))
 (use-package evil-collection
-  :after evil
+  :vc (:url "https://github.com/emacs-evil/evil-collection")
+  :after (:all evil annalist)
   :init
   :config
   (setq evil-collection-want-unimpaired-p nil)
@@ -250,10 +257,9 @@
   (interactive)
   (other-window -1))
 
-(unless (package-installed-p 'evil-leader)
-  (package-vc-install "https://github.com/cofi/evil-leader"))
 (use-package evil-leader
-  :after evil
+  :vc (:url "https://github.com/cofi/evil-leader")
+  :after (evil)
   :config
   (evil-leader/set-leader "<SPC>")
   (evil-leader/set-key
@@ -414,8 +420,6 @@
 
 
 ;; Popup completion-at-point
-(unless (package-installed-p 'nerd-icons-corfu)
-  (package-vc-install "https://github.com/LuigiPiucco/nerd-icons-corfu"))
 (use-package corfu
   :ensure t
   :init
@@ -445,12 +449,12 @@
 ;; Eglot + Direnv ;;
 ;;;;;;;;;;;;;;;;;;;;
 
-(unless (package-installed-p 'inheritenv) ;; inheritenv is a dependency of envrc
-  (package-vc-install "https://github.com/purcell/inheritenv"))
-(unless (package-installed-p 'envrc)
-  (package-vc-install "https://github.com/purcell/envrc"))
+(use-package inheritenv
+  ;; inheritenv is a dependency of envrc 
+  :vc (:url "https://github.com/purcell/inheritenv"))
 (use-package envrc
-  :after diminish
+  :vc (:url "https://github.com/purcell/envrc")
+  :after (diminish inheritenv)
   :demand
   :init
     (diminish 'envrc-mode)
@@ -493,11 +497,13 @@
     (eldoc-echo-area-prefer-doc-buffer t)
     (eldoc-echo-area-use-multiline-p 'truncate-sym-name-if-fit)
 
+    ;; Please, don't pollute my buffer, thanks!
+    (eglot-ignored-server-capabilities '(:inlayHintProvider))
+
   :config
     (diminish 'edoc-mode)
     ;; Set echo-area to be at most 3 lines
     (setq max-mini-window-height 3)
-
 
     (fset #'jsonrpc--log-event #'ignore)  ; massive perf boost---don't log every event
 
@@ -512,8 +518,9 @@
       "W [" 'vcm/flymake-goto-prev-warning
       "[ W" 'vcm/flymake-goto-prev-warning)
 
-    ;; Sometimes you need to tell Eglot where to find the language server
-    (add-to-list 'eglot-server-programs '(python-mode . ("jedi-language-server")))
+    (add-to-list 'eglot-server-programs
+             '((python-mode python-ts-mode)
+               "basedpyright-langserver" "--stdio"))
 
     ;; And if you want to give eglot some per-workspace configuration, this is
     ;; how it would look like:

@@ -1,42 +1,42 @@
 ;; Themeing
 
-(unless (package-installed-p 'themes)
-  (package-vc-install "https://github.com/doomemacs/themes"))
-
 (use-package doom-themes
-  :ensure nil
-  :custom
-    (doom-themes-enable-bold t)   ; if nil, bold is universally disabled
-    (doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  :vc (:url "https://github.com/doomemacs/themes" :rev :newest)
   :config
+    ;; Global settings (defaults)
+      (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+            doom-themes-enable-italic t) ; if nil, italics is universally disabled
     (load-theme 'doom-nord t)
 )
 
-(unless (package-installed-p 'nerd-icons)
-  (package-vc-install "https://github.com/rainstormstudio/nerd-icons.el"))
 (use-package nerd-icons
+  :vc (:url "https://github.com/rainstormstudio/nerd-icons.el")
   :custom
     (nerd-icons-font-family "Symbols Nerd Font Mono")
 )
 
-(unless (package-installed-p 'nerd-icons-dired)
-  (package-vc-install "https://github.com/rainstormstudio/nerd-icons-dired"))
+
+(use-package nerd-icons-corfu
+  :vc (:url "https://github.com/LuigiPiucco/nerd-icons-corfu")
+  :after (corfu)
+)
+
 (use-package nerd-icons-dired
+  :vc (:url "https://github.com/rainstormstudio/nerd-icons-dired")
+  :after (dired)
   :hook
     (dired-mode . nerd-icons-dired-mode)
 )
 
-(unless (package-installed-p 'f)
-  (package-vc-install "https://github.com/rejeep/f.el"))
-(unless (package-installed-p 's)
-  (package-vc-install "https://github.com/magnars/s.el"))
-(unless (package-installed-p 'shrink-path)
-  (package-vc-install "https://github.com/zbelial/shrink-path.el"))
-(unless (package-installed-p 'doom-modeline)
-  (package-vc-install "https://github.com/seagle0128/doom-modeline"))
-
+(use-package f
+  :vc (:url "https://github.com/rejeep/f.el"))
+(use-package s
+  :vc (:url "https://github.com/magnars/s.el"))
+(use-package shrink-path
+  :vc (:url "https://github.com/zbelial/shrink-path.el"))
 (use-package doom-modeline
-  :ensure t
+  :vc (:url "https://github.com/seagle0128/doom-modeline")
+  :after (shrink-path f s)
   :custom
     (doom-modeline-buffer-file-name-style 'buffer-name)
   :config

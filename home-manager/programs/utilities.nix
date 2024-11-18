@@ -23,7 +23,8 @@ in {
     haskellPackages.hpack
     haskellPackages.lhs2tex
 
-    python311Packages.jedi-language-server
+    # pyright
+    basedpyright
 
     agdaWithStdlib
 
