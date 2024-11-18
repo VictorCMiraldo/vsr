@@ -201,11 +201,12 @@ move indentation backwards.
     (delete-horizontal-space)
     ;; This line has an indent, bring it back.
     (unless (<= this-notch 0)
-      (indent-to (- this-notch standard-indent)))
+      (indent-to (- this-notch standard-indent))
+      ;; Once we're done, we move back to the relative position from
+      ;; the beginning of the line.
+      (forward-char (- cur standard-indent))
+    ))
 
-    ;; Once we're done, we move back to the relative position from
-    ;; the beginning of the line.
-    (forward-char (- cur this-notch)))
 )
 
 (provide 'notch)

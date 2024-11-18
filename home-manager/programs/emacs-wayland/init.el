@@ -1,65 +1,11 @@
 (require 'use-package)
 (package-initialize)
 
-;; Set support for a custom.el file.
-(setq custom-file "~/.emacs.d/custom.el")
+;; This file defines a core emacs that has sensible behavior.
 
-(use-package doom-themes
-  :init
-    (unless (package-installed-p 'themes)
-      (package-vc-install "https://github.com/doomemacs/themes"))
-  :custom
-    (doom-themes-enable-bold t)   ; if nil, bold is universally disabled
-    (doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  :config
-    (load-theme 'doom-nord t)
-)
-
-(use-package doom-modeline
-  :ensure t
-  :init
-    (unless (package-installed-p 'f)
-      (package-vc-install "https://github.com/rejeep/f.el"))
-    (unless (package-installed-p 's)
-      (package-vc-install "https://github.com/magnars/s.el"))
-    (unless (package-installed-p 'shrink-path)
-      (package-vc-install "https://github.com/zbelial/shrink-path.el"))
-    (unless (package-installed-p 'doom-modeline)
-      (package-vc-install "https://github.com/seagle0128/doom-modeline"))
-
-  :custom
-    (doom-modeline-buffer-file-name-style 'buffer-name)
-  :config
-    ;; I'll define my own, custom doom-modeline, thanks!
-    (doom-modeline-def-modeline 'my-line
-      '(modals vcs check buffer-info buffer-position selection-info)
-      '(misc-info minor-modes input-method buffer-encoding process))
-
-    (add-hook 'doom-modeline-mode-hook
-              (lambda () (doom-modeline-set-modeline 'my-line 'default)))
-
-    ;; Configure other mode-lines based on major modes
-    (add-to-list 'doom-modeline-mode-alist '(haskell-mode . my-line))
-    (add-to-list 'doom-modeline-mode-alist '(python-mode . my-line))
-
-    (doom-modeline-mode 1)
-)
-
-(use-package nerd-icons
-  :init
-    (unless (package-installed-p 'nerd-icons)
-      (package-vc-install "https://github.com/rainstormstudio/nerd-icons.el"))
-  :custom
-    (nerd-icons-font-family "Symbols Nerd Font Mono")
-)
-
-(use-package nerd-icons-dired
-  :init
-    (unless (package-installed-p 'nerd-icons-dired)
-      (package-vc-install "https://github.com/rainstormstudio/nerd-icons-dired"))
-  :hook
-    (dired-mode . nerd-icons-dired-mode)
-)
+;; Set support for a custom.el file. We'll keep this outside nix for
+;; good measure, so it can always be edited by the different bits
+(setq custom-file (expand-file-name "~/.emacs.d/custom.el"))
 
 (use-package emacs
   :init
@@ -280,13 +226,14 @@
     (setq evil-visual-state-cursor '(hollow "orange"))
     (setq evil-emacs-state-cursor '(hollow "magenta"))
 )
+
+(unless (package-installed-p 'annalist) ;; annalist is a dependency of evil-collection
+  (package-vc-install "https://github.com/noctuid/annalist.el"))
+(unless (package-installed-p 'evil-collection)
+  (package-vc-install "https://github.com/emacs-evil/evil-collection"))
 (use-package evil-collection
   :after evil
   :init
-    (unless (package-installed-p 'annalist) ;; annalist is a dependency of evil-collection
-      (package-vc-install "https://github.com/noctuid/annalist.el"))
-    (unless (package-installed-p 'evil-collection)
-      (package-vc-install "https://github.com/emacs-evil/evil-collection"))
   :config
   (setq evil-collection-want-unimpaired-p nil)
   (evil-collection-init))
@@ -303,11 +250,10 @@
   (interactive)
   (other-window -1))
 
+(unless (package-installed-p 'evil-leader)
+  (package-vc-install "https://github.com/cofi/evil-leader"))
 (use-package evil-leader
   :after evil
-  :init
-    (unless (package-installed-p 'evil-leader)
-      (package-vc-install "https://github.com/cofi/evil-leader"))
   :config
   (evil-leader/set-leader "<SPC>")
   (evil-leader/set-key
@@ -468,12 +414,11 @@
 
 
 ;; Popup completion-at-point
+(unless (package-installed-p 'nerd-icons-corfu)
+  (package-vc-install "https://github.com/LuigiPiucco/nerd-icons-corfu"))
 (use-package corfu
   :ensure t
   :init
-    (unless (package-installed-p 'nerd-icons-corfu)
-      (package-vc-install "https://github.com/LuigiPiucco/nerd-icons-corfu"))
-
     (global-corfu-mode)
   :bind
   (:map corfu-map
@@ -500,15 +445,14 @@
 ;; Eglot + Direnv ;;
 ;;;;;;;;;;;;;;;;;;;;
 
+(unless (package-installed-p 'inheritenv) ;; inheritenv is a dependency of envrc
+  (package-vc-install "https://github.com/purcell/inheritenv"))
+(unless (package-installed-p 'envrc)
+  (package-vc-install "https://github.com/purcell/envrc"))
 (use-package envrc
   :after diminish
   :demand
   :init
-    (unless (package-installed-p 'inheritenv) ;; inheritenv is a dependency of envrc
-      (package-vc-install "https://github.com/purcell/inheritenv"))
-    (unless (package-installed-p 'envrc)
-      (package-vc-install "https://github.com/purcell/envrc"))
-
     (diminish 'envrc-mode)
   :config
     (evil-leader/set-key
@@ -576,96 +520,6 @@
     ;; (setq-default eglot-workspace-configuration
     ;;             '((:haskell . (:formattingProvider "fourmolu"))))
 
- )
-
-;;;;;;;;;;;;;
-;; Haskell ;;
-;;;;;;;;;;;;;
-
-(unless (package-installed-p 'emacs-reformatter)
-  (package-vc-install "https://github.com/purcell/emacs-reformatter"))
-
-(defvar vcm/haskell-formatter-path "ormolu")
-(defvar vcm/haskell-formatter-args nil)
-(defun vcm/set-haskell-formatter-vars ()
-  ;; We use stylish-haskell in most of Channable, so if the buffer is there, please change my default of ormolu!
-  (let ((n (buffer-file-name)))
-    (when (string-prefix-p "/home/victor/channable" n)
-      (setq vcm/haskell-formatter-path "stylish-haskell")
-      (setq vcm/haskell-formatter-args nil)
-
-      ;; Unless we're in imaginator, obviously! :)
-      (when (string-prefix-p "/home/victor/channable/imaginator" n)
-        (setq vcm/haskell-formatter-path "ormolu")
-        (setq vcm/haskell-formatter-args nil))
-
-      ;; Or megaphone! Will we use ormolu everywhere one day?!
-      (when (string-prefix-p "/home/victor/channable/megaphone" n)
-        (setq vcm/haskell-formatter-path "ormolu")
-        (setq vcm/haskell-formatter-args nil))
-
-      ;; Or macgyver! Forumolu there! LOL
-      (when (string-prefix-p "/home/victor/channable/macgyver" n)
-        (setq vcm/haskell-formatter-path "fourmolu")
-        (setq vcm/haskell-formatter-args nil))
-
-      ;; Or sharkmachine-interface Forumolu there ook! LOL
-      (when (string-prefix-p "/home/victor/channable/sharkmachine-interface" n)
-        (setq vcm/haskell-formatter-path "fourmolu")
-        (setq vcm/haskell-formatter-args nil)))
-  )
-)
-
-(reformatter-define haskell-format
-   :program vcm/haskell-formatter-path
-   :args vcm/haskell-formatter-args)
-
-(defun vcm/haskell-format-buffer ()
-  (interactive)
-  (vcm/set-haskell-formatter-vars)
-  (haskell-format-buffer))
-
-(use-package haskell-ts-mode
-  :init
-    (unless (package-installed-p 'haskell-ts-mode)
-      (package-vc-install "https://codeberg.org/pranshu/haskell-ts-mode"))
-  :hook
-    (haskell-ts-mode
-     .
-     (lambda ()
-        (push '("<-" . "←") prettify-symbols-alist)
-        (push '("=>" . "⇒") prettify-symbols-alist)
-        (push '("==" . "≡") prettify-symbols-alist)
-        (push '("/=" . "≢") prettify-symbols-alist)
-        (push '(">=" . "≥") prettify-symbols-alist)
-        (push '("<=" . "≤") prettify-symbols-alist)
-        (push '("!!" . "‼") prettify-symbols-alist)
-        (push '("&&" . "∧") prettify-symbols-alist)
-        (push '("||" . "∨") prettify-symbols-alist)
-        (push '("~>" . "⇝") prettify-symbols-alist)
-        (push '("<~" . "⇜") prettify-symbols-alist)
-        (push '("><" . "⋈") prettify-symbols-alist)
-        (push '("-<" . "↢") prettify-symbols-alist)
-        (push '("::" . "∷") prettify-symbols-alist)
-        (push '("forall" . "∀") prettify-symbols-alist)))
-
-  :custom
-    ;; Abso-freaking-lutely not! Leave my TAB alone!
-    (haskell-ts-use-indent nil)
-  :config
-    (with-eval-after-load 'eglot (haskell-ts-setup-eglot))
-    (evil-leader/set-key
-      ;; 'c' code
-      "c f" 'vcm/haskell-format-buffer
-    )
-)
-
-(use-package python
-  :ensure nil ;; Don't install this, is builtin.
-  :custom
-  ;; Notch settings for python:
-  (notch-punctuation-is-eow t) ;; In python punctuation marks end of word.
-  (standard-indent 4)
 )
 
 ;;;;;;;;;
@@ -693,6 +547,14 @@
     (setq magit-diff-refine-hunk 'all)
 )
 
-;;;;;;;;;;;;;;;; Custom
+;;;;;;;;;;;;;;
+;; Includes ;;
+;;;;;;;;;;;;;;
 
+(load (expand-file-name "~/.emacs.d/modules/ricing.el"))
+(load (expand-file-name "~/.emacs.d/modules/python.el"))
+(load (expand-file-name "~/.emacs.d/modules/haskell.el"))
+
+;; Finally include the custom file; ignoring potentially non-existent
+;; or bad files.
 (ignore-errors (load custom-file))
