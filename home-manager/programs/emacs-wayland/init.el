@@ -201,6 +201,7 @@
 (use-package evil
   :ensure t
   :init
+    (setq evil-want-integration t)
     (setq evil-want-keybinding nil)
     (setq evil-undo-system 'undo-tree)
 
@@ -238,11 +239,10 @@
   ;; annalist is a dependency of evil-collection
   :vc (:url "https://github.com/noctuid/annalist.el"))
 (use-package evil-collection
-  :vc (:url "https://github.com/emacs-evil/evil-collection")
+  :vc (:url "https://github.com/emacs-evil/evil-collection" :rev "0.0.10")
   :after (:all evil annalist)
-  :init
   :config
-  (setq evil-collection-want-unimpaired-p nil)
+  (setq evil-collection-mode-list '(magit))
   (evil-collection-init))
 (use-package undo-tree
   :ensure t
@@ -506,6 +506,7 @@
     (setq max-mini-window-height 3)
 
     (fset #'jsonrpc--log-event #'ignore)  ; massive perf boost---don't log every event
+    
 
     ;; Redefine next-error to use flymake's
     (evil-leader/set-key
@@ -518,9 +519,10 @@
       "W [" 'vcm/flymake-goto-prev-warning
       "[ W" 'vcm/flymake-goto-prev-warning)
 
-    (add-to-list 'eglot-server-programs
-             '((python-mode python-ts-mode)
-               "basedpyright-langserver" "--stdio"))
+    (add-to-list 'eglot-server-programs '(
+      (python-mode python-ts-mode)
+         "basedpyright-langserver" "--stdio" 
+    ))
 
     ;; And if you want to give eglot some per-workspace configuration, this is
     ;; how it would look like:

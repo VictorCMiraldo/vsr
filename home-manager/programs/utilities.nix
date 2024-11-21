@@ -23,7 +23,7 @@ in {
     haskellPackages.hpack
     haskellPackages.lhs2tex
 
-    # pyright
+    pyright
     basedpyright
 
     agdaWithStdlib
