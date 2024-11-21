@@ -21,8 +21,8 @@
           :typeCheckingMode "basic"
           :analysis (
             :diagnosticSeverityOverrides (
-              :reportUnusedCallResult "none"
-              :reportInvalidCast "none"
+              :reportUnusedCallResult :json-false
+              :reportInvalidCast :json-false
             )
             :inlayHints (
               :callArgumentNames :json-false
