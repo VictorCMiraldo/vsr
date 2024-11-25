@@ -454,14 +454,14 @@
   :vc (:url "https://github.com/purcell/inheritenv"))
 (use-package envrc
   :vc (:url "https://github.com/purcell/envrc")
-  :after (diminish inheritenv)
+  :after (eglot diminish inheritenv)
+  :hook (after-init . envrc-global-mode)
   :demand
   :init
     (diminish 'envrc-mode)
   :config
     (evil-leader/set-key
       "d r" 'envrc-reload)
-    (envrc-global-mode)
 )
 
 ;; We need markdown to render documentation.
@@ -497,7 +497,8 @@
     (eldoc-echo-area-prefer-doc-buffer t)
     (eldoc-echo-area-use-multiline-p 'truncate-sym-name-if-fit)
 
-    ;; Please, don't pollute my buffer, thanks!
+    ;; If you can't find a way to stop the server from sending inlay-hints,
+    ;; this is how you stop eglot from listening to them.
     (eglot-ignored-server-capabilities '(:inlayHintProvider))
 
   :config
@@ -523,6 +524,30 @@
       (python-mode python-ts-mode)
          "basedpyright-langserver" "--stdio" 
     ))
+
+    (setq-default
+       eglot-workspace-configuration
+       '(:basedpyright (
+           :typeCheckingMode "recommended"
+         )
+         ;; basedpyright is special: it needs a secton named `basedpyright.analysis`
+         ;; and eglot doesn't interpret the dot hierarchically but as part of the section
+         ;; name: https://github.com/DetachHead/basedpyright/issues/894
+         :basedpyright.analysis (
+           :diagnosticSeverityOverrides (
+             :reportUnusedCallResult "none"
+             :reportAny "none"
+             :reportUnknownVariableType "hint"
+             :reportUnusedParameter "hint"
+             :reportInvalidCast "warning"
+           )
+           :inlayHints (
+             :callArgumentNames :json-false
+             :callFunctionReturnTypes :json-false
+             :genericTypes :json-false
+             :variableTypes :json-false
+           )
+         )))
 
     ;; And if you want to give eglot some per-workspace configuration, this is
     ;; how it would look like:
