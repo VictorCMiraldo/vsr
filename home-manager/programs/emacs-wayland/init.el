@@ -109,11 +109,6 @@
     ;; Make it very easy to see the line with the cursor.
     (global-hl-line-mode t)
 
-    (setq major-mode-remap-alist
-        '((haskell-mode . haskell-ts-mode)
-          (bash-mode . bash-ts-mode)
-          (python-mode . python-ts-mode)))
-
     (global-prettify-symbols-mode 1)
 )
 
@@ -586,8 +581,8 @@
 ;;;;;;;;;;;;;;
 
 (load (expand-file-name "~/.emacs.d/modules/ricing.el"))
-(load (expand-file-name "~/.emacs.d/modules/python.el"))
-(load (expand-file-name "~/.emacs.d/modules/haskell.el"))
+(load (expand-file-name "~/.emacs.d/modules/agda.el"))
+(load (expand-file-name "~/.emacs.d/modules/treesit.el"))
 
 ;; Finally include the custom file; ignoring potentially non-existent
 ;; or bad files.
