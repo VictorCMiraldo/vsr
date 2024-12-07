@@ -35,13 +35,6 @@
 ;; If you bind `<tab>' to `notch-for-tab-command' you probably will need to
 ;; `<remap>' it in other modes. Using 'TAB' instead for `notch' should work.
 
-;; TODO: notch-back is still kinda buggy
-;; TODO: if previous-notch is zero, indent only the base amount, don't try
-;; to match on words or what not. This suggests a generalization: the first tab
-;; matches the previous line indent if the current indent is less-than that.
-;; otherwise it behaves like the second tab: which indents only by multiples
-;; of 2 or 4 or whatever.
-
 (defun previous-line-notch ()
   "Returns the indentation level of the previous non-empty line or zero if at the
 beginning of the buffer"
@@ -49,8 +42,6 @@ beginning of the buffer"
     (beginning-of-line)
     (if (re-search-backward "^[^\n]" nil t)
       (let ((end (save-excursion (forward-line 1) (point))))
-        (or (looking-at "[ \t]")
-            (skip-chars-forward "^ \t" end))
         (skip-chars-forward " \t" end)
         (current-column)
       )
@@ -70,7 +61,7 @@ that point. Otherwise, always indents the line `standard-indent' forward, using
     (delete-horizontal-space)
     (cond
       ;; (1) At or ahead the previous line
-      ((or (not prev-notch) (>= this-notch prev-notch))
+      ((or (not prev-notch) (= 0 prev-notch) (>= this-notch prev-notch))
          (let* ((tgt (+ this-notch standard-indent))
                 (diff (mod tgt standard-indent)))
            (indent-to (- tgt diff))))
@@ -93,14 +84,11 @@ In languages like Agda, this is a bad idea."
 (defun notch-point-in-line-state ()
   "Returns this line's and point state. Returns:
 
-     'in-blank-line OR integerp: when the line is empty or the prefix
-        up to the point is only whitespace characters. The returned int is
-        the identation level of this line: the column of the first non-whitespace
-        character in this line.
-
-     'in-bol when the point is at the beginning of the line on a non-empty line.
+     'in-blank-prefix when the cursor is in a point in the line where forall chars
+     before the point in the same line, they are all whitespace.
 
      'in-eow when the point is at the end of a word. This setting is affected
+     by `notch-punctuation-is-eow'.
 
      'in-middle when the point is at the middle of a non-empty line AND
         the prefix up to the point contains non-whitespace characters."
@@ -110,33 +98,28 @@ In languages like Agda, this is a bad idea."
   (let ((eow-syn-classes (append '(0 12) (if notch-punctuation-is-eow '(1 3 4) nil))))
     (save-excursion
       (cond
-        ;; TODO: unify the blank prefix and blank line, it's the same situation.
-        ;; Check for beginning or end of line. Beginning first.
-        ((string-match "^[[:blank:]]*\n$" (thing-at-point 'line t))
-          'in-blank-line)
-
-        ;; Now, try to skip backwards until we're not seeing a tab or a space.
+        ;; Try to skip backwards until we're not seeing a tab or a space.
         ;; if we skip nothing, we're mid word, or at the beginning of a line.
         ((= (skip-chars-backward " \t") 0)
            (let ((syn (syntax-class (syntax-after (point)))))
              (cond
                ;; The beginning-of-line on a non-empty line should be treated especially,
-               ;; since `syn' will be 0.
-               ((bolp) 'in-bol)
+               ;; since `syn' will be 0. Still, we want to return an integer, as the point
+               ;; is, technicall, in the (non-existent) blank prefix.
+               ((bolp) 'in-blank-prefix)
 
+               ;; In case point is in the end of a word, we return a special tag: 'in-eow
                ((memql syn eow-syn-classes) 'in-eow)
 
-               ;; Finally, if nothing matched, we're in an arbitrary point in the middle
-               ;; of the line.
-               (t 'in-middle))))
+               ;; Finally, if nothing matched, we're in an arbitrary point in the middle of the line.
+               (t 'in-middle-of-line))))
 
         ;; If the above check skipped all the way to the beginning,
         ;; we are in the blank-prefix.
-        ((= (current-column) 0)
-          (skip-chars-forward " \t"))
+        ((= (current-column) 0) 'in-blank-prefix)
 
         ;; Else, we're in the middle of a non-empty line.
-        (t 'in-middle))
+        (t 'in-middle-of-line))
     )
   )
 )
@@ -144,6 +127,11 @@ In languages like Agda, this is a bad idea."
 (defun in-commentp ()
   "Returns t or nil, depending on whether or not the current point is inside a comment."
   (nth 4 (syntax-ppss)))
+
+(defun notch-delete-trailing-blanks ()
+  "Delete the trailing blank characters after the point."
+  (while (memq (following-char) '(32))
+    (delete-char 1)))
 
 (defun notch-for-tab-command ()
   "This package's main function, replacement for `indent-for-tab-command'.
@@ -161,7 +149,10 @@ move indentation backwards.
 "
   (interactive)
   (cond
+    ;; If we're in a comment block, just notch ahead!
     ((in-commentp) (notch-line))
+
+    ;; Otherwise, it get's fun!
      (t
        (let ((old-tick (buffer-chars-modified-tick))
              (old-point (point))
@@ -172,16 +163,19 @@ move indentation backwards.
 
          ;; Now, let's look at what's happening in the current line.
          (pcase state
-           ;; We're in a blank line (or in the blank prefix) just bring it to
-           ;; the same level as the previous indented line, similar to the behavior
+           ;; We're in the blank-prefix of a line, either move forward until we're at the
+           ;; previous notch, or add a notch. Somewhat similar to the behavior
            ;; of `indent-relative-first-indent-point'.
-           ((or 'in-middle (and (pred integerp) (pred (= col))))
-             (notch-line))
+           ('in-blank-prefix
+            (progn
+              (notch-delete-trailing-blanks)
+              (if (<= this-notch prev-notch)
+                  (if (= (skip-chars-forward " \t") 0) (notch-line))
+                  (notch-line)
+              )))
 
-           ;; If I'm in the beginning of a non-empty line or in its blank prefix, bring
-           ;; me to the first non-space character. If we skip nothing, then notch!
-           ((or 'in-bol (and (pred integerp) (pred (< col))))
-             (if (= (skip-chars-forward " \t") 0) (notch-line)))
+           ;; We're in the middle of the line, nothing to think about, just notch
+           ('in-middle-of-line (notch-line))
 
            ;; Let's delete anything that might be ahead of the point, which will prevent
            ;; blank spaces at the end of the line and won't interfere with the carefully
@@ -196,24 +190,26 @@ move indentation backwards.
 
            (_ (error "notch-point-in-line-state: bad return: %s" state))
          ))
-       ))
+    ))
 )
 
 (defun notch-back ()
-  "Cycles the current line between the previous line plus and minus one `standard-indent'."
+  "Moves the current line back one `standard-indent' or to the beginning of the line"
   (interactive)
-  (let ((this-notch (current-indentation))
-        (cur (current-column)))
-    (forward-line 0)
-    (delete-horizontal-space)
+  (let ((this-notch (current-indentation)))
     ;; This line has an indent, bring it back.
     (unless (<= this-notch 0)
-      (indent-to (- this-notch standard-indent))
-      ;; Once we're done, we move back to the relative position from
-      ;; the beginning of the line.
-      (forward-char (- cur standard-indent))
+      (let* ((cur (current-column))
+            (relative-pos (- cur this-notch)))
+        (forward-line 0)
+        (delete-horizontal-space)
+        (indent-to (max 0 (- this-notch standard-indent)))
+        ;; Once we're done, we move back to the relative position from
+        ;; the beginning of the line, if we were mid line; otherwise,
+        ;; a tab will get us to the beginning.
+        (unless (< relative-pos (- standard-indent this-notch))
+            (forward-char relative-pos)))
     ))
-
 )
 
 (provide 'notch)
