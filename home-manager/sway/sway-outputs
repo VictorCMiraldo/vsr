@@ -14,12 +14,17 @@ output 'Iiyama North America PL3288UH 1169612412778' mode 3840x2160 scale 1.3
 output 'Iiyama North America PL3288UH 1169612412872' mode 3840x2160 scale 1.3
 output 'Iiyama North America PL3288UH 1169612412790' mode 3840x2160 scale 1.3
 output 'Iiyama North America PL3288UH 1169612410134' mode 3840x2160 scale 1.3
+output 'Iiyama North America PL3288UH 1169612412871' mode 3840x2160 scale 1.3
+output 'Iiyama North America PL3288UH 1169612411751' mode 3840x2160 scale 1.3
+output 'Iiyama North America PL3288UH 1169612412876' mode 3840x2160 scale 1.3
+
 
 output 'Dell Inc. DELL SE3223Q DDCSKK3'              mode 3840x2160 scale 1.3
 output 'Dell Inc. DELL SE3223Q CS1SKK3'              mode 3840x2160 scale 1.3
 output 'Dell Inc. DELL SE3223Q D5CSKK3'              mode 3840x2160 scale 1.3
 output 'Dell Inc. DELL SE3223Q 7V1SKK3'              mode 3840x2160 scale 1.3
 output 'Dell Inc. DELL SE3223Q DH6SKK3'              mode 3840x2160 scale 1.3
+output 'Dell Inc. DELL SE3223Q DNRRKK3'              mode 3840x2160 scale 1.3
 
 # output * bg `ls -1 /home/victor/.local/share/wallpapers | xargs realpath | shuf -n 1` stretch #24546b
 output * bg /home/victor/.local/share/wallpapers/wp2.jpg stretch #24546b

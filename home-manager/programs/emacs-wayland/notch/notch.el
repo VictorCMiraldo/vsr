@@ -35,6 +35,13 @@
 ;; If you bind `<tab>' to `notch-for-tab-command' you probably will need to
 ;; `<remap>' it in other modes. Using 'TAB' instead for `notch' should work.
 
+;; TODO: notch-back is still kinda buggy
+;; TODO: if previous-notch is zero, indent only the base amount, don't try
+;; to match on words or what not. This suggests a generalization: the first tab
+;; matches the previous line indent if the current indent is less-than that.
+;; otherwise it behaves like the second tab: which indents only by multiples
+;; of 2 or 4 or whatever.
+
 (defun previous-line-notch ()
   "Returns the indentation level of the previous non-empty line or zero if at the
 beginning of the buffer"

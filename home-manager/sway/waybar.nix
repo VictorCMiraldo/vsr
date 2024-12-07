@@ -29,7 +29,8 @@ in {
           "tray",
           "clock#date",
           "clock#time",
-          "custom/notification"
+          "custom/notification",
+          "inhibitor"
       ],
 
       "backlight": {
@@ -190,6 +191,15 @@ in {
         "on-click": "swaync-client -t -sw",
         "on-click-right": "swaync-client -d -sw",
         "escape": true
+      },
+
+      "inhibitor": {
+	"what": "idle",
+	"format": "{icon}",
+	"format-icons": {
+		"activated": "",
+		"deactivated": ""
+	}
       }
     }
     '';
@@ -272,6 +282,10 @@ in {
     }
 
     #custom-notification {
+      margin-right: 12px;
+    }
+
+    #inhibitor {
       margin-right: 12px;
     }
 
