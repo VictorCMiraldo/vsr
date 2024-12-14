@@ -213,6 +213,7 @@
 
   :custom
     (evil-shift-width 1)
+    (evil-want-C-i-jump nil) ; Please don't hijack my tab nor C-i
 
   :config
     (evil-mode)

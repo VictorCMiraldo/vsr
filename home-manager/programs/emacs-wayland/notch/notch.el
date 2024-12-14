@@ -1,6 +1,6 @@
 ;;; notch.el --- Oppinionated indentation functions. -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020 Victor Miraldo
+;; Copyright (C) 2024 Victor Miraldo
 
 ;; Author: Victor Miraldo <victor.miraldo@fastmail.com>
 ;; Keywords: indentation, indent
@@ -35,6 +35,10 @@
 ;; If you bind `<tab>' to `notch-for-tab-command' you probably will need to
 ;; `<remap>' it in other modes. Using 'TAB' instead for `notch' should work.
 
+;; TODO: create a (with-evil-visual-state BODY ...) construction, so we can use
+;; it for both noth-region and notch-back-region.
+;; TODO: implement notch-back-region
+
 (defun previous-line-notch ()
   "Returns the indentation level of the previous non-empty line or zero if at the
 beginning of the buffer"
@@ -53,10 +57,13 @@ beginning of the buffer"
   "Indents the current line all the way to the previous line indent, if we're before
 that point. Otherwise, always indents the line `standard-indent' forward, using
 `indent-to'. The `notch-back' sends the line back.
+
+  Returns the number of spaces inserted
 "
   (let ((this-notch (current-indentation))
         (prev-notch (previous-line-notch))
-        (cur (current-column)))
+        (cur (current-column))
+        (desired-notch nil))
     (forward-line 0)
     (delete-horizontal-space)
     (cond
@@ -64,15 +71,50 @@ that point. Otherwise, always indents the line `standard-indent' forward, using
       ((or (not prev-notch) (= 0 prev-notch) (>= this-notch prev-notch))
          (let* ((tgt (+ this-notch standard-indent))
                 (diff (mod tgt standard-indent)))
-           (indent-to (- tgt diff))))
+           (setq desired-notch (- tgt diff))
+         ))
       ;; (2) Before the previous line, move it to the previous line
-      (t (indent-to prev-notch)))
+      (t (setq desired-notch prev-notch)))
+
+    (indent-to desired-notch)
 
     ;; Can't really use `save-excursion' because we're changing the line, so we
     ;; do some good old point arithmetic here. Once we're done, we move back to
     ;; the relative position from the beginning of the line.
     (forward-char (- cur this-notch))
+
+    ;; Now we return how many spaces were added, so other functions
+    ;; can decide what to do.
+    (- desired-notch this-notch)
 ))
+
+(defun notch-region (start end)
+  "Notch an entire region by calling `notch-line' on the first line, and inserting
+the amount of spaces on every line under that in the region; if the right set
+of evil functions are available, notch will restore the selection with evil"
+  (save-mark-and-excursion
+    (let ((line-beg (line-number-at-pos start))
+          (line-end (line-number-at-pos end))
+          (type (and (functionp 'evil-visual-type) (evil-visual-type))))
+      (cond
+        ;; No real "region" going on here...
+        ((= line-beg line-end)
+          (notch-line))
+        (t
+         (progn
+           (goto-char start)
+           (forward-line 0)
+           (skip-chars-forward " \t")
+           (let ((desired-notch (notch-line))
+                 (this-line (line-number-at-pos (point))))
+             (forward-line 1)
+             (while (<= (line-number-at-pos (point)) line-end)
+                (insert (make-string desired-notch ? ))
+                (forward-line 1)
+             )))))))
+  (and (functionp 'evil-visual-make-selection)
+       (evil-visual-make-selection (mark) (point) type))
+)
 
 (defcustom notch-punctuation-is-eow nil
   "Whether the next symbol being some punctuation mark means the point is at the end of the word.
@@ -149,6 +191,9 @@ move indentation backwards.
 "
   (interactive)
   (cond
+    ;; We've got a region selected! notch it all!
+    ((use-region-p) (notch-region (region-beginning) (region-end)))
+
     ;; If we're in a comment block, just notch ahead!
     ((in-commentp) (notch-line))
 
@@ -193,9 +238,8 @@ move indentation backwards.
     ))
 )
 
-(defun notch-back ()
+(defun notch-back-line ()
   "Moves the current line back one `standard-indent' or to the beginning of the line"
-  (interactive)
   (let ((this-notch (current-indentation)))
     ;; This line has an indent, bring it back.
     (unless (<= this-notch 0)
@@ -211,6 +255,14 @@ move indentation backwards.
             (forward-char relative-pos)))
     ))
 )
+
+(defun notch-back-region (start end))
+
+(defun notch-back ()
+  (interactive)
+  (cond
+    ((use-region-p) (message "undefined"))
+    (t (notch-back-line))))
 
 (provide 'notch)
 ;;; notch.el ends here
