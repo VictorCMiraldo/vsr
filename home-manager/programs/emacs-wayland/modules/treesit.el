@@ -155,3 +155,14 @@
       "c f" 'vcm/haskell-format-buffer
     )
 )
+
+;;;;;;;;;;
+;; TLA+ ;;
+;;;;;;;;;;
+
+(use-package polymode
+  :vc (:url "https://github.com/polymode/polymode"))
+
+(use-package tla-pcal-mode
+  :after (polymode)
+  :vc (:url "https://github.com/mrc/tla-tools"))
