@@ -22,6 +22,7 @@
                  (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src"))
                  (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src"))
                  (haskell . ("https://github.com/tree-sitter/tree-sitter-haskell" "v0.23.1"))
+                 (nix . ("https://github.com/nix-community/tree-sitter-nix"))
                 )
               )
         (add-to-list 'treesit-language-source-alist grammar)
@@ -31,13 +32,13 @@
 
     (dolist (mapping
              '((python-mode . python-ts-mode)
-               (typescript-mode . typescript-ts-mode)
                (js2-mode . js-ts-mode)
                (bash-mode . bash-ts-mode)
                (conf-toml-mode . toml-ts-mode)
                (json-mode . json-ts-mode)
                (js-json-mode . json-ts-mode)
                (haskell-mode . haskell-ts-mode)
+               (nix-mode . nix-ts-mode)
              ))
       (add-to-list 'major-mode-remap-alist mapping))
   :config
@@ -68,10 +69,19 @@
 ;;;;;;;;;;;;;;;;
 
 
-(use-package typescript
-  :ensure nil
-  :after (treesit)
-  :mode ("\\.ts\\'" . typescript-ts-mode))
+;; (use-package typescript
+;;   :ensure nil
+;;   :after (treesit)
+;;   :mode (("\\.ts\\'" . typescript-ts-mode)
+;;          ("\\.tsx\\'" . typescript-ts-mode))
+;; )
+
+(use-package tsx-mode
+  :vc (:url "https://github.com/orzechowskid/tsx-mode.el" :branch "emacs30")
+  :after (treesit notch eglot)
+  :mode (("\\.ts\\'" . tsx-ts-mode)
+         ("\\.tsx\\'" . tsx-ts-mode))
+)
 
 ;;;;;;;;;;;;;
 ;; Haskell ;;
@@ -166,3 +176,12 @@
 (use-package tla-pcal-mode
   :after (polymode)
   :vc (:url "https://github.com/mrc/tla-tools"))
+
+;;;;;;;;;
+;; Nix ;;
+;;;;;;;;;
+
+(use-package nix-ts-mode
+  :mode "\\.nix\\'"
+  :vc (:url "https://github.com/nix-community/nix-ts-mode")
+)

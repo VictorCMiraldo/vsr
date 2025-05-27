@@ -577,6 +577,26 @@
     (setq magit-diff-refine-hunk 'all)
 )
 
+(use-package git-timemachine
+  :vc (:url "https://codeberg.org/pidu/git-timemachine")
+  :custom
+    (git-timemachine-abbreviation-length 6)
+  :config
+    (evil-leader/set-key
+      ;; 't' rebase
+      "g t" #'git-timemachine-toggle
+    )
+)
+
+(use-package git-link
+  :vc (:url "https://github.com/sshaw/git-link")
+  :config
+    (evil-leader/set-key
+      ;; 't' rebase
+      "g l" #'git-link
+    )
+)
+
 ;;;;;;;;;;;;;;
 ;; Includes ;;
 ;;;;;;;;;;;;;;

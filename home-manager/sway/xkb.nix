@@ -13,6 +13,15 @@
             key <RALT> { [ Super_L, Super_R ] };
     };
     '';
+
+  home.file.".xkb/symbols/us_alt_gr_remapped_to_super_intl".text = ''
+    default partial alphanumeric_keys
+    xkb_symbols "basic" {
+            include "us(intl)"
+            name[Group1] = "Modified programmer US";
+            key <RALT> { [ Super_L, Super_R ] };
+    };
+    '';
 }
 
 

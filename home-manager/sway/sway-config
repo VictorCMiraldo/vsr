@@ -40,7 +40,7 @@ include /home/victor/.config/sway/outputs.sway
 # Use our own layout with AltGr mapped to Super, giving us an
 # additional Mod4
 input "type:keyboard" {
-  xkb_layout "us_alt_gr_remapped_to_super"
+  xkb_layout "us_alt_gr_remapped_to_super","us_alt_gr_remapped_to_super_intl"
 }
 
 input "type:touchpad" {

@@ -20,16 +20,17 @@
     :mode ("\\.agda\\'" . agda2-mode)
     :config
       (evil-leader/set-key
+        ;; navigation
+        "] g" 'agda2-next-goal
+        "[ g" 'agda2-previous-goal
+
+        ;; hoping this doesn't mess eglot
+        "c d" 'agda2-goto-definition
+        "c l" 'agda2-load
+        "c r" 'agda2-refine
+        "c ." 'agda2-goal-and-context-and-inferred
+
         ;; 'a' agda
-        "a l" 'agda2-load
-        "a d" 'agda2-goto-definition
-        "a b" 'agda2-go-back
-        "a g" 'agda2-next-goal
-        "a G" 'agda2-previous-goal
-        "a ," 'agda2-goal-and-context
-        "a ." 'agda2-goal-and-context-and-inferred
-        "a ;" 'agda2-goal-and-context-and-checked
-        "a r" 'agda2-refine
         "a c" 'agda2-make-case
         "a t" 'agda2-goal-type
       )
@@ -40,7 +41,11 @@
         ("M-<left>"    . agda2-go-back)
         ("M-<up>"      . agda2-previous-goal)
         ("M-<down>"    . agda2-next-goal)
-        ("C-C C-."     . agda2-goal-and-context-and-inferred)
+        ("C-c C-l"     . agda2-load)
+        ("C-c C-r"     . agda2-refine)
+        ("C-c C-,"     . agda2-goal-and-context)
+        ("C-c C-."     . agda2-goal-and-context-and-inferred)
+        ("C-c C-;"     . agda2-goal-and-context-checked)
        :map evil-normal-state-map
         ([mouse-2]     . agda2-goto-definition-mouse))
     :custom
@@ -70,4 +75,3 @@
     (vcm/fix-unicode)
     (add-hook 'after-make-frame-functions 'vcm/fix-unicode))
 )
-
