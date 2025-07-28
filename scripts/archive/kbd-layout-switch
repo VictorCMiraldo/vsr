@@ -7,6 +7,4 @@ else
   setxkbmap -layout us
 fi
 
-kbd-config --reconfig
-
 exit 0

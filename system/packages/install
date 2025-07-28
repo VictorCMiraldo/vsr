@@ -12,12 +12,23 @@ vlc
 pavucontrol
 pass
 pass-extension-otp
-emacs-gtk
-rofi
 moreutils
 xcape
+htop
+imagemagick
 
-# Ricing
-lxappearance
-arc-theme
+## WM
+sway
+swayidle
+swaylock
+sway-notification-center
+waybar
+wofi
+brightnessctl
+alacritty
+xdg-desktop-portal-wlr
+xdg-desktop-portal
+grimshot
+
+## Ricing
 papirus-icon-theme

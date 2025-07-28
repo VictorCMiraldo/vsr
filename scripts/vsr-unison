@@ -41,16 +41,12 @@ elif [[ "$#" -gt "1" ]]; then
   print_usage
 fi
 
-if [[ "$(uname -n)" == "dev-lt-60" ]]; then
-  remote_hostname="beetroot"
-else
-  remote_hostname="dev-lt-60"
-fi
+remote_hostname="192.168.1.159"
 
 local_root="/home/victor"
 remote_root="ssh://$remote_hostname:$VSR_SSH_PORT//home/victor"
 for prof in ${allprofs[*]}; do
-  unison $prof -root "$local_root" -root "$remote_root"
+  unison -perms 0 $prof -root "$local_root" -root "$remote_root"
 done
 
 

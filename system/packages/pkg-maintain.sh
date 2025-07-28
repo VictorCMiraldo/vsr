@@ -63,6 +63,8 @@ while read line; do
   if pkg-is-installed "$line"; then
     errcho "Scheduling removal: $line"
     pkgs="${pkgs} $line"
+  else
+    errcho "Package is already gone: $line"
   fi
 done < <(cat "$uninstalls" | uncomment)
 if ! $dryrun && [[ ! -z "${pkgs}" ]]; then
@@ -85,6 +87,8 @@ while read line; do
       errcho "No candidate: $line"
       echo "$line" >> pkg-maintain-no-candidates
     fi
+  else
+    errcho "Package already installed: $line"
   fi    
 done < <(cat "$installs" | uncomment)
 if ! $dryrun && [[ ! -z "${pkgs}" ]]; then

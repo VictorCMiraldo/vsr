@@ -1,0 +1,85 @@
+
+set $mod Mod4
+
+set $left h
+set $down j
+set $up k
+set $right l
+set $term alacritty
+
+bindsym $mod+i xkb_switch_layout next
+
+bindsym --to-code { 
+  $mod+Shift+Escape reload
+  $mod+Shift+q exit
+
+  $mod+Shift+c kill
+
+  $mod+d exec $menu
+  $mod+p exec $passmenu
+  $mod+q exec $powermenu
+  Print exec $screenshotmenu
+
+  # Grave is `
+  $mod+Shift+grave exec swaylock -f -c 000000
+
+  # toggle the splitting
+  $mod+t splitt
+  $mod+Return exec $term
+  $mod+Shift+Return exec $term
+  
+  $mod+space layout toggle all
+  $mod+Shift+space layout stacking
+  
+  $mod+1 workspace 1
+  $mod+2 workspace 2
+  $mod+3 workspace 3
+  $mod+4 workspace 4
+  $mod+5 workspace 5
+  $mod+6 workspace 6
+  $mod+7 workspace 7
+  $mod+8 workspace 8
+  $mod+9 workspace 9
+  $mod+0 workspace 10
+  $mod+Shift+1 move window to workspace 1
+  $mod+Shift+2 move window to workspace 2
+  $mod+Shift+3 move window to workspace 3
+  $mod+Shift+4 move window to workspace 4
+  $mod+Shift+5 move window to workspace 5
+  $mod+Shift+6 move window to workspace 6
+  $mod+Shift+7 move window to workspace 7
+  $mod+Shift+8 move window to workspace 8
+  $mod+Shift+9 move window to workspace 9
+  $mod+Shift+0 move window to workspace 10
+  
+  $mod+e focus output right
+  $mod+Shift+e move window to output right
+
+  # Does a little worksapce switcharoo!
+  $mod+r focus output left, move workspace to output right,\
+          workspace back_and_forth, move workspace to output left,\
+          focus output right
+
+  # Move your focus around
+  $mod+$left focus left
+  $mod+$down focus down
+  $mod+$up focus up
+  $mod+$right focus right
+
+  # _move_ the focused window with the same, but add Shift
+  $mod+Shift+$left move left
+  $mod+Shift+$down move down
+  $mod+Shift+$up move up
+  $mod+Shift+$right move right
+
+  XF86AudioMute exec amixer set Master playback toggle
+  XF86AudioRaiseVolume exec amixer set Master playback 1%+
+  XF86AudioLowerVolume exec amixer set Master playback 1%-
+  XF86AudioMicMute exec amixer set Capture capture toggle
+  XF86AudioPlay exec mpc toggle
+  XF86AudioStop exec mpc stop
+  XF86AudioPrev exec mpv prev
+  XF86AudioNext exec mpv next
+  XF86MonBrightnessUp exec --no-startup-id brightnessctl s 5%+
+  XF86MonBrightnessDown exec --no-startup-id brightnessctl s 5%-
+}

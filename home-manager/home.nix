@@ -13,6 +13,12 @@
 
     LANG = "en_US.utf8";
     LOCALES_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
+
+    # Sway-needed things
+    # MOZ_ENABLE_WAYLAND=1;
+    # GTK_USE_PORTAL=0;
+    # XDG_CURRENT_DESKTOP="sway";
+    # XDG_SESSION_DESKTOP="sway";
   };
 
   # Manages our XDG user dirs
@@ -36,7 +42,7 @@
   # You can update Home Manager without changing this value. See
   # the Home Manager release notes for a list of state version
   # changes in each release.
-  home.stateVersion = "23.05";
+  home.stateVersion = "24.11";
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -46,18 +52,21 @@
   # We'll the necessary system-wide options in the vsr namespace.
   # All the options we use are declared in options.nix.
   # For now, it's just one.
-  vsr.isWorkMachine = builtins.getEnv "HOSTNAME" == "dev-lt-60";
+  vsr.isWorkMachine = builtins.getEnv "HOSTNAME" == "dev-lt-111"
+                   || builtins.getEnv "HOSTNAME" == "dev-lt-60";
+  
 
   imports = [
     ./options.nix
-    ./xmonad/config.nix
     ./fonts/config.nix
+    ./sway/config.nix
     ./programs/utilities.nix
     ./programs/pass-and-gpg.nix
     ./programs/bash/config.nix
-    ./programs/emacs/config.nix
+    ./programs/emacs-wayland/config.nix
     ./programs/vim/config.nix
     ./programs/ssh/config.nix
+    ./programs/unison/config.nix
     ./programs/git.nix
     ./programs/papis/config.nix
   ];

@@ -5,9 +5,6 @@
 ;; Don't enable package
 (setq package-enable-at-startup nil)
 
-;; Don't show startup screen
-(setq inhibit-startup-screen t)
-
 ;; Tunning lsp-mode according to
 ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
 

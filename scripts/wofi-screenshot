@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -o pipefail
+
+copysave="⎘ Copy\n🖫 Save"
+
+function ask() {
+  echo -e $1 |\
+    wofi -i --height 230 --width 250 --dmenu --cache-file /dev/null |\
+    awk '{print tolower($2)}'
+}
+
+function main() {
+  option=$(ask "${copysave}")
+  case $option in
+    copy)
+      grimshot copy area;;
+    save)
+      filename=$(mktemp "$HOME/tmp/screenshot-XXXX.png")
+      grimshot save area "$filename";;
+  esac
+}
+
+main

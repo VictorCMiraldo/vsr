@@ -106,6 +106,13 @@ fi
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
+
+    # Load up pass-otp explicitly, because otherwise it won't be sourced
+    # since we call pass-otp through "pass otp", so only the "pass" completion
+    # gets loaded.
+    if [ -f /usr/share/bash-completion/completions/pass-otp ]; then
+      . /usr/share/bash-completion/completions/pass-otp
+    fi
   elif [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
   fi

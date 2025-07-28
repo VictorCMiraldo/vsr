@@ -1,5 +1,10 @@
 colorscheme slate
 
+" Make copy/paste work on sway
+xnoremap "+y y:call system("wl-copy", @")<cr>
+nnoremap "+p :let @"=substitute(system("wl-paste --no-newline"), '<C-v><C-m>', '', 'g')<cr>p
+nnoremap "*p :let @"=substitute(system("wl-paste --no-newline --primary"), '<C-v><C-m>', '', 'g')<cr>
+
 "
 " Set 'nocompatible' to ward off unexpected things that your distro might
 " have made, as well as sanely reset options when re-sourcing .vimrc
