@@ -1,0 +1,38 @@
+---
+- name: Setup home directories
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  vars:
+    home_folders_out:
+      - "{{ ansible_env.HOME }}/Documents"
+      - "{{ ansible_env.HOME }}/Downloads"
+      - "{{ ansible_env.HOME }}/Music"
+      - "{{ ansible_env.HOME }}/Pictures"
+      - "{{ ansible_env.HOME }}/Public"
+      - "{{ ansible_env.HOME }}/Templates"
+      - "{{ ansible_env.HOME }}/Videos"
+
+    home_folders_in:
+      - "{{ ansible_env.HOME }}/tmp/Desktop"
+      - "{{ ansible_env.HOME }}/data/Music"
+      - "{{ ansible_env.HOME }}/data/Videos"
+      - "{{ ansible_env.HOME }}/data/Pictures"
+      - "{{ ansible_env.HOME }}/keychain"
+      - "{{ ansible_env.HOME }}/repos"
+      - "{{ ansible_env.HOME }}/doc"
+      - "{{ ansible_env.HOME }}/bin"
+
+  tasks:
+    - name: Remove default directories, if empty.
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ home_folders_out }}"
+
+    - name: Create directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop: "{{ home_folders_in }}"

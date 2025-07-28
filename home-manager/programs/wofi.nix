@@ -1,6 +1,6 @@
 {config, pkgs, ...}:
 let
-  my-theme = import ./theme.nix;
+  my-theme = import ../theme.nix;
 in {
   home.file.".config/wofi/style.css".text = 
     ''

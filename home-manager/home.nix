@@ -42,7 +42,7 @@
   # You can update Home Manager without changing this value. See
   # the Home Manager release notes for a list of state version
   # changes in each release.
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.05";
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -59,7 +59,7 @@
   imports = [
     ./options.nix
     ./fonts/config.nix
-    ./sway/config.nix
+    ./programs/wofi.nix
     ./programs/utilities.nix
     ./programs/pass-and-gpg.nix
     ./programs/bash/config.nix

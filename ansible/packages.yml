@@ -1,0 +1,54 @@
+---
+- name: Install and Uninstall packages.
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  vars:
+    apt_wanted:
+        - lm-sensors
+        - cryptsetup
+        - curl
+        - ufw
+        - pass
+        - pass-extension-otp
+        - moreutils
+        - htop
+        - wofi
+        - papirus-icon-theme
+        - libnotify-bin
+    apt_unwanted:
+        - thunderbird
+        - rhythmbox
+        - shotwell
+        - snapd
+
+  tasks:
+    - name: Fail on non-Debian
+      fail:
+        msg: "This playook is meant for Debian-based systems"
+      when: ansible_os_family != "Debian"
+
+    - name: Update APT cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      become: yes
+
+    - name: Remove unwanted packages
+      apt:
+        name: "{{ apt_unwanted }}"
+        state: absent
+        purge: yes
+      become: yes
+      ignore_errors: yes
+
+    - name: Install wanted packages
+      apt:
+        name: "{{ apt_wanted }}"
+        state: present
+      become: yes
+
+    - name: Autoremove unused packages
+      apt:
+        autoremove: yes
+      become: yes
