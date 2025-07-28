@@ -299,6 +299,7 @@
       "c D" 'xref-find-references
       "c j" 'fill-paragraph
       "c s" 'eglot
+      "c ." 'eglot-code-actions
       "c c" 'comment-or-uncomment-region
 
     ;; 'p' project
@@ -311,7 +312,7 @@
       "p s" 'project-eshell
 
     ;; 'r' register
-      "r y" 'helm-show-kill-ring
+      "r y" 'consult-yank-from-kill-ring
 
     ;; 'd' dired
       "d e" 'dired-create-empty-file
@@ -602,8 +603,11 @@
 ;;;;;;;;;;;;;;
 
 (load (expand-file-name "~/.emacs.d/modules/ricing.el"))
-(load (expand-file-name "~/.emacs.d/modules/agda.el"))
 (load (expand-file-name "~/.emacs.d/modules/treesit.el"))
+
+;; Agda sometimes just loads automagically; I can't have that happening.
+;; so I'll disable it here.
+;; (load (expand-file-name "~/.emacs.d/modules/agda.el"))
 
 ;; Finally include the custom file; ignoring potentially non-existent
 ;; or bad files.
