@@ -5,6 +5,7 @@
   gather_facts: yes
   vars:
     apt_wanted:
+        - net-tools
         - lm-sensors
         - cryptsetup
         - curl
@@ -16,6 +17,8 @@
         - wofi
         - papirus-icon-theme
         - libnotify-bin
+        - qbittorrent
+        - mullvad-vpn
     apt_unwanted:
         - thunderbird
         - rhythmbox
@@ -27,6 +30,19 @@
       fail:
         msg: "This playook is meant for Debian-based systems"
       when: ansible_os_family != "Debian"
+
+    - name: Add the 'mullvad' repository
+      become: yes
+      ansible.builtin.deb822_repository:
+        name: Mullvad VPN stable
+        types: deb
+        uris: https://repository.mullvad.net/deb/stable
+        suites: stable
+        components:
+          - main
+        architectures: amd64
+        signed_by: https://repository.mullvad.net/deb/mullvad-keyring.asc
+        enabled: true
 
     - name: Update APT cache
       apt:

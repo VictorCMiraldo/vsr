@@ -1,0 +1,40 @@
+---
+- name: Install and manage UFW
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+
+  tasks:
+    - name: Install UFW
+      ansible.builtin.apt:
+        name: ufw
+        state: present
+      become: yes
+
+    - name: UFW - Ensure it manages IPV6
+      lineinfile:
+        path: /etc/default/ufw
+        line: IPV6=yes
+        regexp: '^IPV6='
+
+    - name: UFW - Rules
+      become: yes
+      shell: |
+        ufw --force reset
+
+        ufw default deny incoming
+        ufw default allow outgoing
+
+        # We use a custom SSH port, and I want to have acess from within my local network.
+        ufw allow from 192.168.1.0/24 to any port 2142
+      
+        # I also want to allow from my lan on 1600, for UPnP
+        ufw allow from 192.168.1.0/24 to any port 1600 proto udp
+        ufw allow from 192.168.1.0/24 to any port 1200 proto tcp
+
+        # Finally, let kdeconnectd do its thing
+        ufw allow from 192.168.1.0/24 to any port 1714:1764 proto udp
+        ufw allow from 192.168.1.0/24 to any port 1714:1764 proto tcp
+
+        ufw enable
+
