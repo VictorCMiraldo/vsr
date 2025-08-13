@@ -19,6 +19,7 @@
         - libnotify-bin
         - qbittorrent
         - mullvad-vpn
+        - signal-desktop
     apt_unwanted:
         - thunderbird
         - rhythmbox
@@ -43,11 +44,25 @@
         architectures: amd64
         signed_by: https://repository.mullvad.net/deb/mullvad-keyring.asc
         enabled: true
+        state: present
+
+    - name: Add the 'signal' repository
+      become: yes
+      ansible.builtin.deb822_repository:
+        name: Signal stable
+        types: deb
+        uris: https://updates.signal.org/desktop/apt
+        suites: xenial
+        components:
+          - main
+        architectures: amd64
+        signed_by: https://updates.signal.org/desktop/apt/keys.asc
+        enabled: true
+        state: present
 
     - name: Update APT cache
       apt:
         update_cache: yes
-        cache_valid_time: 3600
       become: yes
 
     - name: Remove unwanted packages
