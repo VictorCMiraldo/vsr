@@ -3,6 +3,11 @@
   config = { 
     programs.ssh = lib.mkIf (! config.vsr.isWorkMachine) {
       enable = true;
+
+      # If this is a work machine, and we don't want to touch SSH config, we'd
+      # still want to ensure @AddKeysToAgent "yes"@ is present there.
+      addKeysToAgent = "yes";
+
       matchBlocks = {
         "pizero" = {
           hostname = "192.168.2.1";
@@ -38,9 +43,6 @@
       [Install]
       WantedBy=default.target
     '';
-
-    # Finaly, for convenience, we'll manually add a 'AddKeysToAgent yes' to our .ssh/config
-
   };
 }
 
