@@ -9,7 +9,7 @@ set -o pipefail
 function pass_get() {
     local -r passname="${1}"
 
-    if [ "$(basename $passname)" == "2fa" ]; then 
+    if [ "$(basename $passname)" == "2fa" ]; then
         pass otp "${passname}" | tail -n1 | { IFS= read -r pass; printf %s "${pass}"; }
     else
         pass show "${passname}" | { IFS= read -r pass; printf %s "${pass}"; }
@@ -27,18 +27,19 @@ function get_passname_from_menu() {
 
 function main() {
     local passname
-    local field
+    local tout=15
 
     passname="$(get_passname_from_menu)"
     [ -n "${passname}" ] || exit
 
-    pass_get "${passname}" | wl-copy
+    pass_get "${passname}" | wl-copy --sensitive
     if [ "$?" -eq 0 ]; then
       notify-send "Copied ${passname}"
     else
       notify-send "Failed"
     fi
+
+
 }
 
 main "${@}"
-
