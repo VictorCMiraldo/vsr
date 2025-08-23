@@ -14,7 +14,8 @@ let
   };
 in {
   home.packages = with pkgs; [
-    # unison
+    konsave
+
     pandoc
 
     haskell.compiler.ghc964
