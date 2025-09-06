@@ -17,6 +17,7 @@
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHSwnBiaBmNkqUJyRfOjnE0rOwb80Bgkko149d/R/pXW victor@beetroot
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO40gphiJ99S0qmbYqLagjuUf9+x7+6khz5CvZe2MpjO victor@blackbean
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAIkSchbyqyOAKZqMvaBgUvmSc5JndXFSvLg5OWsdAO1 victor@bold-bean
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICJQ4RjRJJ+4zOUklWCZsSDYNCuN2xD0ZPFFT+pz5vK7 victor@kale
       '';
 
     # Create the systemd agent unit and set up the environment variable for the socket.
