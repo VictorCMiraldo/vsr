@@ -27,6 +27,7 @@
         - rhythmbox
         - shotwell
         - snapd
+        - kmail
 
   tasks:
     - name: Fail on non-Debian

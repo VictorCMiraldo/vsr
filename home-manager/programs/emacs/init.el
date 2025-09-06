@@ -451,9 +451,8 @@
   :vc (:url "https://github.com/purcell/inheritenv"))
 (use-package envrc
   :vc (:url "https://github.com/purcell/envrc")
+  :hook (after-init . envrc-global-mode)
   :after (diminish inheritenv)
-  ;; :hook (after-init . envrc-global-mode)
-  :demand
   :init
     (diminish 'envrc-mode)
   :config

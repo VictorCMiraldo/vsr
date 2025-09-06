@@ -89,7 +89,9 @@
 
 (use-package haskell-ts-mode
   :vc (:url "https://codeberg.org/pranshu/haskell-ts-mode")
-  :after (treesit reformatter eglot)
+  :after (treesit notch eglot)
+  :mode (("\\.hs\\'" . haskell-ts-mode)
+         ("\\.lhs\\'" . haskell-ts-mode))
   :hook
     (haskell-ts-mode
      .
@@ -116,7 +118,7 @@
   :config
     (evil-leader/set-key
       ;; 'c' code
-      "c f" 'vcm/haskell-format-buffer
+      "c f" 'haskell-ts-format
     )
 )
 
