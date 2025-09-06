@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -46,9 +46,25 @@
   # We'll the necessary system-wide options in the vsr namespace.
   # All the options we use are declared in options.nix.
   # For now, it's just one.
-  vsr.isWorkMachine = builtins.getEnv "HOSTNAME" == "dev-lt-111"
-                   || builtins.getEnv "HOSTNAME" == "dev-lt-60";
-  
+  vsr.isWorkMachine = builtins.getEnv "HOSTNAME" == "bold-bean";
+
+  # Sets up agenix for secret management
+  age = {
+    identityPaths = [ "${config.home.homeDirectory}/keychain/vsr-secrets/id_ed25519" ];
+    secrets = {
+      # This is only half a secret; I just don't want to leak IPs to the public on GitHub, but I'm
+      # the only user on my machine, so I don't really care if these get decrypted to an easily accessible file.
+      sshWorkServersData = {
+        file = ./secrets/work-servers-data.age;
+        path = "${config.home.homeDirectory}/.ssh/work-servers-data";
+      };
+    };
+  };
+
+  home.packages = [
+    inputs.agenix.packages.${pkgs.system}.default
+  ];
+
 
   imports = [
     ./options.nix
