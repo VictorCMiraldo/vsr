@@ -20,6 +20,8 @@
         - qbittorrent
         - mullvad-vpn
         - signal-desktop
+        - zbar-tools
+        - build-essential
     apt_unwanted:
         - thunderbird
         - rhythmbox

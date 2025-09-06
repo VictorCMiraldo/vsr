@@ -19,8 +19,8 @@
         mode: '0755'
     
     - name: Create Nix directory
-      when: nix_check.rc != 0
       become: true
+      when: nix_check.rc == 0
       file:
         path: "/nix"
         mode: '0755'
