@@ -1,0 +1,98 @@
+---
+- name: Install Nix, Home-Manager and Configure Home
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+
+  tasks:
+    - name: Is nix there?
+      command: test -d /nix
+      register: nix_check
+      failed_when: false
+      changed_when: false
+
+    - name: Download Nix
+      when: nix_check.rc != 0
+      get_url:
+        url: "https://nixos.org/nix/install"
+        dest: /tmp/nix-installer
+        mode: '0755'
+    
+    - name: Create Nix directory
+      become: true
+      when: nix_check.rc == 0
+      file:
+        path: "/nix"
+        mode: '0755'
+        owner: victor
+
+    - name: Install Nix
+      when: nix_check.rc != 0
+      command: /tmp/nix-installer --no-daemon
+
+    - name: Cleanup Nix Installer
+      when: nix_check.rc != 0
+      file:
+        path: /tmp/nix-installer
+        state: absent
+
+    - name: Check if home-manager is already installed
+      stat:
+        path: "{{ ansible_env.HOME }}/.nix-profile/bin/home-manager"
+      register: home_manager_check
+
+
+    - name: Create nix.conf Directory
+      when: not home_manager_check.stat.exists
+      file: 
+        path: "{{ ansible_env.HOME }}/.config/nix"
+        state: directory
+        mode: '0755'
+
+    - name: Create nix.conf
+      when: not home_manager_check.stat.exists
+      copy:
+        content: |
+          experimental-features = nix-command flakes
+          auto-optimise-store = true
+        dest: "{{ ansible_env.HOME }}/.config/nix/nix.conf"
+        mode: '0644'
+        backup: yes
+
+    - name: Add channels and install home-manager
+      when: not home_manager_check.stat.exists
+      shell: |
+        export NIX_PATH=$HOME/.nix-defexpr/channels
+        . $HOME/.nix-profile/etc/profile.d/nix.sh
+
+
+        nix-channel --add https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz home-manager
+        nix-channel --add https://nixos.org/channels/nixos-25.05 nixpkgs
+        nix-channel --update
+
+        nix-shell '<home-manager>' -A install
+
+    - name: Prep for home-manager switch (remove conflicting files)
+      file:
+        path: " {{ item }}"
+        state: absent
+      loop:
+        - "{{ ansible_env.HOME }}/.config/home-manager/home.nix"
+        - "{{ ansible_env.HOME }}/.config/user-dirs.dirs"
+        - "{{ ansible_env.HOME }}/.profile"
+        - "{{ ansible_env.HOME }}/.bashrc"
+
+    - name: Prep for home-manager switch (link config)
+      file:
+        src: '/home/victor/repos/vsr/home-manager'
+        dest: '{{ ansible_env.HOME }}/.config/home-manager'
+        state: link
+        force: yes
+
+    - name: Switch
+      shell: |
+        . $HOME/.nix-profile/etc/profile.d/nix.sh
+        cd $HOME/repos/vsr/home-manager
+        ./switch.sh
+
+

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -13,12 +13,6 @@
 
     LANG = "en_US.utf8";
     LOCALES_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
-
-    # Sway-needed things
-    # MOZ_ENABLE_WAYLAND=1;
-    # GTK_USE_PORTAL=0;
-    # XDG_CURRENT_DESKTOP="sway";
-    # XDG_SESSION_DESKTOP="sway";
   };
 
   # Manages our XDG user dirs
@@ -42,7 +36,7 @@
   # You can update Home Manager without changing this value. See
   # the Home Manager release notes for a list of state version
   # changes in each release.
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.05";
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -52,18 +46,34 @@
   # We'll the necessary system-wide options in the vsr namespace.
   # All the options we use are declared in options.nix.
   # For now, it's just one.
-  vsr.isWorkMachine = builtins.getEnv "HOSTNAME" == "dev-lt-111"
-                   || builtins.getEnv "HOSTNAME" == "dev-lt-60";
-  
+  vsr.isWorkMachine = builtins.getEnv "HOSTNAME" == "bold-bean";
+
+  # Sets up agenix for secret management
+  age = {
+    identityPaths = [ "${config.home.homeDirectory}/keychain/vsr-secrets/id_ed25519" ];
+    secrets = {
+      # This is only half a secret; I just don't want to leak IPs to the public on GitHub, but I'm
+      # the only user on my machine, so I don't really care if these get decrypted to an easily accessible file.
+      sshWorkServersData = {
+        file = ./secrets/work-servers-data.age;
+        path = "${config.home.homeDirectory}/.ssh/work-servers-data";
+      };
+    };
+  };
+
+  home.packages = [
+    inputs.agenix.packages.${pkgs.system}.default
+  ];
+
 
   imports = [
     ./options.nix
     ./fonts/config.nix
-    ./sway/config.nix
+    ./programs/wofi.nix
     ./programs/utilities.nix
     ./programs/pass-and-gpg.nix
     ./programs/bash/config.nix
-    ./programs/emacs-wayland/config.nix
+    ./programs/emacs/config.nix
     ./programs/vim/config.nix
     ./programs/ssh/config.nix
     ./programs/unison/config.nix

@@ -1,0 +1,34 @@
+---
+- name: Create a reasonable sshd config.
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+
+  handlers:
+    - name: restart sshd
+      service: name=sshd state=restarted
+
+  tasks:
+    - name: Create a reasonable sshd config.
+      become: yes
+      copy:
+        dest: "/etc/ssh/sshd_config.d/00-user.conf"
+        content: |
+          PermitRootLogin no
+          MaxAuthTries 3
+          PubkeyAuthentication yes
+          AuthorizedKeysFile {{ ansible_env.HOME }}/.ssh/authorized_keys
+          PasswordAuthentication no
+          PermitEmptyPasswords no
+          ChallengeResponseAuthentication no
+          KerberosAuthentication no
+          GSSAPIAuthentication no
+          AllowAgentForwarding no
+          AllowTcpForwarding no
+          PermitTunnel no
+          DebianBanner no
+          # I think that using this and trying to connect through a VPN makes
+          # life complicated.
+          # AllowUsers 192.168.1.0/24
+          Port 2142
+      notify: restart sshd

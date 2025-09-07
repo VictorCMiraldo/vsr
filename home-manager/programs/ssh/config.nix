@@ -1,22 +1,23 @@
 {config, pkgs, lib, ...}:
 {
-  config = { 
-    programs.ssh = lib.mkIf (! config.vsr.isWorkMachine) {
+  config = {
+    programs.ssh = {
       enable = true;
-      matchBlocks = {
-        "pizero" = {
-          hostname = "192.168.2.1";
-          user = "pi";
-          identityFile = "/home/victor/keychain/vps/PiZero/id_rsa";
-        };
+
+      # If this is a work machine, and we don't want to touch SSH config, we'd
+      # still want to ensure @AddKeysToAgent "yes"@ is present there.
+      addKeysToAgent = "yes";
+      includes = [
+         "${config.age.secrets.sshWorkServersData.path}"
+       ];
       };
-    };
 
     # Have our authorized keys file
     home.file.".ssh/authorized_keys".text = ''
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHSwnBiaBmNkqUJyRfOjnE0rOwb80Bgkko149d/R/pXW victor@beetroot
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO40gphiJ99S0qmbYqLagjuUf9+x7+6khz5CvZe2MpjO victor@blackbean
-      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAW1EheUQ22usnWqIRr0pUlE5QhDFO9mH1nG0JIYgkKo victor@dev-lt-111
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAIkSchbyqyOAKZqMvaBgUvmSc5JndXFSvLg5OWsdAO1 victor@bold-bean
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICJQ4RjRJJ+4zOUklWCZsSDYNCuN2xD0ZPFFT+pz5vK7 victor@kale
       '';
 
     # Create the systemd agent unit and set up the environment variable for the socket.
@@ -38,9 +39,5 @@
       [Install]
       WantedBy=default.target
     '';
-
-    # Finaly, for convenience, we'll manually add a 'AddKeysToAgent yes' to our .ssh/config
-
   };
 }
-
