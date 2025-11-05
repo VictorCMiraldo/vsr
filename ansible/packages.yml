@@ -5,6 +5,7 @@
   gather_facts: yes
   vars:
     apt_wanted:
+        - audacity
         - net-tools
         - lm-sensors
         - cryptsetup
