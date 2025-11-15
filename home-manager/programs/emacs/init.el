@@ -603,6 +603,7 @@
 
 (load (expand-file-name "~/.emacs.d/modules/ricing.el"))
 (load (expand-file-name "~/.emacs.d/modules/treesit.el"))
+(load (expand-file-name "~/.emacs.d/modules/lily.el"))
 
 ;; Agda sometimes just loads automagically; I can't have that happening.
 ;; so I'll disable it here.

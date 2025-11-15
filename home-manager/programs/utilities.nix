@@ -33,5 +33,8 @@ in {
     nodePackages_latest.typescript-language-server
 
     ripgrep
+
+    # Formr youtube-dl
+    yt-dlp
   ];
 }
