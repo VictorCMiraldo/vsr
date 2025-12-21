@@ -27,6 +27,10 @@
 
         # We use a custom SSH port, and I want to have acess from within my local network.
         ufw allow from 192.168.1.0/24 to any port 2142
+
+        # Gloomhaven secretariat needs some ports too
+        ufw allow from 192.168.1.0/24 to any port 8080
+        ufw allow from 192.168.1.0/24 to any port 8081
       
         # I also want to allow from my lan on 1600, for UPnP
         ufw allow from 192.168.1.0/24 to any port 1600 proto udp

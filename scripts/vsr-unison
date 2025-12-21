@@ -41,12 +41,12 @@ elif [[ "$#" -gt "1" ]]; then
   print_usage
 fi
 
-remote_hostname="192.168.1.159"
+remote_hostname="192.168.1.144"
 
 local_root="/home/victor"
-remote_root="ssh://$remote_hostname:$VSR_SSH_PORT//home/victor"
+remote_root="ssh://$remote_hostname:2142//home/victor"
 for prof in ${allprofs[*]}; do
-  unison -perms 0 $prof -root "$local_root" -root "$remote_root"
+  unison -servercmd "/home/victor/.nix-profile/bin/unison" -perms 0 $prof -root "$local_root" -root "$remote_root"
 done
 
 
