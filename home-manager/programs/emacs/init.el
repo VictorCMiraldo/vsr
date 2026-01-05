@@ -413,7 +413,25 @@
   :ensure t
   :config
   ;; Narrowing lets you restrict results to certain groups of candidates
-  (setq consult-narrow-key "<"))
+  (setq consult-narrow-key "<")
+
+  ;; Configure consult buffers to use a dedicated side window
+  (add-to-list 'display-buffer-alist
+               '("\\*consult-ripgrep\\*"
+                 (display-buffer-in-side-window)
+                 (side . bottom)
+                 (slot . 0)
+                 (window-height . 0.33)
+                 (preserve-size . (nil . t))))
+  
+  (add-to-list 'display-buffer-alist
+               '("\\*consult-grep\\*"
+                 (display-buffer-in-side-window)
+                 (side . bottom)
+                 (slot . 0)
+                 (window-height . 0.33)
+                 (preserve-size . (nil . t))))
+)
 
 
 ;; Popup completion-at-point
@@ -447,7 +465,7 @@
 ;;;;;;;;;;;;;;;;;;;;
 
 (use-package inheritenv
-  ;; inheritenv is a dependency of envrc 
+  ;; inheritenv is a dependency of envrc
   :vc (:url "https://github.com/purcell/inheritenv"))
 (use-package envrc
   :vc (:url "https://github.com/purcell/envrc")
@@ -462,7 +480,8 @@
 
 ;; We need markdown to render documentation.
 (use-package markdown-mode
-  :ensure t)
+  :ensure t
+)
 
 (defun vcm/flymake-goto-next-error ()
   (interactive)
@@ -503,7 +522,7 @@
     (setq max-mini-window-height 3)
 
     (fset #'jsonrpc--log-event #'ignore)  ; massive perf boost---don't log every event
-    
+
 
     ;; Redefine next-error to use flymake's
     (evil-leader/set-key
@@ -518,7 +537,7 @@
 
     (add-to-list 'eglot-server-programs '(
       (python-mode python-ts-mode)
-         "basedpyright-langserver" "--stdio" 
+         "basedpyright-langserver" "--stdio"
     ))
 
     (setq-default
@@ -550,6 +569,36 @@
     ;; (setq-default eglot-workspace-configuration
     ;;             '((:haskell . (:formattingProvider "fourmolu"))))
 
+    ;; The Haskell LSP is sending rather large hover responses. I don't know why..
+    ;; Let's just truncate that stuff. No way we need more than 5kb docs on a single function.
+    (setq eglot-hover-max-size 5000)
+    
+    (defun my-eglot-truncate-large-hover (orig-fun markup)
+      "Truncate excessively large hover responses from LSP."
+      (let* ((value (plist-get markup :value))
+             (value-length (length value)))
+        (if (> value-length eglot-hover-max-size)
+            (progn
+              (message "Truncating large hover response: %s bytes (limit: %s)" 
+                       value-length eglot-hover-max-size)
+              (funcall orig-fun 
+                       (plist-put (copy-sequence markup) 
+                                  :value 
+                                  (concat (substring value 0 eglot-hover-max-size)
+                                          "\n\n... [Truncated "
+                                          (number-to-string (- value-length eglot-hover-max-size))
+                                          " bytes] ..."))))
+          (funcall orig-fun markup))))
+    (advice-add 'eglot--format-markup :around #'my-eglot-truncate-large-hover)
+
+    ;; Add this to your eglot :config section
+    (defun my-eglot-prioritize-errors ()
+      "Reorder eldoc functions to show errors before hover documentation."
+      (setq-local eldoc-documentation-functions
+                  (cons 'flymake-eldoc-function
+                        (remove 'flymake-eldoc-function eldoc-documentation-functions))))
+
+    (add-hook 'eglot-managed-mode-hook #'my-eglot-prioritize-errors)
 )
 
 ;;;;;;;;;
