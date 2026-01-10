@@ -1,0 +1,79 @@
+---
+- name: Install and configure vsftpd (FTPS, download-only)
+  hosts: localhost
+  become: true
+
+  vars:
+    ftp_user: tv
+    # Generated with: 
+    # > openssl passwd -6
+    ftp_password_hash: "$6$iGq8gUPKq6IbUmu3$HY6r2htkaQl8vkPedL2ee1DxIJMdkM8BFZ6FcIt2QxyWL2abD78zFwbv.A/5iatQKnDySrURcahN5o4V3.spI/"
+    ftp_root: /home/tv/ftp
+    ftp_port: 2121
+    userlist_file: /etc/vsftpd.userlist
+
+  tasks:
+    - name: Install vsftpd
+      apt:
+        name: vsftpd
+        state: present
+        update_cache: yes
+
+    - name: Ensure FTP user exists with no shell access
+      user:
+        name: "{{ ftp_user }}"
+        password: "{{ ftp_password_hash }}"
+        shell: /usr/sbin/nologin
+        create_home: yes
+        state: present
+
+    - name: Ensure FTP root exists (read-only)
+      file:
+        path: "{{ ftp_root }}"
+        state: directory
+        owner: "{{ ftp_user }}"
+        group: "{{ ftp_user }}"
+        mode: '0555'
+
+    - name: Create vsftpd user allow list
+      copy:
+        dest: "{{ userlist_file }}"
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          {{ ftp_user }}
+
+    - name: Configure vsftpd (plain FTP, download-only)
+      copy:
+        dest: /etc/vsftpd.conf
+        mode: '0644'
+        content: |
+          listen=YES
+          listen_ipv6=NO
+
+          anonymous_enable=NO
+          local_enable=YES
+          write_enable=NO
+
+          listen_port={{ ftp_port }}
+
+          local_root={{ ftp_root }}
+          chroot_local_user=YES
+          allow_writeable_chroot=NO
+
+          userlist_enable=YES
+          userlist_file={{ userlist_file }}
+          userlist_deny=NO
+
+          pasv_enable=YES
+          pasv_min_port=30000
+          pasv_max_port=30010
+
+          pam_service_name=vsftpd
+
+    - name: Restart vsftpd
+      service:
+        name: vsftpd
+        state: restarted
+        enabled: true

@@ -27,10 +27,19 @@
 
         # We use a custom SSH port, and I want to have acess from within my local network.
         ufw allow from 192.168.1.0/24 to any port 2142
+
+        # Gloomhaven secretariat needs some ports too
+        ufw allow from 192.168.1.0/24 to any port 8080
+        ufw allow from 192.168.1.0/24 to any port 8081
       
-        # I also want to allow from my lan on 1600, for UPnP
-        ufw allow from 192.168.1.0/24 to any port 1600 proto udp
-        ufw allow from 192.168.1.0/24 to any port 1200 proto tcp
+        # vsftp needs these
+        ufw allow from 192.168.1.0/24 to any port 2121 proto tcp
+        ufw allow from 192.168.1.0/24 to any port 30000:30010 proto tcp
+        ufw allow from 192.168.1.0/24 to any port 30000:30010 proto udp
+
+        # When I used kodi here, I needed to allow from my lan on 1600, for UPnP
+        # ufw allow from 192.168.1.0/24 to any port 1600 proto udp
+        # ufw allow from 192.168.1.0/24 to any port 1200 proto tcp
 
         # Finally, let kdeconnectd do its thing
         ufw allow from 192.168.1.0/24 to any port 1714:1764 proto udp

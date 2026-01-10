@@ -115,6 +115,8 @@
   :custom
     ;; Abso-freaking-lutely not! Leave my TAB alone!
     (haskell-ts-use-indent nil)
+    (standard-indent 2) ;; configure how large the identation is.
+
   :config
     (evil-leader/set-key
       ;; 'c' code

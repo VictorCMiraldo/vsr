@@ -17,8 +17,8 @@
     (setopt auto-revert-check-vc-info t)
     (global-auto-revert-mode)
 
-    ;; Move through windows with Ctrl-<arrow keys>
-    (windmove-default-keybindings 'control)
+    ;; Move through windows with Shift-<arrow keys>
+    (windmove-default-keybindings 'shift)
 
     ;; Save history of minibuffer, enabling up-arrow
     ;; to fetch the previous command.
@@ -98,7 +98,11 @@
           ; TAB acts more like how it does in the shell: completes
           ; the maximum prefix until there are two options.
           ("TAB" . 'minibuffer-complete)
-    )
+
+          ; I use M- for my window manager stuff, in particular,
+          ; M-p is to launch rofi... I'll rely on arrows for history.
+          ("C-<up>" . previous-history-element)
+          ("C-<down>" . next-history-element))
 
   :config
     ;; Inhibit electric indent unless we say otherwise and
@@ -343,11 +347,10 @@
   :after embark
   :bind
     (:map vertico-map
-          ; Makes M-TAB acts like how it does in the shell: completes
-          ; the maximum prefix until there are two options.
-          ("M-TAB" . #'minibuffer-complete)
-          ("?" . #'minibuffer-completion-help)
-    )
+      ; Makes M-TAB acts like how it does in the shell: completes
+      ; the maximum prefix until there are two options.
+      ("M-TAB" . #'minibuffer-complete)
+      ("?" . #'minibuffer-completion-help))
   :custom
     (vertico-cycle t)
   :config
@@ -411,9 +414,23 @@
 ;; Don't forget: #lalal -- -C2#lele
 (use-package consult
   :ensure t
+  ;; The :init configuration is always executed (Not lazy)
+  :init
+    ;; Tweak the register preview for `consult-register-load',
+    ;; `consult-register-store' and the built-in commands.  This improves the
+    ;; register formatting, adds thin separator lines, register sorting and hides
+    ;; the window mode line.
+    (advice-add #'register-preview :override #'consult-register-window)
+    (setq register-preview-delay 0.5)
+
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref)
+
   :config
-  ;; Narrowing lets you restrict results to certain groups of candidates
-  (setq consult-narrow-key "<"))
+    ;; Narrowing lets you restrict results to certain groups of candidates
+    (setq consult-narrow-key "<")
+)
 
 
 ;; Popup completion-at-point
@@ -447,7 +464,7 @@
 ;;;;;;;;;;;;;;;;;;;;
 
 (use-package inheritenv
-  ;; inheritenv is a dependency of envrc 
+  ;; inheritenv is a dependency of envrc
   :vc (:url "https://github.com/purcell/inheritenv"))
 (use-package envrc
   :vc (:url "https://github.com/purcell/envrc")
@@ -462,7 +479,8 @@
 
 ;; We need markdown to render documentation.
 (use-package markdown-mode
-  :ensure t)
+  :ensure t
+)
 
 (defun vcm/flymake-goto-next-error ()
   (interactive)
@@ -503,7 +521,7 @@
     (setq max-mini-window-height 3)
 
     (fset #'jsonrpc--log-event #'ignore)  ; massive perf boost---don't log every event
-    
+
 
     ;; Redefine next-error to use flymake's
     (evil-leader/set-key
@@ -518,7 +536,7 @@
 
     (add-to-list 'eglot-server-programs '(
       (python-mode python-ts-mode)
-         "basedpyright-langserver" "--stdio" 
+         "basedpyright-langserver" "--stdio"
     ))
 
     (setq-default
@@ -550,6 +568,36 @@
     ;; (setq-default eglot-workspace-configuration
     ;;             '((:haskell . (:formattingProvider "fourmolu"))))
 
+    ;; The Haskell LSP is sending rather large hover responses. I don't know why..
+    ;; Let's just truncate that stuff. No way we need more than 5kb docs on a single function.
+    (setq eglot-hover-max-size 5000)
+    
+    (defun my-eglot-truncate-large-hover (orig-fun markup)
+      "Truncate excessively large hover responses from LSP."
+      (let* ((value (plist-get markup :value))
+             (value-length (length value)))
+        (if (> value-length eglot-hover-max-size)
+            (progn
+              (message "Truncating large hover response: %s bytes (limit: %s)" 
+                       value-length eglot-hover-max-size)
+              (funcall orig-fun 
+                       (plist-put (copy-sequence markup) 
+                                  :value 
+                                  (concat (substring value 0 eglot-hover-max-size)
+                                          "\n\n... [Truncated "
+                                          (number-to-string (- value-length eglot-hover-max-size))
+                                          " bytes] ..."))))
+          (funcall orig-fun markup))))
+    (advice-add 'eglot--format-markup :around #'my-eglot-truncate-large-hover)
+
+    ;; Add this to your eglot :config section
+    (defun my-eglot-prioritize-errors ()
+      "Reorder eldoc functions to show errors before hover documentation."
+      (setq-local eldoc-documentation-functions
+                  (cons 'flymake-eldoc-function
+                        (remove 'flymake-eldoc-function eldoc-documentation-functions))))
+
+    (add-hook 'eglot-managed-mode-hook #'my-eglot-prioritize-errors)
 )
 
 ;;;;;;;;;
@@ -603,6 +651,7 @@
 
 (load (expand-file-name "~/.emacs.d/modules/ricing.el"))
 (load (expand-file-name "~/.emacs.d/modules/treesit.el"))
+(load (expand-file-name "~/.emacs.d/modules/lily.el"))
 
 ;; Agda sometimes just loads automagically; I can't have that happening.
 ;; so I'll disable it here.
