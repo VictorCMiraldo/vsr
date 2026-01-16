@@ -75,7 +75,7 @@ that point. Otherwise, always indents the line `standard-indent' forward, using
     (indent-to desired-notch)
 
     ;; Can't really use `save-excursion' because we're changing the line, so we
-    ;; do some good old point arithmetic here. Once we're done, we move back to
+    ;; do some good'old point arithmetic here. Once we're done, we move back to
     ;; the relative position from the beginning of the line.
     (forward-char (- cur this-notch))
 
@@ -84,34 +84,60 @@ that point. Otherwise, always indents the line `standard-indent' forward, using
     (- desired-notch this-notch)
 ))
 
+(defun notch-region-line-bounds (start end)
+  "Normalize region bounds for indentation operations.
+Returns a list (sel-start sel-end) where sel-start is the beginning
+of the first line and sel-end is the end of the last line in the region."
+  (save-excursion
+    (goto-char start)
+    (let ((line-start (line-number-at-pos start))
+          (line-end (line-number-at-pos end)))
+      (list line-start line-end))))
+
+(defun notch-map-region (start end first-line-fn rest-lines-fn)
+  "Apply FIRST-LINE-FN to the first line in the region, then apply REST-LINES-FN
+to each remaining line with the result from FIRST-LINE-FN.
+The mark and point are restored after the operation."
+  (save-mark-and-excursion
+    (let (deactivate-mark)
+      (let* ((bounds (notch-region-line-bounds start end))
+              (line-start (car bounds))
+              (line-end (cadr bounds)))
+
+        (goto-line line-start)
+        (let ((first-result (funcall first-line-fn)))
+
+          ;; Apply rest-lines-fn to remaining lines
+          (forward-line 1)
+          (while (<= (line-number-at-pos (point)) line-end)
+            (funcall rest-lines-fn first-result)
+            (forward-line 1)))))))
+
+
 (defun notch-region (start end)
   "Notch an entire region by calling `notch-line' on the first line, and inserting
-the amount of spaces on every line under that in the region; if the right set
-of evil functions are available, notch will restore the selection with evil"
-    (save-mark-and-excursion (let (deactivate-mark)
-      (let ((line-beg (line-number-at-pos start))
-            (line-end (line-number-at-pos end)))
-        (cond
-          ;; No real "region" going on here...
-          ((= line-beg line-end)
-            (notch-line))
-          (t
-           (progn
-             (goto-char start)
-             (forward-line 0)
-             (skip-chars-forward " \t")
-             (let ((desired-notch (notch-line))
-                   (this-line (line-number-at-pos (point))))
-               (while (< (line-number-at-pos (point)) line-end)
-                  (forward-line 1)
-                  (insert (make-string desired-notch ? )))
-             )))
-      ))
-  ))
-)
+the amount of spaces on every line under that in the region."
+  (notch-map-region
+   start end
+   ;; First line: skip to content, notch, and return the final indentation level
+   #'notch-line
+   ;; Rest of lines: apply the indentation amount
+   (lambda (desired-notch)
+     (forward-line 0) ;; move point to start of line.
+     (insert (make-string desired-notch ?\s)))))
+
+(defun notch-back-region (start end)
+  "Calls `notch-back-line' on all lines in the region"
+  (notch-map-region
+   start end
+   ;; First line: just call notch-back-line, return nil
+   (lambda () (notch-back-line) nil)
+   ;; Rest of lines: ignore the result and call notch-back-line
+   (lambda (_) (notch-back-line))))
 
 (defun notch-back-line ()
-  "Moves the current line back one `standard-indent' or to the beginning of the line"
+  "Moves the current line back one `standard-indent' or to the
+beginning of the line"
   (let ((this-notch (current-indentation)))
     ;; This line has an indent, bring it back.
     (unless (<= this-notch 0)
@@ -248,17 +274,6 @@ move indentation backwards.
            (_ (error "notch-point-in-line-state: bad return: %s" state))
          ))
     ))
-)
-
-(defun notch-back-region (start end)
-  "Calls `notch-back-line' on all lines in the region"
-  (save-mark-and-excursion (let (deactivate-mark)
-    (let ((line-end (line-number-at-pos end)))
-      (goto-char start)
-      (while (< (line-number-at-pos (point)) line-end)
-        (notch-back-line)
-        (forward-line 1)))
-  ))
 )
 
 (defun notch-back ()
