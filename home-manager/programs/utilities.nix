@@ -18,12 +18,6 @@ in {
 
     pandoc
 
-    haskell.compiler.ghc964
-    haskellPackages.cabal-install
-    haskellPackages.ormolu
-    haskellPackages.hpack
-    haskellPackages.lhs2tex
-
     pyright
     basedpyright
 

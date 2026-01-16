@@ -3,8 +3,10 @@
   config = { 
     programs.git = lib.mkIf (! config.vsr.isWorkMachine) {
       enable = true;
-      userName = "Victor Miraldo";
-      userEmail = "victor.miraldo@fastmail.com";
+      settings.user = {
+        name = "Victor Miraldo";
+        email = "victor.miraldo@fastmail.com";
+      };
     };
   };
 }

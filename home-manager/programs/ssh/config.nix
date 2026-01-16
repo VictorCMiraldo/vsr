@@ -6,7 +6,13 @@
 
       # If this is a work machine, and we don't want to touch SSH config, we'd
       # still want to ensure @AddKeysToAgent "yes"@ is present there.
-      addKeysToAgent = "yes";
+      matchBlocks = {
+        "*" = {
+          addKeysToAgent = "yes";  # Applies to all hosts
+        };
+      };
+
+      enableDefaultConfig = false;
       includes = [
          "${config.age.secrets.sshWorkServersData.path}"
        ];

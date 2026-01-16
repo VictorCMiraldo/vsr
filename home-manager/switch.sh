@@ -9,6 +9,9 @@ else
   exit 1
 fi
 
+# We use flakes, so no need for channels anywhere
+export NIX_PATH=""
+
 # We need to switch --impure on because we read from the system environment 
 # to decide whether this is the work machine or not
 home-manager $opt --flake .#default --impure --show-trace
