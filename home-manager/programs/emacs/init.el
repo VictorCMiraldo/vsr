@@ -539,6 +539,11 @@
          "basedpyright-langserver" "--stdio"
     ))
 
+    (add-to-list 'eglot-server-programs '(
+      (nix-mode nix-ts-mode) "nil"
+    ))
+
+
     (setq-default
        eglot-workspace-configuration
        '(:basedpyright (
@@ -561,7 +566,11 @@
              :genericTypes :json-false
              :variableTypes :json-false
            )
-         )))
+         )
+        
+         ;; Configure the formatting provider for `nil`
+         :nil (:formatting (:command ["nixfmt"]))
+    ))
 
     ;; And if you want to give eglot some per-workspace configuration, this is
     ;; how it would look like:
@@ -590,7 +599,8 @@
           (funcall orig-fun markup))))
     (advice-add 'eglot--format-markup :around #'my-eglot-truncate-large-hover)
 
-    ;; Add this to your eglot :config section
+    ;; Ensure that whenever we're looking at the eldoc buffer, if there are errors,
+    ;; show them BEFORE the documentation.
     (defun my-eglot-prioritize-errors ()
       "Reorder eldoc functions to show errors before hover documentation."
       (setq-local eldoc-documentation-functions
