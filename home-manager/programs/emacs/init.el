@@ -373,10 +373,49 @@
     (completion-styles '(orderless))
 )
 
+(defvar vcm/last-avy-input nil
+  "Store the last avy search string for repeating.")
+
+(defun vcm/avy-goto-char-timer-save ()
+  "Run avy-goto-char-timer and save the input."
+  (interactive)
+  (setq vcm/last-avy-input "")
+  (let 
+    ;; This is some cool magic! It temporarily replace 'read-char with the lambda
+    ;; define right below. This lets us tap right into 'read-char, which is how
+    ;; avy-goto-char-timer reads it's input. Our version of read-char calls the original
+    ;; one (read-char-orig) and appends it to our global variable. Glorious!
+    ((read-char-orig (symbol-function 'read-char)))
+    (cl-letf
+      (((symbol-function 'read-char)
+        (lambda (&rest args)
+          (let 
+            ((c (apply read-char-orig args))) ; This is a call to the original read-char
+            (when c (setq vcm/last-avy-input (concat vcm/last-avy-input (string c))))
+            c)) ;; Gotta not forget to return the char
+      ))
+      (call-interactively 'avy-goto-char-timer)
+    )
+  )
+)
+
+(defun vcm/avy-repeat ()
+  "Repeat last avy search."
+  (interactive)
+  (when (and vcm/last-avy-input (not (string-empty-p vcm/last-avy-input)))
+    (avy-jump (regexp-quote vcm/last-avy-input))))
+
 (use-package avy
   :ensure t
-  :after embark
+  :after (embark evil)
   :demand t
+  :bind
+    (:map evil-normal-state-map
+      ("f" . #'vcm/avy-goto-char-timer-save)
+      (";" . #'vcm/avy-repeat))
+    (:map evil-motion-state-map
+      ("f" . #'vcm/avy-goto-char-timer-save)
+      (";" . #'vcm/avy-repeat))
   :config
     ;; Add the option to run embark when using avy
     (defun avy-action-embark (pt)
@@ -388,6 +427,7 @@
        (cdr (ring-ref avy-ring 0))))
     t)
 
+    ;; Use ';' to dispatch an action
     (setf (alist-get ?\; avy-dispatch-alist) 'avy-action-embark)
 )
 
