@@ -38,6 +38,7 @@
                (json-mode . json-ts-mode)
                (js-json-mode . json-ts-mode)
                (haskell-mode . haskell-ts-mode)
+               (rust-mode . rust-ts-mode)
                (nix-mode . nix-ts-mode)
              ))
       (add-to-list 'major-mode-remap-alist mapping))
@@ -57,10 +58,10 @@
 (use-package python
   :ensure nil ;; Don't install this, is builtin.
   :after (treesit notch eglot) ;; require notch, so we can tweak the settings
-  :custom
-    ;; Notch settings for python:
-    (notch-punctuation-is-eow t) ;; In python punctuation marks end of word.
-    (standard-indent 4)
+  :hook
+    (python-base-mode . (lambda ()
+      (setq-local notch-punctuation-is-eow t)
+      (setq-local standard-indent 4)))
 )
 
 
@@ -142,4 +143,18 @@
 (use-package nix-ts-mode
   :mode "\\.nix\\'"
   :vc (:url "https://github.com/nix-community/nix-ts-mode")
+)
+
+;;;;;;;;;;
+;; Rust ;;
+;;;;;;;;;;
+
+(use-package rust-ts-mode
+  :ensure nil ;; built-in!
+  :after (treesit notch eglot)
+  :mode "\\.rs\\'"
+  :hook
+    (rust-ts-mode . eglot-ensure)
+  :custom
+    (standard-indent 4)
 )

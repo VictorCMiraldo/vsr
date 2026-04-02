@@ -19,7 +19,7 @@
       ; (add-hook 'agda2-mode-hook 'my-agda2-mode-hook)
     :mode ("\\.agda\\'" . agda2-mode)
     :config
-      (evil-leader/set-key
+      (evil-leader/set-key-for-mode 'agda2-mode
         ;; navigation
         "] g" 'agda2-next-goal
         "[ g" 'agda2-previous-goal

@@ -108,10 +108,9 @@ The mark and point are restored after the operation."
         (let ((first-result (funcall first-line-fn)))
 
           ;; Apply rest-lines-fn to remaining lines
-          (forward-line 1)
-          (while (<= (line-number-at-pos (point)) line-end)
-            (funcall rest-lines-fn first-result)
-            (forward-line 1)))))))
+          (while (and (= (forward-line 1) 0)
+                      (<= (line-number-at-pos (point)) line-end))
+            (funcall rest-lines-fn first-result)))))))
 
 
 (defun notch-region (start end)

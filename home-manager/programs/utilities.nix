@@ -30,5 +30,7 @@ in {
 
     # Formr youtube-dl
     yt-dlp
+
+    nix-tree
   ];
 }

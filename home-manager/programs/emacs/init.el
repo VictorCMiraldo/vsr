@@ -705,7 +705,7 @@
 
 ;; Agda sometimes just loads automagically; I can't have that happening.
 ;; so I'll disable it here.
-;; (load (expand-file-name "~/.emacs.d/modules/agda.el"))
+(load (expand-file-name "~/.emacs.d/modules/agda.el"))
 
 ;; Finally include the custom file; ignoring potentially non-existent
 ;; or bad files.
