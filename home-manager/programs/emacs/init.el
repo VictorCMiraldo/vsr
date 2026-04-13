@@ -416,6 +416,8 @@
     (:map evil-motion-state-map
       ("f" . #'vcm/avy-goto-char-timer-save)
       (";" . #'vcm/avy-repeat))
+    (:map evil-operator-state-map
+      ("f" . #'evil-find-char))
   :config
     ;; Add the option to run embark when using avy
     (defun avy-action-embark (pt)

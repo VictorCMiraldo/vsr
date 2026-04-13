@@ -36,6 +36,22 @@
         msg: "This playook is meant for Debian-based systems"
       when: ansible_os_family != "Debian"
 
+    - name: Verify sudo privileges
+      ansible.builtin.command: whoami
+      become: yes
+      register: sudo_check
+      changed_when: false
+      failed_when: sudo_check.stdout != 'root'
+
+    - name: Download and dearmor Mullvad signing key
+      become: yes
+      ansible.builtin.shell:
+        cmd: >
+          curl -fsSL https://repository.mullvad.net/deb/mullvad-keyring.asc
+          | gpg --dearmor
+          > /usr/share/keyrings/mullvad-keyring.gpg
+        creates: /usr/share/keyrings/mullvad-keyring.gpg
+
     - name: Add the 'mullvad' repository
       become: yes
       ansible.builtin.deb822_repository:
@@ -46,9 +62,18 @@
         components:
           - main
         architectures: amd64
-        signed_by: https://repository.mullvad.net/deb/mullvad-keyring.asc
+        signed_by: /usr/share/keyrings/mullvad-keyring.gpg
         enabled: true
         state: present
+
+    - name: Download and dearmor Signal signing key
+      become: yes
+      ansible.builtin.shell:
+        cmd: >
+          curl -fsSL https://updates.signal.org/desktop/apt/keys.asc
+          | gpg --dearmor
+          > /usr/share/keyrings/signal-desktop-keyring.gpg
+        creates: /usr/share/keyrings/signal-desktop-keyring.gpg
 
     - name: Add the 'signal' repository
       become: yes
@@ -60,7 +85,7 @@
         components:
           - main
         architectures: amd64
-        signed_by: https://updates.signal.org/desktop/apt/keys.asc
+        signed_by: /usr/share/keyrings/signal-desktop-keyring.gpg
         enabled: true
         state: present
 
