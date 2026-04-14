@@ -9,6 +9,15 @@
         msg: "This playook is meant for Debian-based systems"
       when: ansible_os_family != "Debian"
 
+    - name: Download and dearmor Docker signing key
+      become: yes
+      ansible.builtin.shell:
+        cmd: >
+          curl -fsSL https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
+          | gpg --dearmor
+          > /usr/share/keyrings/docker-keyring.gpg
+        creates: /usr/share/keyrings/docker-keyring.gpg
+
     - name: Add the 'docker' repository
       become: yes
       ansible.builtin.deb822_repository:
@@ -19,7 +28,7 @@
         components:
           - stable
         architectures: amd64
-        signed_by: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+        signed_by: /usr/share/keyrings/docker-keyring.gpg
         enabled: true
         state: present
 
@@ -30,11 +39,13 @@
 
     - name: Install wanted packages
       apt:
-        name: docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-ce-rootles-extras docker-buildx-plugin docker-model-plugin
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+          - docker-ce-rootless-extras
+          - docker-buildx-plugin
+          - docker-model-plugin
         state: present
-      become: yes
-
-    - name: Autoremove unused packages
-      apt:
-        autoremove: yes
       become: yes
