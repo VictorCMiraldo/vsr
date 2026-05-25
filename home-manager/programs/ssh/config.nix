@@ -15,6 +15,7 @@
       enableDefaultConfig = false;
       includes = [
          "${config.age.secrets.sshWorkServersData.path}"
+         "${config.age.secrets.sshPersonalServersData.path}"
        ];
       };
 

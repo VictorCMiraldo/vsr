@@ -8,4 +8,5 @@ let
 in
 {
   "work-servers-data.age".publicKeys = [ pubkey ];
+  "personal-servers-data.age".publicKeys = [ pubkey ];
 }

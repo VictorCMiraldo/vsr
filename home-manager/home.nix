@@ -58,6 +58,12 @@
         file = ./secrets/work-servers-data.age;
         path = "${config.home.homeDirectory}/.ssh/work-servers-data";
       };
+
+      sshPersonalServersData = {
+        file = ./secrets/personal-servers-data.age;
+        path = "${config.home.homeDirectory}/.ssh/personal-servers-data";
+      };
+
     };
   };
 
