@@ -5,7 +5,8 @@
     # such as .git/config and ~/.ssh/config can't be write-protected symlinks for
     # the work computer: company's infrastructure wants to control those files.
     isWorkMachine = lib.mkOption { type = lib.types.bool; default = false; };
+
+    # Whether we're setting up a server environment
+    isServer = lib.mkOption { type = lib.types.bool; default = false; };
   };
 }
-
-

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, agenix, ... }:
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -15,8 +15,8 @@
     LOCALES_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
   };
 
-  # Manages our XDG user dirs
-  xdg.userDirs = {
+  # Manages our XDG user dirs on things that are not a server
+  xdg.userDirs = lib.mkIf (!config.vsr.isServer) {
     enable = true;
     desktop = "$HOME/tmp/Desktop";
     documents = "$HOME/doc";
@@ -41,49 +41,21 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  ############
-
-  # We'll the necessary system-wide options in the vsr namespace.
-  # All the options we use are declared in options.nix.
-  # For now, it's just one.
-  vsr.isWorkMachine = builtins.getEnv "HOSTNAME" == "bold-bean";
-
-  # Sets up agenix for secret management
-  age = {
-    identityPaths = [ "${config.home.homeDirectory}/keychain/vsr-secrets/id_ed25519" ];
-    secrets = {
-      # This is only half a secret; I just don't want to leak IPs to the public on GitHub, but I'm
-      # the only user on my machine, so I don't really care if these get decrypted to an easily accessible file.
-      sshWorkServersData = {
-        file = ./secrets/work-servers-data.age;
-        path = "${config.home.homeDirectory}/.ssh/work-servers-data";
-      };
-
-      sshPersonalServersData = {
-        file = ./secrets/personal-servers-data.age;
-        path = "${config.home.homeDirectory}/.ssh/personal-servers-data";
-      };
-
-    };
-  };
-
   home.packages = [
-    inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+    agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
-
   imports = [
-    ./options.nix
     ./fonts/config.nix
-    ./programs/wofi.nix
-    ./programs/utilities.nix
-    ./programs/pass-and-gpg.nix
+    ./programs/git.nix
     ./programs/bash/config.nix
+    ./programs/utilities.nix
     ./programs/emacs/config.nix
     ./programs/vim/config.nix
+    ./programs/wofi.nix
+    ./programs/pass-and-gpg.nix
     ./programs/ssh/config.nix
     ./programs/unison/config.nix
-    ./programs/git.nix
     ./programs/papis/config.nix
   ];
 }
