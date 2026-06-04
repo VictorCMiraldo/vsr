@@ -97,6 +97,11 @@
     (haskell-ts-mode
      .
      (lambda ()
+        ;; The remote LSP runs through direnv exec on the host
+        (when (file-remote-p default-directory)
+          (setq-local eglot-server-programs
+            '((haskell-ts-mode . ("direnv" "exec" "." "haskell-language-server-wrapper" "--lsp" "--verbose")))))
+
         (push '("<-" . "←") prettify-symbols-alist)
         (push '("=>" . "⇒") prettify-symbols-alist)
         (push '("==" . "≡") prettify-symbols-alist)

@@ -93,6 +93,7 @@
     ;; Use version numbers for backup files.
     (version-control t)
 
+    (vc-handled-backends '(Git))
   :bind
     (:map minibuffer-mode-map
           ; TAB acts more like how it does in the shell: completes
@@ -163,24 +164,25 @@
 ;; somewhere, that will indicate a project, each line of that file will
 ;; be a pattern used to ignore files.
 (defun local/project-find-root (dir)
-  (let* ( (override (locate-dominating-file dir ".project.el"))
-          (dotfile (concat override ".project.el")) )
-    (when (and override (file-readable-p dotfile))
-      (let ((igns nil) (line ""))
-	    (with-temp-buffer
-	      (insert-file-contents-literally dotfile)
-	      (goto-char (point-min))
-	      (while (not (eobp))
-		(setq line
-                      (buffer-substring-no-properties
-                        (line-beginning-position)
-                        (line-end-position)))
-                (unless (or (string= line "") (string-prefix-p "#" line))
-                  (setq igns (cons line igns)))
-                (forward-line 1)
-              ))
+  (unless (file-remote-p dir)
+    (let* ( (override (locate-dominating-file dir ".project.el"))
+            (dotfile (concat override ".project.el")) )
+      (when (and override (file-readable-p dotfile))
+        (let ((igns nil) (line ""))
+              (with-temp-buffer
+                (insert-file-contents-literally dotfile)
+                (goto-char (point-min))
+                (while (not (eobp))
+                  (setq line
+                        (buffer-substring-no-properties
+                          (line-beginning-position)
+                          (line-end-position)))
+                  (unless (or (string= line "") (string-prefix-p "#" line))
+                    (setq igns (cons line igns)))
+                  (forward-line 1)
+                ))
 
-            (list 'project-find-root override (cons ".project.el" igns))))))
+              (list 'project-find-root override (cons ".project.el" igns)))))))
 
 (cl-defmethod project-ignores ((project (head project-find-root)) _dir)
   (car (cdr (cdr project))))
@@ -194,6 +196,27 @@
     (add-to-list 'project-find-functions #'local/project-find-root)
 )
 
+;; Working over SSH
+
+(use-package tramp
+  :custom
+  (tramp-connection-timeout 10)
+  (remote-file-name-inhibit-cache nil)
+  (tramp-completion-reread-directory-timeout nil)
+  (remote-file-name-inhibit-notifiers t))
+
+(defun local/ssh-hosts ()
+  (let ((files '("~/.ssh/personal-servers-data"
+                 "~/.ssh/work-servers-data")))
+    (cl-loop for file in files
+             when (file-exists-p (expand-file-name file))
+             append (mapcar #'cadr
+                            (tramp-parse-sconfig
+                             (expand-file-name file))))))
+(defun local/find-remote-file (host)
+  (interactive
+   (list (completing-read "Host: " (local/ssh-hosts))))
+   (find-file (format "/ssh:%s:~/" host)))
 
 ;; Evil!
 
@@ -238,12 +261,14 @@
 (use-package annalist
   ;; annalist is a dependency of evil-collection
   :vc (:url "https://github.com/noctuid/annalist.el"))
+
 (use-package evil-collection
   :vc (:url "https://github.com/emacs-evil/evil-collection" :rev "0.0.10")
   :after (:all evil annalist)
   :config
   (setq evil-collection-mode-list '(magit))
   (evil-collection-init))
+
 (use-package undo-tree
   :ensure t
   :diminish
@@ -310,6 +335,7 @@
       "p b" 'consult-project-buffer
       "p d" 'project-dired
       "p f" 'project-find-file
+      "p h f" 'local/find-remote-file
       "p G" 'consult-git-grep
       "p /" 'consult-ripgrep
       "p R" 'project-query-replace-regexp
