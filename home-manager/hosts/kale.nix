@@ -16,6 +16,7 @@
   home.stateVersion = "25.05";
 
   vsr.isWorkMachine = false;
+  vsr.isServer = false;
 
   age = {
     identityPaths = [ "${config.home.homeDirectory}/keychain/vsr-secrets/id_ed25519" ];
