@@ -1,9 +1,9 @@
-{config, pkgs, ...}:
+{ config, pkgs, ... }:
 {
-# Below is a config for bringing pass, gpg and gpg-agent through
-# the nix store. Nevertheless, because these are easily available
-# throug the default APT source, I'll stick to that and
-# just set up the right env variables instead.
+  # Below is a config for bringing pass, gpg and gpg-agent through
+  # the nix store. Nevertheless, because these are easily available
+  # throug the default APT source, I'll stick to that and
+  # just set up the right env variables instead.
   home.sessionVariables = {
     KEYCHAIN_ROOT = "CB4A4FBA";
     PASSWORD_STORE_KEY = "CB4A4FBA";

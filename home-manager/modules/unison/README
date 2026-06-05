@@ -62,4 +62,3 @@ rm backup
 sudo umount /mnt/vault
 sudo cryptsetup luksClose volume1
 ```
-

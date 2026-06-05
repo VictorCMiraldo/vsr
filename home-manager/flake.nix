@@ -12,7 +12,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  outputs = { self, nixpkgs, home-manager, agenix, git-hooks }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      agenix,
+      git-hooks,
+    }:
     let
 
       hosts = {
@@ -37,32 +44,35 @@
           pkgs = import nixpkgs { inherit system; };
           pre-commit-check = git-hooks.lib.${system}.run {
             src = ./.;
-            hooks.ormolu.enable = true;
             hooks.nixfmt.enable = true;
+            hooks.end-of-file-fixer.enable = true;
           };
         in
-          pkgs.mkShell {
-            buildInputs = [
-              pkgs.cachix
-              pkgs.nix-tree
-              pkgs.nil
-            ]
-            ++ pre-commit-check.enabledPackages;
+        pkgs.mkShell {
+          buildInputs = [
+            pkgs.cachix
+            pkgs.nix-tree
+            pkgs.nil
+          ]
+          ++ pre-commit-check.enabledPackages;
 
-            shellHook = pre-commit-check.shellHook;
-          };
+          shellHook = pre-commit-check.shellHook;
+        };
 
-      homeConfigurations = nixpkgs.lib.mapAttrs (hostname: { hostModule, system }:
+      homeConfigurations = nixpkgs.lib.mapAttrs (
+        hostname:
+        { hostModule, system }:
         home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = nixpkgs.legacyPackages.${system};
 
-        modules = [
-          ./options.nix
-          agenix.homeManagerModules.default
-          ./home.nix
-          hostModule
-          { _module.args = { inherit agenix hostname; }; }
-        ];
-      }) hosts;
+          modules = [
+            ./options.nix
+            agenix.homeManagerModules.default
+            ./home.nix
+            hostModule
+            { _module.args = { inherit agenix hostname; }; }
+          ];
+        }
+      ) hosts;
     };
 }

@@ -1,4 +1,4 @@
-{pkgs, config, ...}:
+{ pkgs, config, ... }:
 let
   vsr-sync = pkgs.writeShellApplication {
     name = "vsr-sync";

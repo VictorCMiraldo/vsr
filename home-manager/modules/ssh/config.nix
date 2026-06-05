@@ -1,4 +1,4 @@
-{config, lib, ...}:
+{ config, lib, ... }:
 {
   config = {
     programs.ssh = lib.mkIf (!config.vsr.isServer) {
@@ -8,7 +8,7 @@
       # still want to ensure @AddKeysToAgent "yes"@ is present there.
       matchBlocks = {
         "*" = {
-          addKeysToAgent = "yes";  # Applies to all hosts
+          addKeysToAgent = "yes"; # Applies to all hosts
         };
       };
 
@@ -16,7 +16,7 @@
       extraConfig = "
         Include ${config.home.homeDirectory}/.ssh/config.d/*.conf
         ";
-      };
+    };
 
     # Have our authorized keys file
     home.file.".ssh/authorized_keys".text = ''
@@ -24,13 +24,13 @@
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO40gphiJ99S0qmbYqLagjuUf9+x7+6khz5CvZe2MpjO victor@blackbean
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAIkSchbyqyOAKZqMvaBgUvmSc5JndXFSvLg5OWsdAO1 victor@bold-bean
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICJQ4RjRJJ+4zOUklWCZsSDYNCuN2xD0ZPFFT+pz5vK7 victor@kale
-      '';
+    '';
 
     # Create the systemd agent unit and set up the environment variable for the socket.
     # I'm not using home-manager for this since it will want to run the ssh-agent from within
     # nix, and I just want to run the default one from the system!
     home.sessionVariablesExtra = ''
-        export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
+      export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
     '';
 
     home.file.".config/systemd/user/ssh-agent.service".text = ''

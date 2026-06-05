@@ -1,4 +1,9 @@
-{config, pkgs, lib, ...}:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   config = {
     programs.git = {
@@ -6,9 +11,8 @@
       settings = {
         user = {
           name = "Victor Miraldo";
-          email = if config.vsr.isWorkMachine
-            then "victor.miraldo@fastmail.com"
-            else "victor.miraldo@converge.io";
+          email =
+            if config.vsr.isWorkMachine then "victor.miraldo@fastmail.com" else "victor.miraldo@converge.io";
         };
         alias = {
           please = "push --force-with-lease";

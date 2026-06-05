@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 {
   # Create a specific keyboard map that remaps alt_gr to super,
   # so it's a litle easier to use sway.
@@ -12,7 +12,7 @@
             name[Group1] = "Modified programmer US";
             key <RALT> { [ Super_L, Super_R ] };
     };
-    '';
+  '';
 
   home.file.".xkb/symbols/us_alt_gr_remapped_to_super_intl".text = ''
     default partial alphanumeric_keys
@@ -21,8 +21,5 @@
             name[Group1] = "Modified programmer US";
             key <RALT> { [ Super_L, Super_R ] };
     };
-    '';
+  '';
 }
-
-
-
