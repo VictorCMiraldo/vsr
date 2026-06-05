@@ -6,57 +6,55 @@
 }:
 let
   wofi-pass = pkgs.callPackage ./wofi-pass.nix { };
+  my-theme = import ../theme.nix;
 in
 {
   config = lib.mkIf (!config.vsr.isServer) {
     home.packages = [ wofi-pass ];
     programs.wofi.enable = true;
-    programs.wofi.style = with config.lib.stylix.colors; ''
-      * {
-        font-family: "Hack Nerd Font Mono", monospace;
+    programs.wofi.style = ''
+      *{
+          font-family: ${my-theme.fonts.normal-name};
+          color: ${my-theme.colors.active-text};
       }
-
       window {
-        background-color: #${base01};
+          background-color: ${my-theme.colors.unfocused-bg};
       }
-
       #input {
-        margin: 5px;
-        border-radius: 0px;
-        border: none;
-        background-color: #${base01};
-        color: #${base05};
+          margin: 5px;
+          border-radius: 0px;
+          border: none;
+          border-bottom: 3px solid ${my-theme.colors.inactive-border};
+          background-color: ${my-theme.colors.unfocused-bg};
+          color: ${my-theme.colors.active-text};
       }
-
       #inner-box {
-        background-color: #${base00};
+          background-color: ${my-theme.colors.unfocused-bg};
       }
-
       #outer-box {
-        margin: 2px;
-        padding: 10px;
-        background-color: #${base00};
+          margin: 5px;
+          padding:2px;
+          background-color: ${my-theme.colors.inactive-bg};
       }
 
-      #scroll {
-        margin: 5px;
-      }
+      #scroll { }
 
       #text {
-        padding: 4px;
-        color: #${base05};
+        padding: 5px;
+        color: ${my-theme.colors.inactive-text};
       }
 
-      #entry:nth-child(even) {
-        background-color: #${base01};
-      }
+      // #entry:nth-child(even){
+      //     background-color: ${my-theme.colors.unfocused-bg};
+      // }
 
       #entry:selected {
-        background-color: #${base02};
+          background-color: ${my-theme.colors.active-bg};
+          border: ${my-theme.colors.active-border};
       }
 
       #text:selected {
-        background: transparent;
+          color: ${my-theme.colors.active-text};
       }
     '';
   };

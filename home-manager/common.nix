@@ -44,7 +44,6 @@
     ./modules/wofi/config.nix
     ./modules/pass-and-gpg.nix
     ./modules/unison/config.nix
-    ./modules/stylix/config.nix
     # ./modules/papis/config.nix
   ];
 }

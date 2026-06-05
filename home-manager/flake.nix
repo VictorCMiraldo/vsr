@@ -7,11 +7,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    stylix = {
-      url = "github:nix-community/stylix/release-25.11";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     agenix.url = "github:ryantm/agenix";
 
     git-hooks = {
@@ -24,7 +19,6 @@
       self,
       nixpkgs,
       home-manager,
-      stylix,
       agenix,
       git-hooks,
     }:
@@ -76,7 +70,6 @@
           modules = [
             ./options.nix
             agenix.homeManagerModules.default
-            stylix.homeModules.default
             ./common.nix
             hostModule
             { _module.args = { inherit agenix hostname; }; }
