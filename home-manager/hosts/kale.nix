@@ -1,5 +1,20 @@
-{ pkgs, config, lib, ... }:
 {
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+{
+  # This value determines the Home Manager release that your
+  # configuration is compatible with. This helps avoid breakage
+  # when a new Home Manager release introduces backwards
+  # incompatible changes.
+  #
+  # You can update Home Manager without changing this value. See
+  # the Home Manager release notes for a list of state version
+  # changes in each release.
+  home.stateVersion = "25.05";
+
   vsr.isWorkMachine = false;
 
   age = {
@@ -16,17 +31,19 @@
   home.packages =
     let
       agdaWithStdlib = pkgs.agda.withPackages (p: [ p.standard-library ]);
-    in with pkgs; [
-        cachix
-        konsave
-        pandoc
-        basedpyright
-        agdaWithStdlib
-        ripgrep
-        nix-tree
+    in
+    with pkgs;
+    [
+      cachix
+      konsave
+      pandoc
+      basedpyright
+      agdaWithStdlib
+      ripgrep
+      nix-tree
 
-        # Formr youtube-dl
-        yt-dlp
-      ];
+      # Formr youtube-dl
+      yt-dlp
+    ];
 
 }
