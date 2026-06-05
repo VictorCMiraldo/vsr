@@ -6,7 +6,7 @@
     secrets = {
       sshWorkServersData = {
         file = ./secrets/work-servers-data.age;
-        path = "${config.home.homeDirectory}/.ssh/extra/work-servers-data.conf";
+        path = "${config.home.homeDirectory}/.ssh/config.d/work-servers-data.conf";
       };
     };
   };

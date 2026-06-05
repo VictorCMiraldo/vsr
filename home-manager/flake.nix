@@ -12,7 +12,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  outputs = { self, nixpkgs, home-manager, agenix, git-hooks }@inputs:
+  outputs = { self, nixpkgs, home-manager, agenix, git-hooks }:
     let
 
       hosts = {
@@ -45,6 +45,7 @@
             buildInputs = [
               pkgs.cachix
               pkgs.nix-tree
+              pkgs.nil
             ]
             ++ pre-commit-check.enabledPackages;
 

@@ -7,7 +7,7 @@
     secrets = {
       sshPersonalServersData = {
         file = ./secrets/personal-servers-data.age;
-        path = "${config.home.homeDirectory}/.ssh/extra/personal-servers-data.conf";
+        path = "${config.home.homeDirectory}/.ssh/config.d/personal-servers-data.conf";
       };
 
     };

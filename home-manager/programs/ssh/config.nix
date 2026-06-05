@@ -1,7 +1,7 @@
-{config, pkgs, lib, ...}:
+{config, lib, ...}:
 {
   config = {
-    programs.ssh = {
+    programs.ssh = lib.mkIf (!config.vsr.isServer) {
       enable = true;
 
       # If this is a work machine, and we don't want to touch SSH config, we'd
@@ -13,10 +13,9 @@
       };
 
       enableDefaultConfig = false;
-      includes = [
-         "${config.age.secrets.sshWorkServersData.path}"
-         "${config.age.secrets.sshPersonalServersData.path}"
-       ];
+      extraConfig = "
+        Include ${config.home.homeDirectory}/.ssh/config.d/*.conf
+        ";
       };
 
     # Have our authorized keys file
