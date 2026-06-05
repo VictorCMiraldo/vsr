@@ -16,7 +16,7 @@
     identityPaths = [ "${config.home.homeDirectory}/keychain/vsr-secrets/id_ed25519" ];
     secrets = {
       sshWorkServersData = {
-        file = ./secrets/work-servers-data.age;
+        file = ../secrets/work-servers-data.age;
         path = "${config.home.homeDirectory}/.ssh/config.d/work-servers-data.conf";
       };
     };

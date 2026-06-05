@@ -2,8 +2,15 @@
   inputs = {
     nixpkgs.url = "flake:nixpkgs/nixos-25.11";
 
-    home-manager.url = "github:nix-community/home-manager/release-25.11";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    stylix = {
+      url = "github:nix-community/stylix/release-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     agenix.url = "github:ryantm/agenix";
 
@@ -17,6 +24,7 @@
       self,
       nixpkgs,
       home-manager,
+      stylix,
       agenix,
       git-hooks,
     }:
@@ -68,7 +76,8 @@
           modules = [
             ./options.nix
             agenix.homeManagerModules.default
-            ./home.nix
+            stylix.homeModules.default
+            ./common.nix
             hostModule
             { _module.args = { inherit agenix hostname; }; }
           ];

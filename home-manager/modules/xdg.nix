@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 {
   xdg.userDirs = lib.mkIf (!config.vsr.isServer) {
     enable = true;
