@@ -12,7 +12,7 @@
     # I want to turn it on bit by bit
     autoEnable = false;
     image = ./wallpaper.jpg;
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/ashes.yaml";
 
     fonts = {
       serif = {
