@@ -35,15 +35,15 @@
   };
 
   imports = [
-    ./fonts/config.nix
-    ./programs/git.nix
-    ./programs/ssh/config.nix
-    ./programs/bash/config.nix
-    ./programs/emacs/config.nix
-    ./programs/vim/config.nix
-    ./programs/wofi.nix
-    ./programs/pass-and-gpg.nix
-    ./programs/unison/config.nix
-    # ./programs/papis/config.nix
+    ./modules/xdg.nix
+    ./modules/git.nix
+    ./modules/ssh/config.nix
+    ./modules/bash/config.nix
+    ./modules/emacs/config.nix
+    ./modules/vim/config.nix
+    ./modules/wofi.nix
+    ./modules/pass-and-gpg.nix
+    ./modules/unison/config.nix
+    # ./modules/papis/config.nix
   ];
 }
