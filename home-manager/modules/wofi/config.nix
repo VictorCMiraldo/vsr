@@ -6,7 +6,7 @@
 }:
 let
   wofi-pass = pkgs.callPackage ./wofi-pass.nix { };
-  my-theme = import ../theme.nix;
+  my-theme = import ../../theme.nix;
 in
 {
   config = lib.mkIf (!config.vsr.isServer) {

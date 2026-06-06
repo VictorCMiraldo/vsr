@@ -37,6 +37,7 @@
   imports = [
     ./modules/xdg.nix
     ./modules/git.nix
+    ./modules/tmux/config.nix
     ./modules/ssh/config.nix
     ./modules/bash/config.nix
     ./modules/emacs/config.nix
