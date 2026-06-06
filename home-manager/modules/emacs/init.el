@@ -115,6 +115,9 @@
     (global-hl-line-mode t)
 
     (global-prettify-symbols-mode 1)
+
+    ;; Give-me mouse support if available
+    (xterm-mouse-mode 1)
 )
 
 ;; Profiling init
@@ -406,7 +409,7 @@
   "Run avy-goto-char-timer and save the input."
   (interactive)
   (setq vcm/last-avy-input "")
-  (let 
+  (let
     ;; This is some cool magic! It temporarily replace 'read-char with the lambda
     ;; define right below. This lets us tap right into 'read-char, which is how
     ;; avy-goto-char-timer reads it's input. Our version of read-char calls the original
@@ -415,7 +418,7 @@
     (cl-letf
       (((symbol-function 'read-char)
         (lambda (&rest args)
-          (let 
+          (let
             ((c (apply read-char-orig args))) ; This is a call to the original read-char
             (when c (setq vcm/last-avy-input (concat vcm/last-avy-input (string c))))
             c)) ;; Gotta not forget to return the char
@@ -635,7 +638,7 @@
              :variableTypes :json-false
            )
          )
-        
+
          ;; Configure the formatting provider for `nil`
          :nil (:formatting (:command ["nixfmt"]))
     ))
@@ -648,18 +651,18 @@
     ;; The Haskell LSP is sending rather large hover responses. I don't know why..
     ;; Let's just truncate that stuff. No way we need more than 5kb docs on a single function.
     (setq eglot-hover-max-size 5000)
-    
+
     (defun my-eglot-truncate-large-hover (orig-fun markup)
       "Truncate excessively large hover responses from LSP."
       (let* ((value (plist-get markup :value))
              (value-length (length value)))
         (if (> value-length eglot-hover-max-size)
             (progn
-              (message "Truncating large hover response: %s bytes (limit: %s)" 
+              (message "Truncating large hover response: %s bytes (limit: %s)"
                        value-length eglot-hover-max-size)
-              (funcall orig-fun 
-                       (plist-put (copy-sequence markup) 
-                                  :value 
+              (funcall orig-fun
+                       (plist-put (copy-sequence markup)
+                                  :value
                                   (concat (substring value 0 eglot-hover-max-size)
                                           "\n\n... [Truncated "
                                           (number-to-string (- value-length eglot-hover-max-size))

@@ -5,6 +5,23 @@
     emacs30-pgtk
   ];
 
+  services.emacs = {
+    enable = true;
+    package = pkgs.emacs30-pgtk;
+    client.enable = true;
+  };
+
+  systemd.user.services.emacs = {
+    Unit = {
+      Wants = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+    Service.Environment = "COLORTERM=truecolor";
+  };
+
   home.file.".emacs.d/init.el".source = ./init.el;
   home.file.".emacs.d/early-init.el".source = ./early-init.el;
 

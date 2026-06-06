@@ -27,8 +27,7 @@
   # Common environment used everywhere
   home.sessionVariables = {
     VSR_ROOT = builtins.toString ./..;
-
-    EDITOR = "vim";
+    EDITOR = "emacsclient -t";
 
     LANG = "en_US.utf8";
     LOCALES_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
