@@ -1,5 +1,11 @@
 { pkgs, ... }:
 {
+  # tmux is cool and all... but paired with a file manager
+  # is where it shines.
+  programs.yazi = {
+    enable = true;
+  };
+
   programs.tmux = {
     enable = true;
     shell = "${pkgs.bash}/bin/bash";
