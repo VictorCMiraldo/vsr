@@ -1,4 +1,17 @@
 { pkgs, ... }:
+let
+  tmux-menus = pkgs.tmuxPlugins.mkTmuxPlugin {
+    pluginName = "menus";
+    version = "2.2.34";
+    rtpPath = ".";
+    src = pkgs.fetchFromGitHub {
+      owner = "jaclu";
+      repo = "tmux-menus";
+      rev = "f60e791e80d066ef7463ab2a746f5f89a5683dc0";
+      hash = "sha256-KPP6g1RX/c269IzhQeMO14a58sewqdTCaKgD3wfvDiw=";
+    };
+  };
+in
 {
   # tmux is cool and all... but paired with a file manager
   # is where it shines.
@@ -17,19 +30,6 @@
     keyMode = "vi";
     prefix = "`";
 
-    # Wrap the package to force the correct environment variables
-    # for tmux-open
-    package = pkgs.symlinkJoin {
-      name = "tmux-wrapped";
-      paths = [ pkgs.tmux ];
-      buildInputs = [ pkgs.makeWrapper ];
-      postBuild = ''
-        wrapProgram $out/bin/tmux \
-          --set EDITOR "emacsclient -t" \
-          --set VISUAL "emacsclient -t"
-      '';
-    };
-
     plugins = with pkgs; [
       tmuxPlugins.better-mouse-mode
       {
@@ -42,18 +42,18 @@
           set-environment -g COLORTERM "truecolor"
         '';
       }
+      tmuxPlugins.dotbar
       {
-        plugin = tmuxPlugins.sidebar;
+        plugin = tmux-menus;
         extraConfig = ''
-          set -g @sidebar-tree-command 'tree -C --gitignore -L2'
+          set -g @menus_use_cache 'No'
         '';
       }
-      tmuxPlugins.open
     ];
     extraConfig = ''
       # split panes using h and v, just like my emacs
-      bind h split-window -h -c '#{pane_current_path}'
       bind v split-window -v -c '#{pane_current_path}'
+      bind V split-window -h -c '#{pane_current_path}'
       bind c new-window -c '#{pane_current_path}'
       unbind '"'
       unbind %

@@ -124,4 +124,8 @@ for t in $HOME/.nix-profile/share/bash-completion/completions/*; do
 done
 
 export NIX_PATH=$HOME/.nix-defexpr/channels${NIX_PATH:+:$NIX_PATH}
+# ensure compatibility tmux <-> direnv
+if [ -n "$TMUX" ] && [ -n "$DIRENV_DIR" ]; then
+    unset "${!DIRENV_@}"  # unset env vars starting with DIRENV_
+fi
 eval "$(direnv hook bash)"
