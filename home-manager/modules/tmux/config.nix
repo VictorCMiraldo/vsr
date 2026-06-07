@@ -21,7 +21,7 @@ in
 
   programs.tmux = {
     enable = true;
-    shell = "${pkgs.bash}/bin/bash";
+    shell = "${pkgs.zsh}/bin/zsh";
     terminal = "tmux-256color";
     historyLimit = 10000;
     mouse = true;

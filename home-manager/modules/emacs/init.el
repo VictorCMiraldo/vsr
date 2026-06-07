@@ -285,6 +285,11 @@
   (interactive)
   (other-window -1))
 
+(defun local/copy-region-to-clipboard (beg end)
+  "Pipe the active region to the Wayland system clipboard."
+  (interactive "r")
+  (call-process-region beg end "wl-copy" nil nil nil))
+
 (use-package evil-leader
   :vc (:url "https://github.com/cofi/evil-leader")
   :after (evil)
@@ -345,7 +350,8 @@
       "p s" 'project-eshell
 
     ;; 'r' register
-      "r y" 'consult-yank-from-kill-ring
+      "r k" 'consult-yank-from-kill-ring
+      "r y" 'local/copy-region-to-clipboard
 
     ;; 'd' dired
       "d e" 'dired-create-empty-file

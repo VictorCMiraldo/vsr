@@ -39,6 +39,7 @@
     ./modules/tmux/config.nix
     ./modules/ssh/config.nix
     ./modules/bash/config.nix
+    ./modules/zsh/config.nix
     ./modules/emacs/config.nix
     ./modules/vim/config.nix
     ./modules/wofi/config.nix
