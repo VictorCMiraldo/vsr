@@ -10,17 +10,31 @@
       # Dynamically set GPG_TTY for the current terminal session
       GPG_TTY=$(tty)
       export GPG_TTY
+
+      # Inside the tab menu, ESC drops the menu instead of selecting an item
+      bindkey -M menuselect '^[' send-break
     '';
 
     shellAliases = {
       ec = "emacsclient -t -a vim";
     };
+
+    oh-my-zsh = {
+      enable = true;
+      plugins = [
+        "git"
+        "pass"
+        "ssh"
+        "systemd"
+      ];
+      theme = "strug";
+    };
+
   };
 
-  # 2. Enable direnv with native nix-direnv caching
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
-    enableZshIntegration = true; # Automatically hooks into Zsh!
+    enableZshIntegration = true;
   };
 }

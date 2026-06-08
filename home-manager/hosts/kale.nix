@@ -43,8 +43,11 @@
       ripgrep
       nix-tree
 
-      # Formr youtube-dl
+      # Former youtube-dl
       yt-dlp
+
+      # Great at detecting duplicate files
+      rmlint
     ];
 
 }

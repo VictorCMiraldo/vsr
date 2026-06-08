@@ -120,6 +120,19 @@
     (xterm-mouse-mode 1)
 )
 
+;; When on emacsclient -t, this is how you interact with the system
+;; clipboard
+(use-package xclip
+  :ensure t
+  ;; Only initialize if Emacs is running in a non-graphic (terminal) frame
+  :if (not (display-graphic-p))
+  :custom
+    (xclip-program "wl-copy")
+    (xclip-select-enable-clipboard t)
+    (xclip-method 'wl-copy)
+  :config
+    (xclip-mode 1))
+
 ;; Profiling init
 (use-package esup
   :vc (:url "https://github.com/jschaf/esup")
@@ -285,11 +298,6 @@
   (interactive)
   (other-window -1))
 
-(defun local/copy-region-to-clipboard (beg end)
-  "Pipe the active region to the Wayland system clipboard."
-  (interactive "r")
-  (call-process-region beg end "wl-copy" nil nil nil))
-
 (use-package evil-leader
   :vc (:url "https://github.com/cofi/evil-leader")
   :after (evil)
@@ -350,8 +358,7 @@
       "p s" 'project-eshell
 
     ;; 'r' register
-      "r k" 'consult-yank-from-kill-ring
-      "r y" 'local/copy-region-to-clipboard
+      "r y" 'consult-yank-from-kill-ring
 
     ;; 'd' dired
       "d e" 'dired-create-empty-file
